@@ -84,3 +84,40 @@ Which Selenium commands are implemented?
 - [ ] touchSingleTap
 - [ ] touchUp
 - [ ] uploadFile
+
+XPath supported:
+- [ ] axes 
+  - [ ] Ancestor
+  - [ ] AncestorOrSelf
+  - [X] Attribute
+  - [X] Child        
+  - [X] Descendant    
+  - [X] DescendantOrSelf
+  - [ ] Following
+  - [ ] FollowingSibling
+  - [ ] Namespace
+  - [X] Parent
+  - [ ] Preceding
+  - [ ] PrecedingSibling
+  - [ ] Self
+  - [X] Root
+- [ ] predicates
+  - [X] position predicate `//node[3]`
+  - [X] attribute predicate `//node[@attribute = 'X']`
+- [ ] operators
+  - [ ] Or
+  - [ ] And
+  - [X] Eq 
+  - [ ] Ne
+  - [ ] Lt 
+  - [ ] Le 
+  - [ ] Gt 
+  - [ ] Ge
+  - [ ] Plus 
+  - [ ] Minus 
+  - [ ] Multiply 
+  - [ ] Divide 
+  - [ ] Modulo
+  - [ ] UnaryMinus
+  - [ ] Union
+ - [ ] methods
