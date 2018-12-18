@@ -1,0 +1,15 @@
+install:
+  - choco install -y wget
+  - wget -q https://download.microsoft.com/download/4/6/1/46116DFF-29F9-4FF8-94BF-F9BE05BE263B/packages/DotNetCore.1.0.0.RC2-SDK.Preview1-x64.exe
+  - DotNetCore.1.0.0.RC2-SDK.Preview1-x64.exe /install /quiet /log dotnetinstall.log
+  - ps: Push-AppveyorArtifact "dotnetinstall.log"
+
+build_script:
+  - cmd: cd XPathParser
+  - cmd: dotnet restore
+  - cmd: dotnet build -c Release --version-suffix r%APPVEYOR_BUILD_NUMBER%
+  - cmd: dotnet pack -c Release --version-suffix r%APPVEYOR_BUILD_NUMBER%
+
+on_success:
+  - ps: Push-AppveyorArtifact "bin\Release\XPathParser.1.1.0-r$($env:APPVEYOR_BUILD_NUMBER).nupkg"
+  - ps: Push-AppveyorArtifact "bin\Release\XPathParser.1.1.0-r$($env:APPVEYOR_BUILD_NUMBER).symbols.nupkg"

@@ -1,0 +1,58 @@
+{
+  "version": "1.1.0-*",
+
+  "authors": [ "Sergey Dubinets" ],
+  "title": ".NET XPath Parser",
+  "description": "XPath parser in C# source code.",
+
+  "packOptions": {
+    "licenseUrl": "https://github.com/quamotion/XPathParser/blob/master/LICENSE.txt",
+    "owners": [ "quamotion" ],
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/quamotion/XPathParser"
+    },
+  },
+
+  "dependencies": {
+  },
+
+  "buildOptions": {
+    "keyFile": "XPathParser.snk",
+    "strongName": true
+  },
+
+  "frameworks": {
+    "netstandard1.3": {
+      "imports": "dnxcore50",
+      "dependencies": {
+        "System.Xml.XPath": "4.0.1",
+        "System.Collections": "4.0.11",
+        "System.Text.RegularExpressions": "4.1.0",
+        "System.Diagnostics.Debug": "4.0.11",
+        "System.Globalization": "4.0.11",
+        "System.Runtime.Extensions": "4.1.0"
+      }
+    },
+    "net20": {
+      "frameworkAssemblies": {
+        "System.Xml": "2.0.0.0"
+      }
+    },
+    "net30": {
+      "frameworkAssemblies": {
+        "System.Xml": "2.0.0.0"
+      }
+    },
+    "net40": {
+      "frameworkAssemblies": {
+        "System.Xml": "4.0.0.0"
+      }
+    },
+    "net45": {
+      "frameworkAssemblies": {
+        "System.Xml": "4.0.0.0"
+      }
+    }
+  }
+}

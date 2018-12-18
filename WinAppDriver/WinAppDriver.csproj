@@ -1,0 +1,188 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{99665496-5DA2-4F6B-813B-BEC10187CEFD}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>WinAppDriver</RootNamespace>
+    <AssemblyName>WinAppDriver</AssemblyName>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Interop.UIAutomationClient, Version=6.3.0.0, Culture=neutral, PublicKeyToken=365143bb27e7ac8b, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\libs\Interop.UIAutomationClient.dll</HintPath>
+    </Reference>
+    <Reference Include="Nancy, Version=1.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Nancy.1.4.1\lib\net40\Nancy.dll</HintPath>
+    </Reference>
+    <Reference Include="Nancy.Hosting.Self, Version=1.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Nancy.Hosting.Self.1.4.1\lib\net40\Nancy.Hosting.Self.dll</HintPath>
+    </Reference>
+    <Reference Include="Nancy.Serialization.JsonNet, Version=1.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Nancy.Serialization.JsonNet.1.4.1\lib\net40\Nancy.Serialization.JsonNet.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UIAComWrapper">
+      <HintPath>..\libs\UIAComWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="WebDriver, Version=3.141.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Selenium.WebDriver.3.141.0\lib\net40\WebDriver.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Behaviors\UnexpectedAlertBehavior.cs" />
+    <Compile Include="Bootstrapper.cs" />
+    <Compile Include="CommandHandlers\ActionsCommandHandler.cs" />
+    <Compile Include="CommandHandlers\ElementCommandHandler.cs" />
+    <Compile Include="CommandHandlers\GetAlertTextCommandHandler.cs" />
+    <Compile Include="Exceptions\InvalidSelectorException.cs" />
+    <Compile Include="Exceptions\ElementNotDisplayedException.cs" />
+    <Compile Include="Exceptions\ObsoleteElementException.cs" />
+    <Compile Include="Exceptions\NoSuchElementException.cs" />
+    <Compile Include="Extensions\AutomationElementExtensions.cs" />
+    <Compile Include="Extensions\AutomationExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Host.cs" />
+    <Compile Include="Command.cs" />
+    <Compile Include="CommandDispatcher.cs" />
+    <Compile Include="CommandEnvironment.cs" />
+    <Compile Include="CommandHandlerFactory.cs" />
+    <Compile Include="CommandHandlers\ClearElementCommandHandler.cs" />
+    <Compile Include="CommandHandlers\ClickElementCommandHandler.cs" />
+    <Compile Include="CommandHandlers\CommandHandler.cs" />
+    <Compile Include="CommandHandlers\DeleteAllCookiesCommandHandler.cs" />
+    <Compile Include="CommandHandlers\ElementEqualsCommandHandler.cs" />
+    <Compile Include="CommandHandlers\ExecuteAsyncScriptCommandHandler.cs" />
+    <Compile Include="CommandHandlers\ExecuteScriptCommandHandler.cs" />
+    <Compile Include="CommandHandlers\FindChildElementCommandHandler.cs" />
+    <Compile Include="CommandHandlers\FindChildElementsCommandHandler.cs" />
+    <Compile Include="CommandHandlers\FindElementCommandHandler.cs" />
+    <Compile Include="CommandHandlers\FindElementsCommandHandler.cs" />
+    <Compile Include="CommandHandlers\GetActiveElementCommandHandler.cs" />
+    <Compile Include="CommandHandlers\GetAllCookiesCommandHandler.cs" />
+    <Compile Include="CommandHandlers\GetCurrentUrlCommandHandler.cs" />
+    <Compile Include="CommandHandlers\GetCurrentWindowHandleCommandHandler.cs" />
+    <Compile Include="CommandHandlers\GetElementAttributeValueCommandHandler.cs" />
+    <Compile Include="CommandHandlers\GetElementCssPropertyValueCommandHandler.cs" />
+    <Compile Include="CommandHandlers\GetElementLocationCommandHandler.cs" />
+    <Compile Include="CommandHandlers\GetElementLocationInViewCommandHandler.cs" />
+    <Compile Include="CommandHandlers\GetElementSizeCommandHandler.cs" />
+    <Compile Include="CommandHandlers\GetElementTagNameCommandHandler.cs" />
+    <Compile Include="CommandHandlers\GetElementTextCommandHandler.cs" />
+    <Compile Include="CommandHandlers\GetOrientationCommandHandler.cs" />
+    <Compile Include="CommandHandlers\GetPageSourceCommandHandler.cs" />
+    <Compile Include="CommandHandlers\GetTitleCommandHandler.cs" />
+    <Compile Include="CommandHandlers\GetWindowHandlesCommandHandler.cs" />
+    <Compile Include="CommandHandlers\GetWindowPositionCommandHandler.cs" />
+    <Compile Include="CommandHandlers\GetWindowSizeCommandHandler.cs" />
+    <Compile Include="CommandHandlers\GoBackCommandHandler.cs" />
+    <Compile Include="CommandHandlers\GoForwardCommandHandler.cs" />
+    <Compile Include="CommandHandlers\GoToUrlCommandHandler.cs" />
+    <Compile Include="CommandHandlers\IsElementDisplayedCommandHandler.cs" />
+    <Compile Include="CommandHandlers\IsElementEnabledCommandHandler.cs" />
+    <Compile Include="CommandHandlers\IsElementSelectedCommandHandler.cs" />
+    <Compile Include="CommandHandlers\MouseButtonDownCommandHandler.cs" />
+    <Compile Include="CommandHandlers\MouseButtonUpCommandHandler.cs" />
+    <Compile Include="CommandHandlers\MouseClickCommandHandler.cs" />
+    <Compile Include="CommandHandlers\MouseDoubleClickCommandHandler.cs" />
+    <Compile Include="CommandHandlers\MouseMoveCommandHandler.cs" />
+    <Compile Include="CommandHandlers\NewSessionCommandHandler.cs" />
+    <Compile Include="CommandHandlers\NoOpCommandHandler.cs" />
+    <Compile Include="CommandHandlers\NotImplementedCommandHandler.cs" />
+    <Compile Include="CommandHandlers\QuitCommandHandler.cs" />
+    <Compile Include="CommandHandlers\RefreshCommandHandler.cs" />
+    <Compile Include="CommandHandlers\ScreenshotCommandHandler.cs" />
+    <Compile Include="CommandHandlers\SendKeysCommandHandler.cs" />
+    <Compile Include="CommandHandlers\SendKeysToActiveElementCommandHandler.cs" />
+    <Compile Include="CommandHandlers\SetAsyncScriptTimeoutCommandHandler.cs" />
+    <Compile Include="CommandHandlers\SetImplicitWaitTimeoutCommandHandler.cs" />
+    <Compile Include="CommandHandlers\SetTimeoutCommandHandler.cs" />
+    <Compile Include="CommandHandlers\StatusCommandHandler.cs" />
+    <Compile Include="CommandHandlers\SubmitCommandHandler.cs" />
+    <Compile Include="CommandHandlers\SwitchToFrameCommandHandler.cs" />
+    <Compile Include="CommandHandlers\SwitchToWindowCommandHandler.cs" />
+    <Compile Include="DriverCommand.cs" />
+    <Compile Include="Infrastructure\CacheStore.cs" />
+    <Compile Include="Infrastructure\ElementCache.cs" />
+    <Compile Include="Infrastructure\ElementCacheFactory.cs" />
+    <Compile Include="Infrastructure\ElementFinder.cs" />
+    <Compile Include="Input\Key.cs" />
+    <Compile Include="Input\Keyboard.cs" />
+    <Compile Include="Input\Mouse.cs" />
+    <Compile Include="Input\MouseButton.cs" />
+    <Compile Include="Input\MouseButtonState.cs" />
+    <Compile Include="Input\NamespaceDoc.cs" />
+    <Compile Include="Input\NativeMethods.cs" />
+    <Compile Include="Input\SendMouseInputFlags.cs" />
+    <Compile Include="JsonNetSerializer.cs" />
+    <Compile Include="MainModule.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ProtocolValueJsonConverter.cs" />
+    <Compile Include="Response.cs" />
+    <Compile Include="SeleniumModule.cs" />
+    <Compile Include="TextEventArgs.cs" />
+    <Compile Include="WebBrowserNavigationMonitor.cs" />
+    <Compile Include="WebDriverAtoms.cs" />
+    <Compile Include="WebDriverStatusCode.cs" />
+    <Compile Include="XPath\AxisElement.cs" />
+    <Compile Include="XPath\FormNavigator.cs" />
+    <Compile Include="XPath\AutomationElementTreeWalker.cs" />
+    <Compile Include="XPath\Iterators\DescenendantIterator.cs" />
+    <Compile Include="XPath\Iterators\ChildIterator.cs" />
+    <Compile Include="XPath\Iterators\IteratorBase.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\XPathParser-master\XPathParser\XPathParser.csproj">
+      <Project>{a8072758-e8d2-4551-89c2-564bde162403}</Project>
+      <Name>XPathParser</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

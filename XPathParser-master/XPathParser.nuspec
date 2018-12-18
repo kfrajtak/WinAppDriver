@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package>
+  <metadata>
+    <id>XPathParser</id>
+    <version>$version$</version>
+    <authors>Sergey Dubinets</authors>
+    <owners>Quamotion</owners>
+    <title>.NET XPath Parser</title>
+    <description>XPath parser in C# source code.</description>
+    <projectUrl>https://github.com/quamotion/XPathParser</projectUrl>
+    <licenseUrl>https://github.com/quamotion/XPathParser/blob/master/LICENSE.txt</licenseUrl>
+    <tags>XPath</tags>
+    <language>en-US</language>
+  </metadata>
+  <files>
+    <file src="XPathParser\bin\Release\XPathParser.dll" target="lib\net35" />
+  </files>
+</package>
