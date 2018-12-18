@@ -125,3 +125,13 @@ XPath supported:
   - [ ] UnaryMinus
   - [ ] Union
  - [ ] methods
+
+## How to create session
+The driver is currently not able to start the system under test. You have to set process name in capapabilities. The IP address is currently hardwired to `http://127.0.0.1:12345`.
+
+```public static RemoteWebDriver CreateSession()
+{
+	DesiredCapabilities desktopCapabilities = new DesiredCapabilities();
+	desktopCapabilities.SetCapability("processName", "<name of the process>");
+	return new RemoteWebDriver(new CommandExec(new Uri("http://127.0.0.1:12345"), TimeSpan.FromSeconds(60)), desktopCapabilities);
+}```
