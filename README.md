@@ -1,0 +1,86 @@
+# WinAppDriver
+Selenium driver for WinForms applications
+
+This project is using 
+- Windows Automation
+- Nancy as the webserver
+- XPathParser for parsing XPath expressions (https://github.com/quamotion/XPathParser)
+- Selenium.WebDriver.3.141.0 to get the internals of web driver (commands for Nancy endpoints for example)
+- windowsphonedriver (https://github.com/forcedotcom/windowsphonedriver) for the basic infrastructure (commands & command handlers)
+
+Which Selenium commands are implemented?
+- [ ] acceptAlert
+- [X] actions
+- [ ] addCookie
+- [ ] clearElement
+- [X] clickElement
+- [X] close
+- [ ] deleteAllCookies
+- [ ] deleteCookie
+- [ ] describeElement
+- [ ] dismissAlert
+- [ ] elementEquals
+- [ ] executeAsyncScript
+- [ ] executeScript
+- [X] findChildElement
+- [X] findChildElements
+- [X] findElement
+- [X] findElements
+- [ ] get
+- [ ] getActiveElement
+- [ ] getAlertText
+- [ ] getCookies
+- [ ] getCurrentUrl
+- [ ] getCurrentWindowHandle
+- [ ] getElementAttribute
+- [ ] getElementLocation
+- [ ] getElementLocationOnceScrolledIntoView
+- [ ] getElementSize
+- [ ] getElementTagName
+- [ ] getElementText
+- [ ] getElementValueOfCssProperty
+- [ ] getOrientation
+- [ ] getPageSource
+- [ ] getSessionCapabilities
+- [ ] getSessionList
+- [ ] getTitle
+- [ ] getWindowHandles
+- [ ] getWindowPosition
+- [ ] getWindowSize
+- [ ] goBack
+- [ ] goForward
+- [ ] implicitlyWait
+- [ ] isElementDisplayed
+- [ ] isElementEnabled
+- [X] isElementSelected
+- [ ] maximizeWindow
+- [ ] mouseClick
+- [ ] mouseDoubleClick
+- [ ] mouseDown
+- [ ] mouseMoveTo
+- [ ] mouseUp
+- [ ] newSession
+- [X] quit
+- [ ] refresh
+- [ ] screenshot
+- [X] sendKeysToActiveElement
+- [X] sendKeysToElement
+- [ ] setAlertValue
+- [ ] setOrientation
+- [ ] setScriptTimeout
+- [ ] setTimeout
+- [ ] setWindowPosition
+- [ ] setWindowSize
+- [ ] status
+- [ ] submitElement
+- [ ] switchToFrame
+- [ ] switchToWindow
+- [ ] touchDoubleTap
+- [ ] touchDown
+- [ ] touchFlick
+- [ ] touchLongPress
+- [ ] touchMove
+- [ ] touchScroll
+- [ ] touchSingleTap
+- [ ] touchUp
+- [ ] uploadFile
