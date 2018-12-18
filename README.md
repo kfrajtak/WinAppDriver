@@ -1,6 +1,8 @@
 # WinAppDriver
 Selenium driver for WinForms applications
 
+Any contributions are welcomed :)
+
 This project is using 
 - Windows Automation
 - Nancy as the webserver
