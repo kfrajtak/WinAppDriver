@@ -10,6 +10,8 @@ This project is using
 - Selenium.WebDriver.3.141.0 to get the internals of web driver (commands for Nancy endpoints for example)
 - windowsphonedriver (https://github.com/forcedotcom/windowsphonedriver) for the basic infrastructure (commands & command handlers)
 
+Why another driver when there already is https://github.com/Microsoft/WinAppDriver? The app I'm testing is quite large with number of elements and that driver was timing out after 60 seconds on some XPath queries (see [this issue](https://github.com/Microsoft/WinAppDriver/issues/333)) and after putting everything together the query finished under 2 seconds.
+
 Which Selenium commands are implemented?
 - [ ] acceptAlert
 - [X] actions
