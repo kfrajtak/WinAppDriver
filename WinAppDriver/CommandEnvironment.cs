@@ -28,18 +28,15 @@ using WinAppDriver.Behaviors;
 using WinAppDriver.Infrastructure;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Windows.Automation;
-using System.Windows.Forms;
 
 namespace WinAppDriver.Server
 {
     /// <summary>
     /// The environment in which commands are run.
     /// </summary>
-    public class CommandEnvironment
+    public class CommandEnvironment : IDisposable
     {
         /// <summary>
         /// The key used to denote a window object.
@@ -259,6 +256,14 @@ namespace WinAppDriver.Server
             else
             {
                 this.ClearAlertStatus();
+            }
+        }
+
+        public void Dispose()
+        {
+            if (Cache != null)
+            {
+                Cache.Dispose();
             }
         }
     }

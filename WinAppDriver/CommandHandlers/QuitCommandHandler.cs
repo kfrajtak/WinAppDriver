@@ -24,7 +24,6 @@
 // USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // </copyright>
 
-using WinAppDriver.Infrastructure;
 using System.Collections.Generic;
 
 namespace WinAppDriver.Server.CommandHandlers
@@ -35,17 +34,14 @@ namespace WinAppDriver.Server.CommandHandlers
     internal class QuitCommandHandler : CommandHandler
     {
         /// <summary>
-        /// Executes the command.
+        /// Disposes the session.
         /// </summary>
         /// <param name="environment">The <see cref="CommandEnvironment"/> to use in executing the command.</param>
         /// <param name="parameters">The <see cref="Dictionary{string, object}"/> containing the command parameters.</param>
         /// <returns>The JSON serialized string representing the command response.</returns>
         public override Response Execute(CommandEnvironment environment, Dictionary<string, object> parameters)
         {
-            if (environment.SessionId != null && CacheStore.Store.TryRemove(environment.SessionId, out var cache))
-            {
-                cache.Dispose();
-            }
+            environment.Dispose();
             return Response.CreateSuccessResponse();
         }
     }
