@@ -74,8 +74,7 @@ namespace WinAppDriver.Server
         /// if the command is not implemented.</returns>
         internal CommandHandler GetHandler(string commandName)
         {
-            CommandHandler handler = null;
-            if (this.handlers.TryGetValue(commandName, out handler))
+            if (handlers.TryGetValue(commandName, out CommandHandler handler))
             {
                 return handler;
             }

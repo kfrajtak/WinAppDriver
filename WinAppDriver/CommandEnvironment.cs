@@ -63,6 +63,8 @@ namespace WinAppDriver.Server
 
         private Dictionary<string, object> _desiredCapabilities;
 
+        private CancellationTokenSource _cancellationTokenSource;
+
         private int implicitWaitTimeout = 60000;
         private int asyncScriptTimeout = -1;
         private int pageLoadTimeout = -1;
@@ -70,7 +72,7 @@ namespace WinAppDriver.Server
         private string alertText = string.Empty;
         private string alertType = string.Empty;
 
-        private readonly UnexpectedAlertBehaviorReaction _unexpectedAlertBehavior = UnexpectedAlertBehaviorReaction.DismissAndNotify;
+        private readonly UnexpectedAlertBehaviorReaction _unexpectedAlertBehavior = UnexpectedAlertBehaviorReaction.Ignore;
 
         public UnexpectedAlertBehaviorReaction UnexpectedAlertBehavior => _unexpectedAlertBehavior;
 
@@ -88,8 +90,9 @@ namespace WinAppDriver.Server
             };
         }
 
-        public CommandEnvironment(ElementCache elementCache, Dictionary<string, object> desiredCapabilities)
+        public CommandEnvironment(string sessionId, ElementCache elementCache, Dictionary<string, object> desiredCapabilities)
         {
+            SessionId = sessionId;
             _hwnd = elementCache.Handle;
             _desiredCapabilities = desiredCapabilities ?? new Dictionary<string, object>();
             Cache = elementCache;
@@ -102,6 +105,16 @@ namespace WinAppDriver.Server
         }
 
         public CommandEnvironment() { }
+
+        public CancellationToken GetCancellationToken()
+        {
+            if (_cancellationTokenSource == null)
+            {
+                _cancellationTokenSource = new CancellationTokenSource();
+                _cancellationTokenSource.CancelAfter(ImplicitWaitTimeout);
+            }
+            return _cancellationTokenSource.Token;
+        }
 
         /// <summary>
         /// Gets or sets the keyboard state of the driver.
@@ -190,7 +203,7 @@ namespace WinAppDriver.Server
             set { this.pageLoadTimeout = value; }
         }
 
-        public string SessionId { get; set; }
+        public string SessionId { get; private set; }
 
         /// <summary>
         /// Creates a serializable object for the currently focused frame.

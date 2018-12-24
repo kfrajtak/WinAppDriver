@@ -94,7 +94,7 @@ namespace WinAppDriver.Server.CommandHandlers
                 else
                 {
                     var cache = ElementCacheFactory.Get(sessionId);
-                    commandEnvironment = new CommandEnvironment(cache, desiredCapabilities);
+                    commandEnvironment = new CommandEnvironment(sessionId, cache, desiredCapabilities);
                     cache.AddHandler(UnexpectedAlertBehavior.CreateHandler(cache.AutomationElement, commandEnvironment));
                     CacheStore.CommandStore.AddOrUpdate(sessionId, commandEnvironment, (k, c) => c);
                 }

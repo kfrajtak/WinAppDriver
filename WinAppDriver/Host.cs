@@ -10,14 +10,14 @@ namespace WinAppDriver.Server
     {
         private readonly NancyHost _nancyHost;
 
-        public Host(Uri uri, CommandEnvironment commandEnvironment)
+        public Host(Uri uri)
         {
             var hostConfigs = new HostConfiguration
             {
                 UrlReservations = new UrlReservations() { CreateAutomatically = true }
             };
 
-            _nancyHost = new NancyHost(new Bootstrapper(commandEnvironment), hostConfigs, uri);
+            _nancyHost = new NancyHost(new Bootstrapper(), hostConfigs, uri);
         }        
 
         public void Start()

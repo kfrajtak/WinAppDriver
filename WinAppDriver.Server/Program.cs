@@ -13,7 +13,7 @@ namespace ClientApp
         [STAThread]
         static void Main()
         {
-            var commandDispatcher = new CommandDispatcher("http://localhost:12345");
+            var commandDispatcher = new DriverHost("http://localhost:12345");
             commandDispatcher.Start();
             Console.ReadLine();
         }

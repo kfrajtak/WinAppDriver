@@ -52,49 +52,7 @@ namespace WinAppDriver.Server.CommandHandlers
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Catching general exception type is expressly permitted here to allow proper reporting via JSON-serialized result.")]
         public override Response Execute(CommandEnvironment environment, Dictionary<string, object> parameters)
         {
-            object script;
-            if (!parameters.TryGetValue("script", out script))
-            {
-                return Response.CreateMissingParametersResponse("script");
-            }
-
-            object args;
-            if (!parameters.TryGetValue("args", out args))
-            {
-                return Response.CreateMissingParametersResponse("args");
-            }
-
-            this.navigationStarted = false;
-            //environment.Browser.Navigating += this.BrowserNavigatingEventHandler;
-
-            object[] argsArray = new object[] { script, args, environment.AsyncScriptTimeout };
-            string argumentString = CreateArgumentString(argsArray);
-
-            string callback = "function(result){window.top.__wd_fn_result = result;}";
-            argumentString = string.Format(CultureInfo.InvariantCulture, "{0}, {1}, {2}", argumentString, callback, JsonConvert.SerializeObject(environment.CreateFrameObject()));
-
-            string atom = "window.top.__wd_fn_result = '';(" + WebDriverAtoms.ExecuteAsyncScript + ")(" + argumentString + ");";
-            string result = string.Empty;
-            /*environment.Browser.Dispatcher.BeginInvoke(() =>
-            {
-                try
-                {
-                    environment.Browser.InvokeScript("eval", atom);
-                }
-                catch (Exception ex)
-                {
-                    result = string.Format(CultureInfo.InvariantCulture, "{{ \"status\": {2}, \"value\": {{ \"message\": \"Unexpected exception ({0}) - '{1}'\" }} }}", ex.GetType().ToString(), ex.Message, WebDriverStatusCode.UnhandledError);
-                }
-            });*/
-
-            result = this.WaitForAsyncScriptResult(environment);
-            //environment.Browser.Navigating -= this.BrowserNavigatingEventHandler;
-            if (this.navigationStarted)
-            {
-                return Response.CreateErrorResponse(WebDriverStatusCode.UnhandledError, "Page load detected during asynchronous script execution");
-            }
-
-            return Response.FromJson(result);
+            throw new NotImplementedException();
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Catching general exception type is expressly permitted here to allow proper reporting via JSON-serialized result.")]
