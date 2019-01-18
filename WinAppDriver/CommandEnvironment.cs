@@ -69,7 +69,7 @@ namespace WinAppDriver.Server
         private string alertText = string.Empty;
         private string alertType = string.Empty;
 
-        private readonly UnexpectedAlertBehaviorReaction _unexpectedAlertBehavior = UnexpectedAlertBehaviorReaction.Ignore;
+        private readonly UnexpectedAlertBehaviorReaction _unexpectedAlertBehavior = UnexpectedAlertBehaviorReaction.DismissAndNotify;
 
         public UnexpectedAlertBehaviorReaction UnexpectedAlertBehavior => _unexpectedAlertBehavior;
 

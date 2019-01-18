@@ -34,7 +34,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
+using System.Windows.Automation;
 
 namespace WinAppDriver.Server.CommandHandlers
 {
@@ -91,13 +91,13 @@ namespace WinAppDriver.Server.CommandHandlers
                 {
                     CacheStore.CommandStore.TryRemove(sessionId, out commandEnvironment);
                 }
-                else
-                {
-                    var cache = ElementCacheFactory.Get(sessionId);
-                    commandEnvironment = new CommandEnvironment(sessionId, cache, desiredCapabilities);
-                    cache.AddHandler(UnexpectedAlertBehavior.CreateHandler(cache.AutomationElement, commandEnvironment));
-                    CacheStore.CommandStore.AddOrUpdate(sessionId, commandEnvironment, (k, c) => c);
-                }
+
+                var cache = ElementCacheFactory.Get(sessionId);
+                commandEnvironment = new CommandEnvironment(sessionId, cache, desiredCapabilities);
+                var e = cache.AutomationElement;
+                e = AutomationElement.FromHandle(cache.Handle);
+                cache.AddHandler(UnexpectedAlertBehavior.CreateHandler(e, cache.Handle, commandEnvironment));
+                CacheStore.CommandStore.AddOrUpdate(sessionId, commandEnvironment, (k, c) => c);
             }
 
             Response response = Response.CreateSuccessResponse(responseValue);

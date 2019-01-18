@@ -6,6 +6,9 @@ using OpenQA.Selenium.Remote;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading.Tasks;
+using WinAppDriver.Server.CommandHandlers;
+using System.Text;
 
 namespace WinAppDriver.Server
 {
@@ -17,14 +20,14 @@ namespace WinAppDriver.Server
             var field = repository.GetType().BaseType.GetField("commandDictionary", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public);
             var commandDictionary = (Dictionary<string, CommandInfo>)field.GetValue(repository);
 
-            //Before += BeforeEach;
+            After += AfterEach;
 
             foreach (var command in commandDictionary)
             {
                 switch (command.Value.Method)
                 {
                     case CommandInfo.GetCommand:
-                        Get[command.Value.ResourcePath] = p => { return HandleCommand(command.Key, p); };
+                        Get[command.Value.ResourcePath] = p => HandleCommand(command.Key, p);
                         break;
                     case CommandInfo.PostCommand:
                         Post[command.Value.ResourcePath] = p => 
@@ -35,7 +38,7 @@ namespace WinAppDriver.Server
                         };
                         break;
                     case CommandInfo.DeleteCommand:
-                        Delete[command.Value.ResourcePath] = p =>
+                        Delete[command.Value.ResourcePath] = p => 
                         {
                             var body = Request.Body.AsString();
                             if (body == null || body.Trim().Length == 0)
@@ -49,18 +52,35 @@ namespace WinAppDriver.Server
                 }
             }
         }
-        /*
-        private object BeforeEach(NancyContext context)
+        
+        private void AfterEach(NancyContext context)
         {
-            return context;
-        }*/
+            var sb = new StringBuilder();
+            sb.AppendLine($"{context.Request.Method} {context.Request.Url}");
+            foreach(var header in context.Request.Headers)
+            {
+                sb.AppendLine($"{header.Key}: {string.Join(",", header.Value)}");
+            }
+
+            context.Request.Body.Seek(0, System.IO.SeekOrigin.Begin);
+            sb.AppendLine(context.Request.Body.AsString());
+            sb.AppendLine();
+            sb.AppendLine($"{context.Response.StatusCode}");
+            foreach (var header in context.Response.Headers)
+            {
+                sb.AppendLine($"{header.Key}: {string.Join(",", header.Value)}");
+            }
+
+            //sb.AppendLine();
+            //sb.AppendLine(context.Response.Contents.AsString());
+            Console.Out.WriteLine(sb.ToString());
+            Console.Out.WriteLine();
+        }
 
         private object HandleCommand(string commandName, dynamic data, Dictionary<string, object> parameters = null)
         {
             try
             {
-                System.Diagnostics.Debug.WriteLine(commandName);
-
                 var p2 = new Dictionary<string, object>(data);
                 parameters = parameters ?? new Dictionary<string, object>();
 
@@ -104,9 +124,32 @@ namespace WinAppDriver.Server
                     }
                 }
 
-                command.CommandHandler = CommandHandlerFactory.Instance.GetHandler(command.CommandName);
-                var response = command.Execute(commandEnvironment);
-                return response;
+                Task<Response> t;
+
+                var commandHandler = CommandHandlerFactory.Instance.GetHandler(command.CommandName);
+
+                System.Diagnostics.Debug.WriteLine($"{commandName} [{System.Threading.Thread.CurrentThread.ManagedThreadId}]");
+
+                if (commandHandler is AsyncCommandHandler ach)
+                {
+                    t = ach.ExecuteAsync(commandEnvironment, command.Parameters);
+                    t.Start();
+                }
+                else
+                {       
+                    t = Task.Factory.StartNew(() =>
+                    {
+                        return commandHandler.Execute(commandEnvironment, command.Parameters);
+                    }, commandEnvironment.GetCancellationToken());
+                }
+
+                t.Wait();
+                return t.Result;
+            }
+            catch (System.Windows.Automation.ElementNotEnabledException ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+                return Server.Response.CreateErrorResponse(WebDriverStatusCode.InvalidElementState, ex.Message);
             }
             catch (Exception ex)
             {

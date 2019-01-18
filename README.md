@@ -16,7 +16,7 @@ Which Selenium commands are implemented?
 - [ ] acceptAlert
 - [X] actions
 - [ ] addCookie
-- [ ] clearElement
+- [X] clearElement
 - [X] clickElement
 - [X] close
 - [ ] deleteAllCookies

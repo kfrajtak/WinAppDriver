@@ -29,30 +29,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Automation;
+using WinAppDriver.Extensions;
 
 namespace WinAppDriver.Server.CommandHandlers
 {
     /// <summary>
     /// Provides handling for the clear element command.
     /// </summary>
-    internal class ClearElementCommandHandler : CommandHandler
+    internal class ClearElementCommandHandler : ElementCommandHandler
     {
-        /// <summary>
-        /// Executes the command.
-        /// </summary>
-        /// <param name="environment">The <see cref="CommandEnvironment"/> to use in executing the command.</param>
-        /// <param name="parameters">The <see cref="Dictionary{string, object}"/> containing the command parameters.</param>
-        /// <returns>The JSON serialized string representing the command response.</returns>
-        public override Response Execute(CommandEnvironment environment, Dictionary<string, object> parameters)
+        protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters)
         {
-            object element;
-            if (!parameters.TryGetValue("ID", out element))
-            {
-                return Response.CreateMissingParametersResponse("ID");
-            }
-
-            string result = this.EvaluateAtom(environment, WebDriverAtoms.Clear, element, environment.CreateFrameObject());
-            return Response.FromJson(result);
+            automationElement.SetText("");
+            return Response.CreateSuccessResponse();
         }
     }
 }

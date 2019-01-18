@@ -10,20 +10,17 @@ namespace WinAppDriver.Server
 {
     public class Bootstrapper : DefaultNancyBootstrapper
     {
-        private CommandEnvironment _commandEnvironment;
-
-        public Bootstrapper(CommandEnvironment commandEnvironment)
+        public Bootstrapper()
         {
-            _commandEnvironment = commandEnvironment;
         }
 
         protected override void ConfigureRequestContainer(TinyIoCContainer container, NancyContext context)
         {
-            // Register other types here
-
-            container.Register<CommandEnvironment>((x, options) => {
-                return _commandEnvironment;
-            });
         }
-    }
+
+        protected override void RequestStartup(TinyIoCContainer container, IPipelines pipelines, NancyContext context)
+        {
+            base.RequestStartup(container, pipelines, context);
+        }
+    }   
 }

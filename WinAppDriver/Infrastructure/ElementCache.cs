@@ -1,31 +1,20 @@
-﻿using WinAppDriver.Behaviors;
-using WinAppDriver.Exceptions;
-using WinAppDriver.Extensions;
-using WinAppDriver.Server;
-using WinAppDriver.XPath;
-using CodePlex.XPathParser;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Automation;
-using System.Windows.Forms;
 
 namespace WinAppDriver.Infrastructure
 {
     public class ElementCache : IDisposable
     {
-        private readonly AutomationElement _automationElement;        
-
         public ElementCache(AutomationElement automationElement)
         {
             Automation.RemoveAllEventHandlers();
 
-            _automationElement = automationElement;
+            AutomationElement = automationElement;
 
-            AddToCache(new Tuple<string, AutomationElement>((_counter++).ToString(), _automationElement));            
+            AddToCache(new Tuple<string, AutomationElement>((_counter++).ToString(), AutomationElement));            
         }
 
         public IntPtr Handle { get; set; }
@@ -34,11 +23,11 @@ namespace WinAppDriver.Infrastructure
         private Dictionary<AutomationElement, string> _cacheReversed = new Dictionary<AutomationElement, string>();
         private IList<IDisposable> _handlers = new List<IDisposable>();
 
-        public AutomationElement AutomationElement => _automationElement;
+        public AutomationElement AutomationElement { get; }
 
         public IEnumerable<Tuple<string, AutomationElement>> FindElements(string mechanism, string criteria, CancellationToken cancellationToken)
         {
-            return FindElements(_automationElement, mechanism, criteria, cancellationToken);
+            return FindElements(AutomationElement, mechanism, criteria, cancellationToken);
         }
 
         public IEnumerable<Tuple<string, AutomationElement>> FindElements(AutomationElement automationElement, string mechanism, string criteria, CancellationToken cancellationToken)
@@ -68,6 +57,8 @@ namespace WinAppDriver.Infrastructure
                     id = tuple.Item1;
                 }
 
+                System.Diagnostics.Debug.WriteLine($"{tuple.Item2.Current.AutomationId}: {string.Join(", ", tuple.Item2.GetSupportedPatterns().Select(p => p.ProgrammaticName))}");
+
                 if (!_cache.ContainsKey(id))
                 {
                     _cache.Add(id, tuple.Item2);
@@ -77,17 +68,17 @@ namespace WinAppDriver.Infrastructure
                 {
                     _cacheReversed.Add(tuple.Item2, id);
                 }
-
-                if (tuple.Item2.Current.ControlType == ControlType.Window)
-                {
-                    //_handlers.Add(UnexpectedAlertBehavior.CreateHandler(tuple.Item2));
-                }
             }
         }
 
-        internal void AddHandler(object p)
+        public void AddHandler(object p)
         {
             _handlers.Add((IDisposable)p);
+        }
+
+        public T GetHandler<T>()
+        {
+            return _handlers.OfType<T>().FirstOrDefault();
         }
 
         internal void Clear()

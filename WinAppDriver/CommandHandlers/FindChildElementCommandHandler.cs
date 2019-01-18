@@ -54,9 +54,7 @@ namespace WinAppDriver.Server.CommandHandlers
                 return Response.CreateMissingParametersResponse("value");
             }
 
-            var tokenSource = new CancellationTokenSource();
-            tokenSource.CancelAfter(environment.ImplicitWaitTimeout);
-            var token = tokenSource.Token;
+            var token = environment.GetCancellationToken();
 
             try
             {
@@ -71,14 +69,14 @@ namespace WinAppDriver.Server.CommandHandlers
                 var response = new Response
                 {
                     Status = WebDriverStatusCode.Success,
-                    SessionId = "",
+                    SessionId = environment.SessionId,
                     Value = new Dictionary<string, object>
                     {
                         { CommandEnvironment.ElementObjectKey, element.Item1 },
                         { string.Empty, element.Item2.Current.AutomationId }
                     }
                 };
-                //. this.EvaluateAtom(environment, WebDriverAtoms.FindElement, mechanism, criteria, null, environment.CreateFrameObject());
+
                 if (response.Status == WebDriverStatusCode.Success)
                 {
                     // Return early for success
