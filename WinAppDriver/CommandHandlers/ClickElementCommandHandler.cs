@@ -109,7 +109,8 @@ namespace WinAppDriver.Server.CommandHandlers
 
                 if (args != null) // alert was displayed, now decide what to do next
                 {
-
+                    return Response.CreateErrorResponse(WebDriverStatusCode.UnexpectedAlertOpen, 
+                        args.Title + ";" + string.Join(",", args.Content));
                 }
 
                 return Response.CreateSuccessResponse();

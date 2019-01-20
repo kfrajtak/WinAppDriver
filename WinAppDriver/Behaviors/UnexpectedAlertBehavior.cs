@@ -91,44 +91,42 @@ namespace WinAppDriver.Behaviors
                         UnexpectedAlertEventArgs args = null;
                         var raiseEvent = false;
 
-                        foreach (var w in windows)
+                        foreach (var window in windows)
                         {
-                            if (_childWindows.Contains(w))
+                            if (_childWindows.Contains(window))
                             {
                                 continue;
                             }
 
-                            var window = AutomationElement.FromHandle(w.HWnd);
-                            if (window.IsModalWindow())
+                            raiseEvent = 
+                                behavior == UnexpectedAlertBehaviorReaction.DismissAndNotify ||
+                                behavior == UnexpectedAlertBehaviorReaction.AcceptAndNotify;
+
+                            if (raiseEvent)
                             {
-                                raiseEvent = 
-                                    behavior == UnexpectedAlertBehaviorReaction.DismissAndNotify ||
-                                    behavior == UnexpectedAlertBehaviorReaction.AcceptAndNotify;
-
-                                if (raiseEvent)
+                                args = new UnexpectedAlertEventArgs
                                 {
-                                    args = new UnexpectedAlertEventArgs
-                                    {
-                                        Title = w.Title,
-                                        Content = w.AllDescendantWindows.Select(d => d.Title?.Trim())
-                                            .Where(s => !string.IsNullOrEmpty(s))
-                                            .ToArray()
-                                    };
-                                }
+                                    Title = window.Title,
+                                    Content = window.AllDescendantWindows
+                                        .Where(s => s.Visible)
+                                        .Select(d => d.Title?.Trim())
+                                        .Where(s => !string.IsNullOrEmpty(s))
+                                        .ToArray()
+                                };
+                            }
 
-                                System.Diagnostics.Debug.WriteLine("New modal window " + window.ToDiagString());
+                            System.Diagnostics.Debug.WriteLine("New modal window " + window.HWnd);
 
-                                switch (behavior)
-                                {
-                                    case UnexpectedAlertBehaviorReaction.Ignore:
-                                        break;
-                                    case UnexpectedAlertBehaviorReaction.Dismiss:
-                                    case UnexpectedAlertBehaviorReaction.DismissAndNotify:
-                                    case UnexpectedAlertBehaviorReaction.Accept:
-                                    case UnexpectedAlertBehaviorReaction.AcceptAndNotify:
-                                        ((WindowPattern)window.GetCurrentPattern(WindowPattern.Pattern)).Close();
-                                        break;
-                                }
+                            switch (behavior)
+                            {
+                                case UnexpectedAlertBehaviorReaction.Ignore:
+                                    break;
+                                case UnexpectedAlertBehaviorReaction.Dismiss:
+                                case UnexpectedAlertBehaviorReaction.DismissAndNotify:
+                                case UnexpectedAlertBehaviorReaction.Accept:
+                                case UnexpectedAlertBehaviorReaction.AcceptAndNotify:
+                                    window.SendClose();
+                                    break;
                             }
                         }
 
