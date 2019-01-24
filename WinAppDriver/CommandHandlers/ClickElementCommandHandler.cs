@@ -95,6 +95,7 @@ namespace WinAppDriver.Server.CommandHandlers
                     }
 
                     handler.Dispose();
+                    manualResetEvent.Set();
                 });
 
                 // run asynchronously
@@ -122,7 +123,26 @@ namespace WinAppDriver.Server.CommandHandlers
                 return Response.CreateSuccessResponse();
             }
 
-            return Response.CreateErrorResponse(WebDriverStatusCode.UnhandledError, "InvokePattern not availeble");
+            if (automationElement.TryGetCurrentPattern(ExpandCollapsePattern.Pattern, out objPattern))
+            {
+                var prop = (ExpandCollapseState)automationElement.GetCurrentPropertyValue(ExpandCollapsePattern.ExpandCollapseStateProperty);
+                switch (prop)
+                {
+                    case ExpandCollapseState.Collapsed:
+                        ((ExpandCollapsePattern)objPattern).Expand();
+                        break;
+                    case ExpandCollapseState.Expanded:
+                    case ExpandCollapseState.PartiallyExpanded:
+                        ((ExpandCollapsePattern)objPattern).Collapse();
+                        break;
+                    case ExpandCollapseState.LeafNode:
+                        ((ExpandCollapsePattern)objPattern).Expand();
+                        break;
+                }
+                return Response.CreateSuccessResponse();
+            }
+
+            return Response.CreateErrorResponse(WebDriverStatusCode.UnhandledError, "InvokePattern not available");
         }
     }
 }

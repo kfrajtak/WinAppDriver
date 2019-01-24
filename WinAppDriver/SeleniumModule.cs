@@ -107,7 +107,7 @@ namespace WinAppDriver.Server
                 var sessionId = command.SessionId?.ToString();
                 var commandEnvironment = new CommandEnvironment();
                 if (sessionId != null)
-                {                    
+                {
                     if (CacheStore.CommandStore.TryGetValue(sessionId, out commandEnvironment))
                     {
                         /*commandEnvironment = new CommandEnvironment(elementCache)
@@ -130,32 +130,60 @@ namespace WinAppDriver.Server
 
                 System.Diagnostics.Debug.WriteLine($"{commandName} [{System.Threading.Thread.CurrentThread.ManagedThreadId}]");
 
+                bool conversion = false;
                 if (commandHandler is AsyncCommandHandler ach)
                 {
-                    t = ach.ExecuteAsync(commandEnvironment, command.Parameters);
-                    t.Start();
+                    conversion = true;
+                    t = ach.ExecuteAsync(commandEnvironment, command.Parameters);                    
                 }
                 else
-                {       
+                {
                     t = Task.Factory.StartNew(() =>
                     {
                         return commandHandler.Execute(commandEnvironment, command.Parameters);
                     }, commandEnvironment.GetCancellationToken());
                 }
 
+                var t2 = t.ContinueWith(task =>
+                {
+                    if (task.IsFaulted)
+                    {
+                        return FromException(task.Exception?.InnerException);
+                    }
+
+                    return task.Result;
+                });       
+                
+                if (conversion)
+                {
+                    t.Start();
+                }
+
                 t.Wait();
-                return t.Result;
-            }
-            catch (System.Windows.Automation.ElementNotEnabledException ex)
-            {
-                System.Diagnostics.Debug.WriteLine(ex.ToString());
-                return Server.Response.CreateErrorResponse(WebDriverStatusCode.InvalidElementState, ex.Message);
+
+                return t2.Result;
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex.ToString());
-                return Server.Response.CreateErrorResponse(WebDriverStatusCode.UnknownCommand, ex.Message);
+                return FromException(ex);
             }
+        }
+
+        private Response FromException(Exception exception)
+        {
+            if (exception is AggregateException aggregateException)
+            {
+                return FromException(aggregateException.InnerException);
+            }
+
+            System.Diagnostics.Debug.WriteLine(exception.ToString());
+
+            if (exception is System.Windows.Automation.ElementNotEnabledException enee)
+            {
+                return Server.Response.CreateErrorResponse(WebDriverStatusCode.InvalidElementState, enee.Message);
+            }
+
+            return Server.Response.CreateErrorResponse(WebDriverStatusCode.UnknownCommand, exception.Message);
         }
 
         //private 
