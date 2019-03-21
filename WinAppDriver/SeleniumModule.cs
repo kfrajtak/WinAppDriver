@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using WinAppDriver.Server.CommandHandlers;
 using System.Text;
+using WinAppDriver.Behaviors;
 
 namespace WinAppDriver.Server
 {
@@ -130,11 +131,25 @@ namespace WinAppDriver.Server
 
                 System.Diagnostics.Debug.WriteLine($"{commandName} [{System.Threading.Thread.CurrentThread.ManagedThreadId}]");
 
+                // check for unexpected active windows
+                if (commandEnvironment.Handler == null)
+                {
+                    commandEnvironment.Handler = new UnexpectedAlertBehavior2.Handler(null, commandEnvironment.WindowHandle, commandEnvironment);
+                }
+                else
+                {
+                    if (commandHandler.UnexpectedAlertCheckRequired && commandEnvironment.Handler.IsFaulty)// .IsTopMostActiveWindowDifferent(out var args))
+                    {
+                        return Server.Response.CreateErrorResponse(WebDriverStatusCode.UnexpectedAlertOpen, 
+                            "An alert was found open unexpectedly.", commandEnvironment.Handler.Unexpected);
+                    }
+                }
+
                 bool conversion = false;
-                if (commandHandler is AsyncCommandHandler ach)
+                if (commandHandler is AsyncCommandHandler asyncCommandHandler)
                 {
                     conversion = true;
-                    t = ach.ExecuteAsync(commandEnvironment, command.Parameters);                    
+                    t = asyncCommandHandler.ExecuteAsync(commandEnvironment, command.Parameters);                    
                 }
                 else
                 {
@@ -152,7 +167,7 @@ namespace WinAppDriver.Server
                     }
 
                     return task.Result;
-                });       
+                });
                 
                 if (conversion)
                 {
@@ -160,6 +175,9 @@ namespace WinAppDriver.Server
                 }
 
                 t.Wait();
+
+                commandEnvironment.Handler.Update();// .IsTopMostActiveWindowDifferent(out var args))
+                System.Diagnostics.Trace.WriteLine("****** ____________" + commandEnvironment.Handler.IsFaulty);
 
                 return t2.Result;
             }

@@ -119,13 +119,17 @@ namespace WinAppDriver.Server
         /// <param name="errorCode">The error code of the response.</param>
         /// <param name="errorMessage">The error message containing information about the error.</param>
         /// <returns>The response indicating an unsuccessful command execution.</returns>
-        public static Response CreateErrorResponse(int errorCode, string errorMessage)
+        public static Response CreateErrorResponse(int errorCode, string errorMessage, object payload = null)
         {
             Response response = new Response();
             response.Status = errorCode;
             Dictionary<string, object> errorDetails = new Dictionary<string, object>();
             errorDetails["error"] = errorMessage;
             errorDetails["message"] = errorMessage;
+            if (payload != null)
+            {
+                errorDetails["payload"] = payload;
+            }
             response.Value = errorDetails;
             return response;
         }

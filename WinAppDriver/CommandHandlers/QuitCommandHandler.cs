@@ -33,6 +33,11 @@ namespace WinAppDriver.Server.CommandHandlers
     /// </summary>
     internal class QuitCommandHandler : CommandHandler
     {
+        public QuitCommandHandler()
+        {
+            _unexpectedAlertCheckRequired = false;
+        }
+
         /// <summary>
         /// Disposes the session.
         /// </summary>

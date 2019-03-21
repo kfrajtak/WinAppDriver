@@ -96,9 +96,9 @@ namespace WinAppDriver.Server.CommandHandlers
 
             var actionsToExecute = new List<Action>();
 
-            SetForegroundWindow(environment.Handle);
+            SetForegroundWindow(environment.WindowHandle);
 
-            System.Windows.Automation.AutomationElement.FromHandle(environment.Handle).SetFocus();
+            System.Windows.Automation.AutomationElement.FromHandle(environment.WindowHandle).SetFocus();
 
             try
             {
@@ -122,9 +122,30 @@ namespace WinAppDriver.Server.CommandHandlers
                         })
                         .ToList();
 
-                    Microsoft.Test.Input.Keyboard.Type(keys.Last(), keys.Take(keys.Count - 1).ToArray());
-                    continue;
+                    if (keys.Any())
+                    {
+                        Microsoft.Test.Input.Keyboard.Type(keys.Last(), keys.Take(keys.Count - 1).ToArray());
+                        continue;
+                    }
 
+                    var akeys = actions
+                        .Cast<JObject>().Where(action =>
+                        {
+                            var actionType = action.GetValue("type").Value<string>();
+                            return actionType == "keyDown";
+                        })
+                        .Select(action =>
+                        {
+                            var keyCode = action["value"].Value<string>()[0];
+                            if (!TryGetKey(keyCode, out var key))
+                            {
+                                throw new NotSupportedException("Unknown key code: " + (int)keyCode);
+                            }
+                            return key;
+                        })
+                        .ToList();
+
+                    continue;
 
                     foreach (JObject action in actions)
                     {
@@ -196,7 +217,7 @@ namespace WinAppDriver.Server.CommandHandlers
 
                 //environment.Control.Invoke(new Action(() =>            {
 
-                SetForegroundWindow(environment.Handle);
+                SetForegroundWindow(environment.WindowHandle);
                 foreach (var a in actionsToExecute)
                 {
                     a();

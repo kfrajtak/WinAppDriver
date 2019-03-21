@@ -52,14 +52,17 @@ namespace WinAppDriver.Server.CommandHandlers
         {
             if (automationElement.TryGetCurrentPattern(InvokePattern.Pattern, out var objPattern))
             {
+                //AutoIt.AutoItX.ControlClick(environment.WindowHandle, automationElement.NativeElement.CurrentNativeWindowHandle);
+                //return;
                 var manualResetEvent = new ManualResetEvent(false);
                 var alertBehaviorHandler = environment.Cache.GetHandler<UnexpectedAlertBehavior.Handler>();
-                UnexpectedAlertEventArgs args = null; 
+                //UnexpectedAlertEventArgs args = null; 
 
                 // handle situation with an unexpected alert (dialog)
                 void UnexpectedAlertEventEventHandler(object sender, UnexpectedAlertEventArgs e)
                 {
-                    args = e;
+                    //args = e;
+                    environment.Unexpected = e;
                     manualResetEvent.Set();
                 }
 
@@ -70,11 +73,8 @@ namespace WinAppDriver.Server.CommandHandlers
                     ((InvokePattern)p).Invoke();
                     System.Diagnostics.Debug.WriteLine("Finished");
                     _manualResetEvent.Set();
-                }, objPattern);
-                
+                }, objPattern);*/
 
-                _manualResetEvent.WaitOne();
-                System.Diagnostics.Debug.WriteLine("ClickElementCommandHandler done");*/
                 //have to click in a separate thread because box is modal.  From http://social.msdn.microsoft.com/forums/en-US/windowsaccessibilityandautomation/thread/7f0bdc7c-be85-4fde-9f8a-cbb3f16ba5f4/
                 ThreadStart threadStart = new ThreadStart(() =>
                 {
@@ -95,6 +95,7 @@ namespace WinAppDriver.Server.CommandHandlers
                     }
 
                     handler.Dispose();
+                    // waits for end ...
                     manualResetEvent.Set();
                 });
 
@@ -102,17 +103,19 @@ namespace WinAppDriver.Server.CommandHandlers
                 // execution will wait for the Invoke operation to finish, but some work has to be executed at the same time 
                 // TODO what work
                 var thread = new Thread(threadStart);
+                // https://social.msdn.microsoft.com/Forums/windowsdesktop/en-US/05a890ba-6f91-4380-9672-e8d173243ac3/ui-automation-hangs-when-showing-a-form-from-another-form?forum=windowsaccessibilityandautomation
+                thread.SetApartmentState(ApartmentState.MTA);
                 thread.Start();
                 // but wait for signal
                 manualResetEvent.WaitOne();
 
                 alertBehaviorHandler.OnUnexpectedAlert -= UnexpectedAlertEventEventHandler;
 
-                if (args != null) // alert was displayed, now decide what to do next
+                /*if (args != null) // alert was displayed, now decide what to do next
                 {
                     return Response.CreateErrorResponse(WebDriverStatusCode.UnexpectedAlertOpen, 
                         args.Title + ";" + string.Join(",", args.Content));
-                }
+                }*/
 
                 return Response.CreateSuccessResponse();
             }

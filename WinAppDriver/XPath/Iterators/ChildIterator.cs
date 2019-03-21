@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Automation;
+using System.Threading;
 
 namespace WinAppDriver.XPath.Iterators
 {
@@ -10,7 +11,7 @@ namespace WinAppDriver.XPath.Iterators
     {
         private IList<AutomationElement> _children;
 
-        public ChildIterator(string name, AutomationElement automationElement)
+        public ChildIterator(string name, AutomationElement automationElement, CancellationToken cancellationToken)
         {
             var treeScope = TreeScope.Children;
             var condition = Condition.TrueCondition;

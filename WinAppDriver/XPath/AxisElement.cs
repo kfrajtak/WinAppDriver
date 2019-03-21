@@ -9,7 +9,6 @@ using CodePlex.XPathParser;
 
 namespace WinAppDriver.XPath
 {   
-
     public class AxisElement : IXPathExpression, ICanGetValue
     {
         private readonly string _prefix, _name;
@@ -30,6 +29,11 @@ namespace WinAppDriver.XPath
 
         public IEnumerable<AutomationElement> Find(AutomationElement automationElement, IList<AutomationElement> collection, CancellationToken cancellationToken)
         {
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return new List<AutomationElement>();
+            }
+
             switch (_xpathAxis)
             {
                 case XPathAxis.Child:
@@ -39,7 +43,7 @@ namespace WinAppDriver.XPath
                     {
                         return new List<AutomationElement> { automationElement };
                     }
-                    return new ChildIterator(Name, automationElement);
+                    return new ChildIterator(Name, automationElement, cancellationToken);
                 case XPathAxis.Descendant:
                     return new DescendantIterator(automationElement, false, cancellationToken);
                 case XPathAxis.DescendantOrSelf:

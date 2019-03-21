@@ -34,6 +34,10 @@ namespace WinAppDriver.Server.CommandHandlers
     /// </summary>
     internal abstract class CommandHandler
     {
+        protected bool _unexpectedAlertCheckRequired = true;
+
+        public bool UnexpectedAlertCheckRequired => _unexpectedAlertCheckRequired;
+
         /// <summary>
         /// Executes the command.
         /// </summary>

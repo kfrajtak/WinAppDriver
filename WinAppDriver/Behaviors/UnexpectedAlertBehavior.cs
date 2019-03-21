@@ -125,7 +125,7 @@ namespace WinAppDriver.Behaviors
                                 case UnexpectedAlertBehaviorReaction.DismissAndNotify:
                                 case UnexpectedAlertBehaviorReaction.Accept:
                                 case UnexpectedAlertBehaviorReaction.AcceptAndNotify:
-                                    window.SendClose();
+                                    //window.SendClose();
                                     break;
                             }
                         }
@@ -141,7 +141,7 @@ namespace WinAppDriver.Behaviors
                     }
                 });
 
-                _thread.Start();
+                _thread.Start(); // TODO new thread for each session (OK), not disposed properly
             }
 
             public void Dispose()

@@ -10,7 +10,7 @@ namespace ClientApp
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        [STAThread]
+        [MTAThread]
         static void Main()
         {
             var commandDispatcher = new DriverHost("http://localhost:12345");

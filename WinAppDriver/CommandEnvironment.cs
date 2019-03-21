@@ -103,6 +103,10 @@ namespace WinAppDriver.Server
 
         public CommandEnvironment() { }
 
+        public UnexpectedAlertBehavior2.Handler Handler { get; set; }
+
+        public UnexpectedAlertEventArgs Unexpected { get; set; }
+
         public CancellationToken GetCancellationToken()
         {
             if (_cancellationTokenSource == null)
@@ -154,7 +158,7 @@ namespace WinAppDriver.Server
             get; private set;
         }
 
-        public IntPtr Handle => _hwnd;
+        public IntPtr WindowHandle => _hwnd;
 
         /// <summary>
         /// Gets a value indicating whether execution of the next command should be blocked.
