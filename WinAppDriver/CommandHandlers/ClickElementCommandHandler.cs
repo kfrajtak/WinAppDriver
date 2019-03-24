@@ -145,7 +145,9 @@ namespace WinAppDriver.Server.CommandHandlers
                 return Response.CreateSuccessResponse();
             }
 
-            return Response.CreateErrorResponse(WebDriverStatusCode.UnhandledError, "InvokePattern not available");
+            AutoIt.AutoItX.ControlClick(environment.WindowHandle, automationElement.NativeElement.CurrentNativeWindowHandle);
+            return Response.CreateSuccessResponse();
+            //return Response.CreateErrorResponse(WebDriverStatusCode.UnhandledError, "InvokePattern not available");
         }
     }
 }

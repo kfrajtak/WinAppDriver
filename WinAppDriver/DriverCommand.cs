@@ -413,5 +413,7 @@ namespace WinAppDriver.Server
         /// Represents the TouchFlick command.
         /// </summary>
         public static readonly string TouchFlick = "touchFlick";
+
+        public static readonly string GetElementRect = "getElementRect";
     }
 }

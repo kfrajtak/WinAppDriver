@@ -29,13 +29,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Automation;
+using WinAppDriver.Extensions;
 
 namespace WinAppDriver.Server.CommandHandlers
 {
     /// <summary>
     /// Provides handling for the get element text command.
     /// </summary>
-    internal class GetElementTagNameCommandHandler : CommandHandler
+    internal class GetElementTagNameCommandHandler : ElementCommandHandler
     {
         /// <summary>
         /// Executes the command.
@@ -43,7 +45,7 @@ namespace WinAppDriver.Server.CommandHandlers
         /// <param name="environment">The <see cref="CommandEnvironment"/> to use in executing the command.</param>
         /// <param name="parameters">The <see cref="Dictionary{string, object}"/> containing the command parameters.</param>
         /// <returns>The JSON serialized string representing the command response.</returns>
-        public override Response Execute(CommandEnvironment environment, Dictionary<string, object> parameters)
+        /*public override Response Execute(CommandEnvironment environment, Dictionary<string, object> parameters)
         {
             object element;
             if (!parameters.TryGetValue("ID", out element))
@@ -55,6 +57,12 @@ namespace WinAppDriver.Server.CommandHandlers
 
             string result = this.EvaluateAtom(environment, WebDriverAtoms.ExecuteScript, tagNameScript, new object[] { element }, environment.CreateFrameObject());
             return Response.FromJson(result);
+        }*/
+
+        protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters)
+        {
+            var value = (ControlType)automationElement.GetAutomationElementPropertyValue("ControlType");
+            return Response.CreateSuccessResponse(value.ProgrammaticName);
         }
     }
 }

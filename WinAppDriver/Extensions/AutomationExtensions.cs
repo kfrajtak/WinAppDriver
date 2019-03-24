@@ -101,16 +101,19 @@ namespace WinAppDriver.Extensions
 
         public static string ToDiagString(this AutomationElement automationElement)
         {
-            return $"\"{automationElement.Current.ControlType.ProgrammaticName}\" \"{automationElement.Current.Name}\" {automationElement.Current.AutomationId} ({automationElement.Current.LocalizedControlType}/{automationElement.Current.ClassName})";
+            return $"\"{automationElement.Current.ControlType.ProgrammaticName}\" \"{automationElement.Current.Name}\" {automationElement.Current.AutomationId} ({automationElement.Current.LocalizedControlType}/{automationElement.Current.ClassName}) [{automationElement.Current.BoundingRectangle.TopLeft}]";
         }
 
         public static object GetAutomationElementPropertyValue(this AutomationElement element, string propertyName)
         {
             var name = $"AutomationElementIdentifiers.{propertyName}Property";
-            var prop = element.GetSupportedProperties().SingleOrDefault(p => p.ProgrammaticName == name);
+            var supportedProperies = element.GetSupportedProperties().ToList();
+            var prop = supportedProperies.SingleOrDefault(p => p.ProgrammaticName == name);
             if (prop == null)
             {
-                throw new NotSupportedException($"Unknown or unsupported attribute name '{propertyName}' by {element.Current.ControlType.ProgrammaticName}.");
+                var propsInfo = string.Join(", ",
+                    supportedProperies.Select(p => p.ProgrammaticName.Replace("AutomationElementIdentifiers.", string.Empty).Replace("Property", string.Empty)));
+                throw new NotSupportedException($"Unknown or unsupported attribute name '{propertyName}' by {element.Current.ControlType.ProgrammaticName}, only these properties are supported: {propsInfo}");
             }
 
             return element.GetCurrentPropertyValue(prop);

@@ -144,6 +144,7 @@ namespace WinAppDriver.Server
             this.handlers.Add(DriverCommand.MouseUp, new MouseButtonUpCommandHandler());
             this.handlers.Add(DriverCommand.MouseDoubleClick, new MouseDoubleClickCommandHandler());
             this.handlers.Add(DriverCommand.Screenshot, new ScreenshotCommandHandler());
+            this.handlers.Add(DriverCommand.GetElementRect, new GetElementRectCommandHandler());
         }
     }
 }

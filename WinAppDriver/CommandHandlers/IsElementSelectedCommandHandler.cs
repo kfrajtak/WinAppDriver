@@ -13,7 +13,7 @@ namespace WinAppDriver.Server.CommandHandlers
         {
             if (!automationElement.TryGetCurrentPattern(SelectionItemPattern.Pattern, out var selectionItemPattern))
             {
-                throw new NotSupportedException();
+                return Response.CreateSuccessResponse(false);
             }
 
             return Response.CreateSuccessResponse(((SelectionItemPattern)selectionItemPattern).Current.IsSelected);

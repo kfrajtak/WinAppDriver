@@ -75,6 +75,27 @@ namespace WinAppDriver.Server.CommandHandlers
                 });
             }
 
+            atom = getAtomMethod.Invoke(null, new object[] { "isDisplayed.js" });
+            if (atom.Equals(script.ToString()))
+            {
+                var keyValuePairs = JArray.Parse(args.ToString());
+                var elementId = keyValuePairs[0].Last().Last().ToString();
+                return CommandHandlerFactory.Instance.GetHandler(DriverCommand.IsElementDisplayed).Execute(environment, new Dictionary<string, object>
+                {
+                    { "ID", elementId }
+                });
+            }
+
+            if (script.ToString() == "var rect = arguments[0].getBoundingClientRect(); return {'x': rect.left, 'y': rect.top};")
+            {
+                var keyValuePairs = JArray.Parse(args.ToString());
+                var elementId = keyValuePairs[0].Last().Last().ToString();
+                return CommandHandlerFactory.Instance.GetHandler(DriverCommand.GetElementRect).Execute(environment, new Dictionary<string, object>
+                {
+                    { "ID", elementId }
+                });
+            }
+
             string result = this.EvaluateAtom(environment, WebDriverAtoms.ExecuteScript, script, args, environment.CreateFrameObject());
             return Response.FromJson(result);
         }

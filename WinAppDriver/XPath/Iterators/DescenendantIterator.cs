@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Automation;
+using System.Linq;
+using System.Windows;
 
 namespace WinAppDriver.XPath.Iterators
 {
@@ -33,6 +35,29 @@ namespace WinAppDriver.XPath.Iterators
         {
             private readonly CancellationToken _cancellationToken;
 
+            private class PointComparer : IComparer<System.Windows.Point>
+            {
+                public int Compare(Point a, Point b)
+                {
+                    if (a.Y < b.Y)
+                    {
+                        return -1;
+                    }
+
+                    if (a.Y > b.Y)
+                    {
+                        return 1;
+                    }
+
+                    if (a.X == b.X)
+                    {
+                        return 0;
+                    }
+
+                    return a.X < b.X ? -1 : 1;
+                }
+            }
+
             public AutomationElement Current { get; private set; }
 
             object IEnumerator.Current => Current;
@@ -54,7 +79,13 @@ namespace WinAppDriver.XPath.Iterators
                 Current = _elementQueue.Dequeue();
                 System.Diagnostics.Debug.WriteLine("Current " + Current.ToDiagString());
 
-                foreach (AutomationElement automationElement in Current.FindAll(TreeScope.Children, Condition.TrueCondition))
+                var children = Current.FindAll(TreeScope.Children, Condition.TrueCondition).Cast<AutomationElement>()
+                    .OrderBy(c => c.Current.BoundingRectangle.TopLeft, new PointComparer())
+                    .ToList();
+
+                System.Diagnostics.Debug.WriteLine($"Children: {string.Join("\n", children.Select(c => c.ToDiagString()))}");
+
+                foreach (AutomationElement automationElement in children)
                 {
                     if (_cancellationToken.IsCancellationRequested)
                     {
