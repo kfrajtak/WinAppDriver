@@ -163,7 +163,9 @@
     <Compile Include="Infrastructure\ElementFinder.cs" />
     <Compile Include="Input\Key.cs" />
     <Compile Include="Input\Keyboard.cs" />
+    <Compile Include="Input\KeyboardActions.cs" />
     <Compile Include="Input\Mouse.cs" />
+    <Compile Include="Input\MouseActions.cs" />
     <Compile Include="Input\MouseButton.cs" />
     <Compile Include="Input\MouseButtonState.cs" />
     <Compile Include="Input\NamespaceDoc.cs" />
