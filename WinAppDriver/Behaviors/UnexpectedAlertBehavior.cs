@@ -23,6 +23,11 @@ namespace WinAppDriver.Behaviors
     {
         public string Title { get; set; }
         public string[] Content { get; set; }
+
+        public override string ToString()
+        {
+            return base.ToString() + ":" + Title + " " + Content;
+        }
     }
 
     public class UnexpectedAlertBehavior
@@ -81,7 +86,7 @@ namespace WinAppDriver.Behaviors
                 {
                     while (true)
                     {
-                        System.Diagnostics.Debug.WriteLine("Thread work ... " + Thread.CurrentThread.ManagedThreadId);
+                        //System.Diagnostics.Debug.WriteLine("Thread work ... " + Thread.CurrentThread.ManagedThreadId);
                         if (token.IsCancellationRequested)
                         {
                             break;
@@ -93,7 +98,7 @@ namespace WinAppDriver.Behaviors
 
                         foreach (var window in windows)
                         {
-                            if (_childWindows.Contains(window))
+                            if (_childWindows.Contains(window) || !window.Visible)
                             {
                                 continue;
                             }
@@ -113,6 +118,16 @@ namespace WinAppDriver.Behaviors
                                         .Where(s => !string.IsNullOrEmpty(s))
                                         .ToArray()
                                 };
+                            }
+
+                            try
+                            {
+                                // menus were windows too
+                                var aw = AutomationElement.FromHandle(window.HWnd);
+                            }
+                            catch (ElementNotAvailableException)
+                            {
+                                continue; // but menus cause this exception
                             }
 
                             System.Diagnostics.Debug.WriteLine("New modal window " + window.HWnd);

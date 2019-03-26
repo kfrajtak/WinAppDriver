@@ -19,6 +19,11 @@ namespace WinAppDriver.XPath.Iterators
             {
                 var controlType = name.AsControlType();
                 condition = new PropertyCondition(AutomationElement.ControlTypeProperty, controlType);
+
+                if (!controlType.CanBeNestedUnder(automationElement.Current.ControlType))
+                {
+                    condition = Condition.FalseCondition;
+                }
             }
 
             _children = automationElement.FindAll(treeScope, condition).Cast<AutomationElement>().ToList();

@@ -41,7 +41,7 @@ namespace WinAppDriver.Server.CommandHandlers
                         case "pointer":
                             new MouseActions(actions, commandEnvironment).Execute();
                             break;
-                        case "keyDown":
+                        case "key":
                             new KeyboardActions(actions, commandEnvironment).Execute();
                             break;
                     }

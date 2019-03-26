@@ -33,7 +33,7 @@ using System.Threading.Tasks;
 namespace WinAppDriver.Server.CommandHandlers
 {
     /// <summary>
-    /// Provides handling for the click element command.
+    /// Provides handling for the double click element command.
     /// </summary>
     internal class MouseDoubleClickCommandHandler : CommandHandler
     {

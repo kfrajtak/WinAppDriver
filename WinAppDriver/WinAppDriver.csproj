@@ -97,6 +97,7 @@
     <Compile Include="Exceptions\NoSuchElementException.cs" />
     <Compile Include="Extensions\AutomationElementExtensions.cs" />
     <Compile Include="Extensions\AutomationExtensions.cs" />
+    <Compile Include="Extensions\ControlTypeExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Host.cs" />
     <Compile Include="Command.cs" />
@@ -161,6 +162,7 @@
     <Compile Include="Infrastructure\CacheStore.cs" />
     <Compile Include="Infrastructure\ElementCache.cs" />
     <Compile Include="Infrastructure\ElementCacheFactory.cs" />
+    <Compile Include="Infrastructure\ElementFinderByType.cs" />
     <Compile Include="Infrastructure\ElementFinder.cs" />
     <Compile Include="Input\Key.cs" />
     <Compile Include="Input\Keyboard.cs" />

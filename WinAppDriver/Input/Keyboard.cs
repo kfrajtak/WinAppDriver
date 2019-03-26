@@ -225,6 +225,7 @@ namespace Microsoft.Test.Input
         public static void Press(Key key)
         {
             var keySpec = GetKeySpecFromKey(key);
+            System.Diagnostics.Trace.WriteLine(keySpec.Name + " " + keySpec.KeyCode);
             SendKeyboardKey(keySpec.KeyCode, true, keySpec.IsExtended, false);
         }
 

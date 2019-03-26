@@ -269,6 +269,9 @@ namespace WinAppDriver.Server
             {
                 Cache.Dispose();
             }
+
+            Microsoft.Test.Input.Mouse.Reset();
+            Microsoft.Test.Input.Keyboard.Reset();
         }
     }
 }

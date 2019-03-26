@@ -33,7 +33,7 @@ using System.Threading.Tasks;
 namespace WinAppDriver.Server.CommandHandlers
 {
     /// <summary>
-    /// Provides handling for the mouse button down command.
+    /// Provides handling for the mouse button up command.
     /// </summary>
     internal class MouseButtonUpCommandHandler : CommandHandler
     {

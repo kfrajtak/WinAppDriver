@@ -29,7 +29,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Automation;
+using ManagedWinapi.Windows;
 using Newtonsoft.Json;
+using WinAppDriver.Infrastructure;
 
 namespace WinAppDriver.Server.CommandHandlers
 {
@@ -38,6 +41,26 @@ namespace WinAppDriver.Server.CommandHandlers
     /// </summary>
     internal class SwitchToWindowCommandHandler : CommandHandler
     {
+        private IList<AutomationElement> GetWindows(IntPtr hwnd)
+        {
+            // dialog windows happen not be in the same tree as the root window
+            return SystemWindow.DesktopWindow.AllDescendantWindows
+                .Where(w => w.Visible && w.TopMost && w.Process.MainWindowHandle == hwnd)
+                .Select(w =>
+                {
+                    try
+                    {
+                        return AutomationElement.FromHandle(w.HWnd);
+                    }
+                    catch (ElementNotAvailableException)
+                    {
+                        return null;
+                    }
+                })
+                .Where(w => w != null)
+                .ToList();
+        }
+
         /// <summary>
         /// Executes the command.
         /// </summary>
@@ -46,19 +69,27 @@ namespace WinAppDriver.Server.CommandHandlers
         /// <returns>The JSON serialized string representing the command response.</returns>
         public override Response Execute(CommandEnvironment environment, Dictionary<string, object> parameters)
         {
-            object windowIdentifier;
-            if (!parameters.TryGetValue("name", out windowIdentifier))
+            if (!parameters.TryGetValue("handle", out object handle))
             {
-                return Response.CreateMissingParametersResponse("name");
+                return Response.CreateMissingParametersResponse("handle");
             }
 
-            if (windowIdentifier.ToString() != CommandEnvironment.GlobalWindowHandle)
+            var windowIdentifier = handle?.ToString();
+            if (windowIdentifier != CommandEnvironment.GlobalWindowHandle)
             {
-                string script = "return window.top.name;";
-                string result = this.EvaluateAtom(environment, WebDriverAtoms.ExecuteScript, script, new object[] { }, environment.CreateFrameObject());
-                Response interimResponse = Response.FromJson(result);
-                if (interimResponse.Value != null && interimResponse.Value.ToString() == windowIdentifier.ToString())
+                var windows = new BreadthFirstSearch().Find(environment.Cache.AutomationElement, ControlType.Window, environment.GetCancellationToken())
+                    .Where(w => w.Current.ControlType == ControlType.Window)
+                    .ToList();
+
+                var matchingWindow = windows.SingleOrDefault(w => w.Current.AutomationId == windowIdentifier);
+                if (matchingWindow != null)
                 {
+                    SystemWindow systemWindow = new SystemWindow(matchingWindow.NativeElement.CurrentNativeWindowHandle);
+                    if (!systemWindow.TopMost)
+                    {
+                        return Response.CreateErrorResponse(WebDriverStatusCode.UnhandledError, "Window is not enabled.");
+                    }
+                    AutomationElement.FromHandle(matchingWindow.NativeElement.CurrentNativeWindowHandle).SetFocus();
                     return Response.CreateSuccessResponse();
                 }
 

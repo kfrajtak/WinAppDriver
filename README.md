@@ -39,9 +39,9 @@ Which Selenium commands are implemented?
 - [ ] getElementAttribute
 - [ ] getElementLocation
 - [ ] getElementLocationOnceScrolledIntoView
-- [ ] getElementSize
-- [ ] getElementTagName
-- [ ] getElementText
+- [X] getElementSize
+- [X] getElementTagName
+- [X] getElementText
 - [ ] getElementValueOfCssProperty
 - [ ] getOrientation
 - [ ] getPageSource

@@ -79,6 +79,12 @@ namespace WinAppDriver.XPath.Iterators
                 Current = _elementQueue.Dequeue();
                 System.Diagnostics.Debug.WriteLine("Current " + Current.ToDiagString());
 
+                /*var condition = Condition.TrueCondition;
+                if (!Current.ControlType.CanBeNestedUnder(automationElement.Current.ControlType))
+                {
+                    condition = Condition.FalseCondition;
+                }*/
+
                 var children = Current.FindAll(TreeScope.Children, Condition.TrueCondition).Cast<AutomationElement>()
                     .OrderBy(c => c.Current.BoundingRectangle.TopLeft, new PointComparer())
                     .ToList();

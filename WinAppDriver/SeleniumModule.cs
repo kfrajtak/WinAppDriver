@@ -140,6 +140,7 @@ namespace WinAppDriver.Server
                 {
                     if (commandHandler.UnexpectedAlertCheckRequired && commandEnvironment.Handler.IsFaulty)// .IsTopMostActiveWindowDifferent(out var args))
                     {
+                        System.Diagnostics.Trace.WriteLine(commandEnvironment.Handler.Unexpected);
                         return Server.Response.CreateErrorResponse(WebDriverStatusCode.UnexpectedAlertOpen, 
                             "An alert was found open unexpectedly.", commandEnvironment.Handler.Unexpected);
                     }
