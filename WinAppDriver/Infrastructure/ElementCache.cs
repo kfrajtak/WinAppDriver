@@ -8,16 +8,27 @@ namespace WinAppDriver.Infrastructure
 {
     public class ElementCache : IDisposable
     {
+        public ElementCache(IntPtr hwnd, AutomationElement automationElement) : this(automationElement)
+        {
+            Handle = hwnd;
+        }
+
         public ElementCache(AutomationElement automationElement)
         {
-            Automation.RemoveAllEventHandlers();
+            // Automation.RemoveAllEventHandlers();
+            Handle = automationElement.NativeElement.CurrentNativeWindowHandle;
 
             AutomationElement = automationElement;
 
-            AddToCache(new Tuple<string, AutomationElement>((_counter++).ToString(), AutomationElement));            
+            AddToCache(new Tuple<string, AutomationElement>(GetNextElementId(), AutomationElement));            
         }
 
-        public IntPtr Handle { get; set; }
+        public IntPtr Handle { get; private set; }
+
+        /// <summary>
+        /// Handle of the previous/parent window.
+        /// </summary>
+        public IntPtr PrevWindowsHandle { get; set; }
 
         private Dictionary<string, AutomationElement> _cache = new Dictionary<string, AutomationElement>();
         private Dictionary<AutomationElement, string> _cacheReversed = new Dictionary<AutomationElement, string>();
@@ -41,11 +52,13 @@ namespace WinAppDriver.Infrastructure
                         return new Tuple<string, AutomationElement>(id, found);
                     }
 
-                    return new Tuple<string, AutomationElement>((_counter++).ToString(), found);
+                    return new Tuple<string, AutomationElement>(GetNextElementId(), found);
                 });
         }
 
         private int _counter = 1;
+
+        private string GetNextElementId() => $"{Handle}_{_counter++}";
 
         public void AddToCache(params Tuple<string, AutomationElement>[] automationElements)
         {

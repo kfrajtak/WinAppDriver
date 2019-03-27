@@ -104,6 +104,11 @@ namespace WinAppDriver.Extensions
             return $"\"{automationElement.Current.ControlType.ProgrammaticName}\" \"{automationElement.Current.Name}\" {automationElement.Current.AutomationId} ({automationElement.Current.LocalizedControlType}/{automationElement.Current.ClassName}) [{automationElement.Current.BoundingRectangle.TopLeft}]";
         }
 
+        public static object GetAutomationElementPropertyValue(this AutomationElement element, AutomationProperty property)
+        {
+            return element.GetCurrentPropertyValue(property);
+        }
+
         public static object GetAutomationElementPropertyValue(this AutomationElement element, string propertyName)
         {
             var name = $"AutomationElementIdentifiers.{propertyName}Property";

@@ -99,11 +99,12 @@ namespace WinAppDriver.Server.CommandHandlers
             if (script.ToString() == "return window.name")
             {
                 var keyValuePairs = JArray.Parse(args.ToString());
-                var elementId = keyValuePairs[0].Last().Last().ToString();
+                /*var elementId = keyValuePairs[0].Last().Last().ToString();
                 return CommandHandlerFactory.Instance.GetHandler(DriverCommand.GetElementRect).Execute(environment, new Dictionary<string, object>
                 {
                     { "ID", elementId }
-                });
+                });*/
+                return Response.CreateErrorResponse(WebDriverStatusCode.UnexpectedJavaScriptError, "Cannot get window.name");
             }
 
             string result = this.EvaluateAtom(environment, WebDriverAtoms.ExecuteScript, script, args, environment.CreateFrameObject());

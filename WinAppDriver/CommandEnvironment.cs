@@ -53,7 +53,7 @@ namespace WinAppDriver.Server
         /// </summary>
         public const string GlobalWindowHandle = "WPDriverWindowHandle";
 
-        private IntPtr _hwnd;
+        private IntPtr _hwnd, _windowHwnd;
         private string focusedFrame = string.Empty;
         private Dictionary<string, object> keyboardState = null;
         private Dictionary<string, object> mouseState = new Dictionary<string, object>();
@@ -73,32 +73,38 @@ namespace WinAppDriver.Server
 
         public UnexpectedAlertBehaviorReaction UnexpectedAlertBehavior => _unexpectedAlertBehavior;
 
-        /// <summary>
+        /*// <summary>
         /// Initializes a new instance of the <see cref="CommandEnvironment"/> class.
         /// </summary>
         /// <param name="root">The root control</param>
         public CommandEnvironment(IntPtr hwnd)
         {
             _hwnd = hwnd;
+            _windowHwnd = hwnd;
 
-            Cache = new ElementCache(AutomationElement.FromHandle(hwnd))
-            {
-                Handle = hwnd
-            };
-        }
+            SwitchToWindow(AutomationElement.FromHandle(hwnd));
+            //Cache = new ElementCache(hwnd, AutomationElement.FromHandle(hwnd));
+        }*/
 
-        public CommandEnvironment(string sessionId, ElementCache elementCache, Dictionary<string, object> desiredCapabilities)
+        public CommandEnvironment(string sessionId, Dictionary<string, object> desiredCapabilities)
         {
             SessionId = sessionId;
-            _hwnd = elementCache.Handle;
+           
+            _hwnd = new IntPtr(int.Parse(sessionId));
+            var element = AutomationElement.FromHandle(_hwnd);
+
             _desiredCapabilities = desiredCapabilities ?? new Dictionary<string, object>();
-            Cache = elementCache;
+
+            SwitchToWindow(element);
 
             if (!desiredCapabilities.TryGetValue(OpenQA.Selenium.Remote.CapabilityType.UnexpectedAlertBehavior, out var unexpectedAlertBehavior) ||
                 !Enum.TryParse(unexpectedAlertBehavior?.ToString(), true, out _unexpectedAlertBehavior))
             {
                 _unexpectedAlertBehavior = UnexpectedAlertBehaviorReaction.DismissAndNotify;
             }
+
+            Cache.AddHandler(Behaviors.UnexpectedAlertBehavior.CreateHandler(element, _hwnd, this));
+            CacheStore.CommandStore.AddOrUpdate(sessionId, this, (k, c) => c);
         }
 
         public CommandEnvironment() { }
@@ -153,12 +159,14 @@ namespace WinAppDriver.Server
             get { return this.alertType; }
         }
 
-        public ElementCache Cache
-        {
-            get; private set;
-        }
+        public System.Collections.Concurrent.ConcurrentDictionary<IntPtr, ElementCache> _elementCache
+            = new System.Collections.Concurrent.ConcurrentDictionary<IntPtr, ElementCache>();
 
-        public IntPtr WindowHandle => _hwnd;
+        public ElementCache Cache => _elementCache[WindowHandle];
+
+        public IntPtr ApplicationWindowHandle => _hwnd;
+
+        public IntPtr WindowHandle => _windowHwnd;
 
         /// <summary>
         /// Gets a value indicating whether execution of the next command should be blocked.
@@ -260,6 +268,32 @@ namespace WinAppDriver.Server
             else
             {
                 this.ClearAlertStatus();
+            }
+        }
+
+        public void SwitchToWindow(AutomationElement window)
+        {
+            var windowHwnd = window.NativeElement.CurrentNativeWindowHandle;
+            var cache = _elementCache.AddOrUpdate(_windowHwnd,
+                hwnd => new ElementCache(window),
+                (e, c) => c);
+
+            cache.PrevWindowsHandle = _windowHwnd;
+            _windowHwnd = cache.Handle;
+            window.SetFocus();
+        }
+
+        public void CloseWindow(IntPtr hwnd)
+        {
+            if (ApplicationWindowHandle == hwnd)
+            {
+                return;
+            }
+
+            if (_elementCache.TryRemove(hwnd, out var cache))
+            {
+                _windowHwnd = cache.PrevWindowsHandle;
+                cache.Dispose();
             }
         }
 

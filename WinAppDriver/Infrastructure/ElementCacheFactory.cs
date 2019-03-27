@@ -8,10 +8,7 @@ namespace WinAppDriver.Infrastructure
         public static ElementCache Get(string sessionId)
         {
             var hwnd = new IntPtr(int.Parse(sessionId));
-            return new ElementCache(AutomationElement.FromHandle(hwnd))
-            {
-                Handle = hwnd
-            };
+            return new ElementCache(hwnd, AutomationElement.FromHandle(hwnd));
         }
     }
 }

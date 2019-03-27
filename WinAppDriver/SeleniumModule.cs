@@ -134,7 +134,7 @@ namespace WinAppDriver.Server
                 // check for unexpected active windows
                 if (commandEnvironment.Handler == null)
                 {
-                    commandEnvironment.Handler = new UnexpectedAlertBehavior2.Handler(null, commandEnvironment.WindowHandle, commandEnvironment);
+                    commandEnvironment.Handler = new UnexpectedAlertBehavior2.Handler(null, commandEnvironment.ApplicationWindowHandle, commandEnvironment);
                 }
                 else
                 {

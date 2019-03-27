@@ -89,6 +89,7 @@
     <Compile Include="CommandHandlers\ElementCommandHandler.cs" />
     <Compile Include="CommandHandlers\GetAlertTextCommandHandler.cs" />
     <Compile Include="CommandHandlers\GetElementRectCommandHandler.cs" />
+    <Compile Include="CommandHandlers\CloseCommandHandler.cs" />
     <Compile Include="EventHandler.cs" />
     <Compile Include="Exceptions\InvalidSelectorException.cs" />
     <Compile Include="Exceptions\ElementNotDisplayedException.cs" />

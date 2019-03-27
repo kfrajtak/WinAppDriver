@@ -124,7 +124,7 @@ namespace WinAppDriver.Server
             this.handlers.Add(DriverCommand.SetAsyncScriptTimeout, new SetAsyncScriptTimeoutCommandHandler());
             this.handlers.Add(DriverCommand.SetTimeout, new SetTimeoutCommandHandler());
             this.handlers.Add(DriverCommand.Quit, new QuitCommandHandler());
-            this.handlers.Add(DriverCommand.Close, new QuitCommandHandler());
+            this.handlers.Add(DriverCommand.Close, new CloseCommandHandler());
             //this.handlers.Add(DriverCommand.AddCookie, new AddCookieCommandHandler());
             this.handlers.Add(DriverCommand.GetAllCookies, new GetAllCookiesCommandHandler());
             //this.handlers.Add(DriverCommand.DeleteCookie, new DeleteCookieCommandHandler());

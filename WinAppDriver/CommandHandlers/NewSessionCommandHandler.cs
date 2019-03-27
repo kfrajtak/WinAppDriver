@@ -92,12 +92,12 @@ namespace WinAppDriver.Server.CommandHandlers
                     CacheStore.CommandStore.TryRemove(sessionId, out commandEnvironment);
                 }
 
-                var cache = ElementCacheFactory.Get(sessionId);
-                commandEnvironment = new CommandEnvironment(sessionId, cache, desiredCapabilities);
-                var e = cache.AutomationElement;
-                e = AutomationElement.FromHandle(cache.Handle);
-                cache.AddHandler(UnexpectedAlertBehavior.CreateHandler(e, cache.Handle, commandEnvironment));
-                CacheStore.CommandStore.AddOrUpdate(sessionId, commandEnvironment, (k, c) => c);
+                //var cache = ElementCacheFactory.Get(sessionId);
+                commandEnvironment = new CommandEnvironment(sessionId, desiredCapabilities);
+                //var e = cache.AutomationElement;
+                //e = AutomationElement.FromHandle(cache.Handle);
+                //cache.AddHandler(UnexpectedAlertBehavior.CreateHandler(e, cache.Handle, commandEnvironment));
+                //CacheStore.CommandStore.AddOrUpdate(sessionId, commandEnvironment, (k, c) => c);
             }
 
             Response response = Response.CreateSuccessResponse(responseValue);
