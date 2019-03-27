@@ -136,6 +136,20 @@ public static RemoteWebDriver CreateSession()
 {
 	DesiredCapabilities desktopCapabilities = new DesiredCapabilities();
 	desktopCapabilities.SetCapability("processName", "<name of the process>");
-	return new RemoteWebDriver(new CommandExec(new Uri("http://127.0.0.1:12345"), TimeSpan.FromSeconds(60)), desktopCapabilities);
+	return new RemoteWebDriver(
+	  new CommandExec(new Uri("http://127.0.0.1:12345"), 
+	  TimeSpan.FromSeconds(60)), 
+	  desktopCapabilities);
 }
 ```
+
+Recommended element location is using XPath expression (though with a limited expression support)
+```
+var webBrowser = session.FindElement(By.XPath("//Pane[@AutomationId='webBrowser']"));
+```
+
+Windows in the Win application are not like windows in browser. The windows (`ControlType.Window`) can be nested inside the control tree, for example in a `Tab` element. 
+
+Window can be either located using XPath expression `var window = session.FindElement(By.XPath("/Window/Pane/Window[@AutomationId='WindowName']"));` or by switching to it `session.SwitchTo().Window("WindowName");`, in the first example you will get the element reference, in the other the internal context is switched to new window and elements cached during the following operations can be disposed when window is cloded `session.Close()`.
+
+Note that element wrappers like `OpenQA.Selenium.Support.UI.SelectElement` do not work because internally `select` and `option` elements are expected.
