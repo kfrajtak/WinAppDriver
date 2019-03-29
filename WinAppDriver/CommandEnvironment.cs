@@ -95,7 +95,7 @@ namespace WinAppDriver.Server
 
             _desiredCapabilities = desiredCapabilities ?? new Dictionary<string, object>();
 
-            SwitchToWindow(element);
+            SwitchToWindow(_hwnd, element);
 
             if (!desiredCapabilities.TryGetValue(OpenQA.Selenium.Remote.CapabilityType.UnexpectedAlertBehavior, out var unexpectedAlertBehavior) ||
                 !Enum.TryParse(unexpectedAlertBehavior?.ToString(), true, out _unexpectedAlertBehavior))
@@ -273,8 +273,17 @@ namespace WinAppDriver.Server
 
         public void SwitchToWindow(AutomationElement window)
         {
-            var windowHwnd = window.NativeElement.CurrentNativeWindowHandle;
-            var cache = _elementCache.AddOrUpdate(_windowHwnd,
+            SwitchToWindow(window.NativeElement.CurrentNativeWindowHandle, window);
+        }
+
+        private void SwitchToWindow(IntPtr windowHwnd, AutomationElement window)
+        {
+            if (windowHwnd.ToInt64() == 0)
+            {
+                throw new Exception("Window handle is 0.");
+            }
+
+            var cache = _elementCache.AddOrUpdate(windowHwnd,
                 hwnd => new ElementCache(window),
                 (e, c) => c);
 
