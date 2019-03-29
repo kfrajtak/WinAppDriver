@@ -172,23 +172,27 @@ namespace WinAppDriver.Behaviors
                              .ToArray()
                     };
 
-                    //}
+                    // TODO requires rewrite
+
+                    // menus slip through
+                    AutomationElement aw = null;
+                    try
+                    {
+                        aw = AutomationElement.FromHandle(window.HWnd);
+                    }
+                    catch (ElementNotAvailableException)
+                    {
+                        continue; // menus are causing this exception
+                    }
+
+                    if (aw.Current.ControlType != ControlType.Window)
+                    {
+                        continue; // but sometimes they slip through
+                    }
 
                     System.Diagnostics.Debug.WriteLine("New modal window " + window.HWnd);
 
-                    return true;
-                    /*
-                            switch (behavior)
-                            {
-                                case UnexpectedAlertBehaviorReaction.Ignore:
-                                    break;
-                                case UnexpectedAlertBehaviorReaction.Dismiss:
-                                case UnexpectedAlertBehaviorReaction.DismissAndNotify:
-                                case UnexpectedAlertBehaviorReaction.Accept:
-                                case UnexpectedAlertBehaviorReaction.AcceptAndNotify:
-                                    window.SendClose();
-                                    break;
-                            }*/
+                    return true;                    
                 }
 
                 return false;
@@ -196,9 +200,7 @@ namespace WinAppDriver.Behaviors
 
             public void Dispose()
             {
-                //_cancellationTokenSource.Cancel();
-
-                //_thread = null;
+                
             }
         }
     }
