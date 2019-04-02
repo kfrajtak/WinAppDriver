@@ -61,15 +61,38 @@ namespace WinAppDriver.Server.CommandHandlers
             var desiredCapabilities = JObject.Parse(parameters["desiredCapabilities"]?.ToString() ?? "{}").ToObject<Dictionary<string, object>>();
             //parameters["desiredCapabilities"] as Dictionary<string, string> ?? new Dictionary<string, string>();
 
-            if (!desiredCapabilities.TryGetValue("processName", out var processName))
+            if (!desiredCapabilities.TryGetValue("processName", out var processName) 
+                & !desiredCapabilities.TryGetValue("exePath", out var exePath))
             {
-                return Response.CreateMissingParametersResponse("processName");
+                return Response.CreateMissingParametersResponse("processName or exePath");
             }
 
-            var process = Process.GetProcessesByName(processName.ToString()).FirstOrDefault();
-            if (process == null)
+
+            Process process = null;
+            if (processName != null)
             {
-                return Response.CreateErrorResponse(-1, $"Cannot attach to process '{processName}', no such process found.");
+                
+                process = Process.GetProcessesByName(processName.ToString()).FirstOrDefault();
+
+                if (process == null)
+                {
+                    var processes = Process.GetProcesses();
+                    process = processes.Where(x =>
+                    {
+                        return x.ProcessName.Contains(processName.ToString())
+                        || processName.ToString().Contains(x.ProcessName);
+                    }).FirstOrDefault();
+                }
+
+                if (process == null && exePath == null)
+                {
+                    return Response.CreateErrorResponse(-1, $"Cannot attach to process '{processName}', no such process found.");
+                }
+            }
+
+            if (exePath != null && process == null)
+            {
+
             }
 
             var sessionId = process.MainWindowHandle.ToString();
