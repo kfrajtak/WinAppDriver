@@ -31,6 +31,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.IO;
+using System.ComponentModel;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -90,9 +92,28 @@ namespace WinAppDriver.Server.CommandHandlers
                 }
             }
 
-            if (exePath != null && process == null)
+            if (process == null && exePath != null)
             {
-
+                try
+                {
+                    process = StartProcessFromPath(exePath.ToString());
+                    if (process == null || process.MainWindowHandle.ToInt32() == 0)
+                    {
+                        return Response.CreateErrorResponse(-1, "Process starting timeout expired.");
+                    }
+                }
+                catch (FileNotFoundException) 
+                {
+                    return Response.CreateErrorResponse(-1, $"Cannot start process from file '{exePath.ToString()}' file not found.");
+                }
+                catch(ObjectDisposedException)
+                {
+                    return Response.CreateErrorResponse(-1, "The object you tring access already desposed.");
+                }
+                catch(InvalidOperationException)
+                {
+                    return Response.CreateErrorResponse(-1, "Cannot run application without user interface.");
+                }
             }
 
             var sessionId = process.MainWindowHandle.ToString();
@@ -127,6 +148,32 @@ namespace WinAppDriver.Server.CommandHandlers
             response.SessionId = sessionId;
             response.Status = null;
             return response;
+        }
+
+        private Process StartProcessFromPath(string path, int timeout = 3000)
+        {
+            var process = Process.Start(path);
+            process.WaitForInputIdle(timeout);
+            process.Refresh();
+            if (process.MainWindowHandle.ToInt32() == 0)
+            {
+                int time = 0;
+                while (!process.HasExited)
+                {
+                    process.Refresh();
+                    if (process.MainWindowHandle.ToInt32() != 0)
+                    {
+                        return process;
+                    }
+                    Thread.Sleep(50);
+                    time += 10;
+                    if (time > timeout)
+                    {
+                        throw new TimeoutException("Process starting timeout expired.");
+                    }
+                }
+            }
+            return process;
         }
     }
 }
