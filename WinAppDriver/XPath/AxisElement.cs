@@ -56,6 +56,8 @@ namespace WinAppDriver.XPath
                         return new List<AutomationElement> { automationElement.CachedParent };
                     }
                     return new List<AutomationElement>();
+                case XPathAxis.Self:
+                    return new List<AutomationElement> { automationElement };
                 default:
                     throw new System.NotSupportedException(_xpathAxis.ToString());
             }

@@ -120,14 +120,20 @@ namespace WinAppDriver.Behaviors
                                 };
                             }
 
+                            // menus slip through
+                            AutomationElement aw = null;
                             try
                             {
-                                // menus were windows too
-                                var aw = AutomationElement.FromHandle(window.HWnd);
+                                aw = AutomationElement.FromHandle(window.HWnd);
                             }
                             catch (ElementNotAvailableException)
                             {
-                                continue; // but menus cause this exception
+                                continue; // menus are causing this exception
+                            }
+
+                            if (aw.Current.ControlType != ControlType.Window)
+                            {
+                                continue; // but sometimes they slip through
                             }
 
                             System.Diagnostics.Debug.WriteLine("New modal window " + window.HWnd);
@@ -162,7 +168,7 @@ namespace WinAppDriver.Behaviors
             public void Dispose()
             {
                 _cancellationTokenSource.Cancel();
-
+                _thread.Abort();
                 _thread = null;
             }
         }
