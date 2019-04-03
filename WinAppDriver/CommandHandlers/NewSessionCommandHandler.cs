@@ -31,12 +31,14 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.IO;
 using System.ComponentModel;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Automation;
+using WinAppDriver;
 
 namespace WinAppDriver.Server.CommandHandlers
 {
@@ -63,10 +65,23 @@ namespace WinAppDriver.Server.CommandHandlers
             var desiredCapabilities = JObject.Parse(parameters["desiredCapabilities"]?.ToString() ?? "{}").ToObject<Dictionary<string, object>>();
             //parameters["desiredCapabilities"] as Dictionary<string, string> ?? new Dictionary<string, string>();
 
-            if (!desiredCapabilities.TryGetValue("processName", out var processName) 
-                & !desiredCapabilities.TryGetValue("exePath", out var exePath))
+
+            // extend capabilities with one more required parameter
+            if (!desiredCapabilities.TryGetValue("mode", out var mode))
             {
-                return Response.CreateMissingParametersResponse("processName or exePath");
+                return Response.CreateMissingParametersResponse("mode");
+            }
+
+            // check does mode is process and capabilities contain processName simultaneounsy
+            if (mode?.ToString() == "process" & !desiredCapabilities.TryGetValue("processName", out var processName))
+            {
+                return Response.CreateMissingParametersResponse("processName");
+            }
+
+            // check does mode is process and capabilities contain exePath simultaneounsy
+            if (mode?.ToString() == "executable" & !desiredCapabilities.TryGetValue("processName", out var exePath))
+            {
+                return Response.CreateMissingParametersResponse("exePath");
             }
 
 
@@ -76,47 +91,30 @@ namespace WinAppDriver.Server.CommandHandlers
                 
                 process = Process.GetProcessesByName(processName.ToString()).FirstOrDefault();
 
+                // searching by name as regular expression pattern
                 if (process == null)
                 {
-                    var processes = Process.GetProcesses();
-                    process = processes.Where(x =>
-                    {
-                        return x.ProcessName.Contains(processName.ToString())
-                        || processName.ToString().Contains(x.ProcessName);
-                    }).FirstOrDefault();
+                        var regex = new Regex(processName.ToString());
+                        process = Process.GetProcesses()
+                            .Where(x => regex.IsMatch(x.ProcessName)).FirstOrDefault();            
                 }
 
-                if (process == null && exePath == null)
+                if (process == null)
                 {
                     return Response.CreateErrorResponse(-1, $"Cannot attach to process '{processName}', no such process found.");
                 }
             }
 
-            if (process == null && exePath != null)
+            if (exePath != null)
             {
-                try
+                process = ApplicationProcess.StartProcessFromPath(exePath.ToString());
+                if (process == null)
                 {
-                    process = StartProcessFromPath(exePath.ToString());
-                    if (process == null || process.MainWindowHandle.ToInt32() == 0)
-                    {
-                        return Response.CreateErrorResponse(-1, "Process starting timeout expired.");
-                    }
-                }
-                catch (FileNotFoundException) 
-                {
-                    return Response.CreateErrorResponse(-1, $"Cannot start process from file '{exePath.ToString()}' file not found.");
-                }
-                catch(ObjectDisposedException)
-                {
-                    return Response.CreateErrorResponse(-1, "The object you tring access already desposed.");
-                }
-                catch(InvalidOperationException)
-                {
-                    return Response.CreateErrorResponse(-1, "Cannot run application without user interface.");
+                    return Response.CreateErrorResponse(-1, "Can't start process.");
                 }
             }
 
-            var sessionId = process.MainWindowHandle.ToString();
+            var sessionId = process?.MainWindowHandle.ToString();
             if (sessionId != null)
             {
                 /*if (CacheStore.Store.TryGetValue(sessionId, out var elementCache))
@@ -150,30 +148,6 @@ namespace WinAppDriver.Server.CommandHandlers
             return response;
         }
 
-        private Process StartProcessFromPath(string path, int timeout = 3000)
-        {
-            var process = Process.Start(path);
-            process.WaitForInputIdle(timeout);
-            process.Refresh();
-            if (process.MainWindowHandle.ToInt32() == 0)
-            {
-                int time = 0;
-                while (!process.HasExited)
-                {
-                    process.Refresh();
-                    if (process.MainWindowHandle.ToInt32() != 0)
-                    {
-                        return process;
-                    }
-                    Thread.Sleep(50);
-                    time += 10;
-                    if (time > timeout)
-                    {
-                        throw new TimeoutException("Process starting timeout expired.");
-                    }
-                }
-            }
-            return process;
-        }
+        
     }
 }
