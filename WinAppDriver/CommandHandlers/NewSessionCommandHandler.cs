@@ -79,7 +79,7 @@ namespace WinAppDriver.Server.CommandHandlers
             }
 
             // check does mode is process and capabilities contain exePath simultaneounsy
-            if (mode?.ToString() == "executable" & !desiredCapabilities.TryGetValue("processName", out var exePath))
+            if (mode?.ToString() == "executable" & !desiredCapabilities.TryGetValue("exePath", out var exePath))
             {
                 return Response.CreateMissingParametersResponse("exePath");
             }
