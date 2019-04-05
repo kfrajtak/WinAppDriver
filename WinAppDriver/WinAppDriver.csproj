@@ -80,6 +80,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApplicationProcess.cs" />
     <Compile Include="Behaviors\UnexpectedAlertBehavior2.cs" />
     <Compile Include="Behaviors\UnexpectedAlertBehavior.cs" />
     <Compile Include="Bootstrapper.cs" />

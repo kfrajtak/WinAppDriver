@@ -31,10 +31,14 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.RegularExpressions;
+using System.IO;
+using System.ComponentModel;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Automation;
+using WinAppDriver;
 
 namespace WinAppDriver.Server.CommandHandlers
 {
@@ -61,18 +65,56 @@ namespace WinAppDriver.Server.CommandHandlers
             var desiredCapabilities = JObject.Parse(parameters["desiredCapabilities"]?.ToString() ?? "{}").ToObject<Dictionary<string, object>>();
             //parameters["desiredCapabilities"] as Dictionary<string, string> ?? new Dictionary<string, string>();
 
-            if (!desiredCapabilities.TryGetValue("processName", out var processName))
+
+            // extend capabilities with one more required parameter
+            if (!desiredCapabilities.TryGetValue("mode", out var mode))
+            {
+                return Response.CreateMissingParametersResponse("mode");
+            }
+
+            // check does mode is process and capabilities contain processName simultaneounsy
+            if (mode?.ToString() == "attach" & !desiredCapabilities.TryGetValue("processName", out var processName))
             {
                 return Response.CreateMissingParametersResponse("processName");
             }
 
-            var process = Process.GetProcessesByName(processName.ToString()).FirstOrDefault();
-            if (process == null)
+            // check does mode is process and capabilities contain exePath simultaneounsy
+            if (mode?.ToString() == "start" & !desiredCapabilities.TryGetValue("exePath", out var exePath))
             {
-                return Response.CreateErrorResponse(-1, $"Cannot attach to process '{processName}', no such process found.");
+                return Response.CreateMissingParametersResponse("exePath");
             }
 
-            var sessionId = process.MainWindowHandle.ToString();
+
+            Process process = null;
+            if (processName != null)
+            {
+                
+                process = Process.GetProcessesByName(processName.ToString()).FirstOrDefault();
+
+                // searching by name as regular expression pattern
+                if (process == null)
+                {
+                        var regex = new Regex(processName.ToString());
+                        process = Process.GetProcesses()
+                            .Where(x => regex.IsMatch(x.ProcessName)).FirstOrDefault();            
+                }
+
+                if (process == null)
+                {
+                    return Response.CreateErrorResponse(-1, $"Cannot attach to process '{processName}', no such process found.");
+                }
+            }
+
+            if (exePath != null)
+            {
+                process = ApplicationProcess.StartProcessFromPath(exePath.ToString());
+                if (process == null)
+                {
+                    return Response.CreateErrorResponse(-1, "Cannot start process.");
+                }
+            }
+
+            var sessionId = process?.MainWindowHandle.ToString();
             if (sessionId != null)
             {
                 /*if (CacheStore.Store.TryGetValue(sessionId, out var elementCache))
@@ -105,5 +147,7 @@ namespace WinAppDriver.Server.CommandHandlers
             response.Status = null;
             return response;
         }
+
+        
     }
 }
