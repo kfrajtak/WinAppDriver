@@ -73,13 +73,13 @@ namespace WinAppDriver.Server.CommandHandlers
             }
 
             // check does mode is process and capabilities contain processName simultaneounsy
-            if (mode?.ToString() == "process" & !desiredCapabilities.TryGetValue("processName", out var processName))
+            if (mode?.ToString() == "attach" & !desiredCapabilities.TryGetValue("processName", out var processName))
             {
                 return Response.CreateMissingParametersResponse("processName");
             }
 
             // check does mode is process and capabilities contain exePath simultaneounsy
-            if (mode?.ToString() == "executable" & !desiredCapabilities.TryGetValue("exePath", out var exePath))
+            if (mode?.ToString() == "start" & !desiredCapabilities.TryGetValue("exePath", out var exePath))
             {
                 return Response.CreateMissingParametersResponse("exePath");
             }
@@ -110,7 +110,7 @@ namespace WinAppDriver.Server.CommandHandlers
                 process = ApplicationProcess.StartProcessFromPath(exePath.ToString());
                 if (process == null)
                 {
-                    return Response.CreateErrorResponse(-1, "Can't start process.");
+                    return Response.CreateErrorResponse(-1, "Cannot start process.");
                 }
             }
 
