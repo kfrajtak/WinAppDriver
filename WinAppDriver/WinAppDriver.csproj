@@ -189,6 +189,7 @@
     <Compile Include="XPath\AxisElement.cs" />
     <Compile Include="XPath\FormNavigator.cs" />
     <Compile Include="XPath\AutomationElementTreeWalker.cs" />
+    <Compile Include="XPath\FunctionElement.cs" />
     <Compile Include="XPath\Iterators\DescenendantIterator.cs" />
     <Compile Include="XPath\Iterators\ChildIterator.cs" />
     <Compile Include="XPath\Iterators\IteratorBase.cs" />

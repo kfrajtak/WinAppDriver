@@ -9,7 +9,7 @@ using CodePlex.XPathParser;
 
 namespace WinAppDriver.XPath
 {   
-    public class AxisElement : IXPathExpression, ICanGetValue
+    public class AxisElement : IXPathExpression, IEvaluate
     {
         private readonly string _prefix, _name;
         private readonly System.Xml.XPath.XPathNodeType _nodeType;
@@ -63,7 +63,7 @@ namespace WinAppDriver.XPath
             }
         }
 
-        public object GetValue(AutomationElement automationElement)
+        object IEvaluate.Evaluate(AutomationElement automationElement)
         {
             switch (_xpathAxis)
             {
@@ -71,6 +71,8 @@ namespace WinAppDriver.XPath
                     var attributeValue = automationElement.GetAutomationElementPropertyValue(_name);
                     System.Diagnostics.Debug.WriteLine($"{_xpathAxis}: {automationElement.Current.LocalizedControlType}#{automationElement.Current.AutomationId} @{_name} => {attributeValue}");
                     return attributeValue;
+                case XPathAxis.Self:
+                    return automationElement;
                 default:
                     throw new System.NotSupportedException(_xpathAxis.ToString());
             }

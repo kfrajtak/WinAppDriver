@@ -23,10 +23,8 @@ namespace WinAppDriver.Extensions
                 var textPattern = (TextPattern)patternObj;
                 return textPattern.DocumentRange.GetText(-1).TrimEnd('\r'); // often there is an extra '\r' hanging off the end.
             }
-            else
-            {
-                return element.Current.Name;
-            }
+
+            throw new NotSupportedException("GetText for " + element.ToDiagString());
         }
 
         public static void SetText(this AutomationElement element, string value)
@@ -117,7 +115,8 @@ namespace WinAppDriver.Extensions
             if (prop == null)
             {
                 var propsInfo = string.Join(", ",
-                    supportedProperies.Select(p => p.ProgrammaticName.Replace("AutomationElementIdentifiers.", string.Empty).Replace("Property", string.Empty)));
+                    supportedProperies.Select(p => p.ProgrammaticName.Replace("AutomationElementIdentifiers.", string.Empty).Replace("Property", string.Empty))
+                    .OrderBy(p => p));
                 throw new NotSupportedException($"Unknown or unsupported attribute name '{propertyName}' by {element.Current.ControlType.ProgrammaticName}, only these properties are supported: {propsInfo}");
             }
 

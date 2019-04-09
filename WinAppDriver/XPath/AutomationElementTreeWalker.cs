@@ -9,15 +9,15 @@ namespace WinAppDriver.XPath
 {
     public interface IXPathExpression
     {
-        IEnumerable<AutomationElement> Find(AutomationElement root, IList<AutomationElement> collection, CancellationToken cancellationToken);
+        IEnumerable<AutomationElement> Find(AutomationElement root, IList<AutomationElement> collection, CancellationToken cancellationToken);        
     }
 
-    public interface ICanGetValue
+    public interface IEvaluate
     {
-        object GetValue(AutomationElement root);
+        object Evaluate(AutomationElement element);
     }
 
-    public class ValueElement<T> : IXPathExpression, ICondition
+    public class ValueElement<T> : IXPathExpression, ICondition, IEvaluate
     {
         private readonly T _value;
 
@@ -31,7 +31,7 @@ namespace WinAppDriver.XPath
             return collection;
         }
 
-        public bool Matches(AutomationElement element, int index)
+        bool ICondition.Matches(AutomationElement element, int index)
         {
             if (int.TryParse(_value.ToString(), out var i) && i == index)
             {
@@ -44,6 +44,11 @@ namespace WinAppDriver.XPath
         public override bool Equals(object obj)
         {
             return Equals(obj, _value);
+        }
+
+        object IEvaluate.Evaluate(AutomationElement element)
+        {
+            return _value;
         }
     }
 
@@ -124,8 +129,8 @@ namespace WinAppDriver.XPath
                 throw new System.NotImplementedException();
             }
 
-            ICanGetValue canGetValue = _left as ICanGetValue;
-            var left = canGetValue.GetValue(element);
+            IEvaluate canGetValue = _left as IEvaluate;
+            var left = canGetValue.Evaluate(element);
 
             switch (_op)
             {
@@ -143,9 +148,7 @@ namespace WinAppDriver.XPath
 
             throw new System.NotImplementedException();
         }
-    }
-
-    
+    }    
 
     public class JoinStepElement : IXPathExpression
     {
@@ -175,25 +178,7 @@ namespace WinAppDriver.XPath
             System.Diagnostics.Debug.WriteLine(GetHashCode() + " JoinStep >> " + right.Count);
             return right;*/
         }
-    }
-
-    public class FunctionElement : IXPathExpression
-    {
-        private readonly string _prefix, _name;
-        private readonly IList<IXPathExpression> _args;
-
-        public FunctionElement(string prefix, string name, IList<IXPathExpression> args)
-        {
-            _prefix = prefix;
-            _name = name;
-            _args = args;
-        }
-
-        public IEnumerable<AutomationElement> Find(AutomationElement root, IList<AutomationElement> collection, CancellationToken cancellationToken)
-        {
-            return collection;
-        }
-    }
+    }        
 
     public class AutomationElementTreeWalker
     {

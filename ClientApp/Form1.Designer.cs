@@ -41,9 +41,10 @@
             this.tabPage5 = new System.Windows.Forms.TabPage();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.menu1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.menu11ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menu2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menu21ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.menu11ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.tabControl1.SuspendLayout();
             this.tabControl2.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -174,6 +175,12 @@
             this.menu1ToolStripMenuItem.Size = new System.Drawing.Size(56, 20);
             this.menu1ToolStripMenuItem.Text = "Menu1";
             // 
+            // menu11ToolStripMenuItem
+            // 
+            this.menu11ToolStripMenuItem.Name = "menu11ToolStripMenuItem";
+            this.menu11ToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
+            this.menu11ToolStripMenuItem.Text = "Menu1.1";
+            // 
             // menu2ToolStripMenuItem
             // 
             this.menu2ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -185,20 +192,31 @@
             // menu21ToolStripMenuItem
             // 
             this.menu21ToolStripMenuItem.Name = "menu21ToolStripMenuItem";
-            this.menu21ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.menu21ToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
             this.menu21ToolStripMenuItem.Text = "Menu2.1";
             // 
-            // menu11ToolStripMenuItem
+            // comboBox1
             // 
-            this.menu11ToolStripMenuItem.Name = "menu11ToolStripMenuItem";
-            this.menu11ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.menu11ToolStripMenuItem.Text = "Menu1.1";
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Items.AddRange(new object[] {
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6 7",
+            "8"});
+            this.comboBox1.Location = new System.Drawing.Point(32, 100);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(121, 21);
+            this.comboBox1.TabIndex = 7;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.tabControl2);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.textBox2);
@@ -238,6 +256,7 @@
         private System.Windows.Forms.ToolStripMenuItem menu11ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem menu2ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem menu21ToolStripMenuItem;
+        private System.Windows.Forms.ComboBox comboBox1;
     }
 }
 

@@ -1,12 +1,8 @@
 ﻿using CodePlex.XPathParser;
 using OpenQA.Selenium;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Automation;
 using WinAppDriver.Extensions;
 using WinAppDriver.XPath;
@@ -20,7 +16,7 @@ namespace WinAppDriver.Infrastructure
 
         public IEnumerable<AutomationElement> Find(AutomationElement automationElement, string mechanism, string criteria, CancellationToken cancellationToken)
         {
-            System.Diagnostics.Debug.WriteLine($"FindElements {mechanism} '{criteria}'...");
+            System.Diagnostics.Debug.WriteLine($"FindElements {mechanism} '{criteria}'... ({automationElement.ToDiagString()})");
 
             switch (mechanism)
             {

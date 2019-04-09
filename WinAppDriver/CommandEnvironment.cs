@@ -118,7 +118,7 @@ namespace WinAppDriver.Server
             if (_cancellationTokenSource == null)
             {
                 _cancellationTokenSource = new CancellationTokenSource();
-                _cancellationTokenSource.CancelAfter(ImplicitWaitTimeout);
+                //_cancellationTokenSource.CancelAfter(ImplicitWaitTimeout);
             }
             return _cancellationTokenSource.Token;
         }

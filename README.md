@@ -89,7 +89,7 @@ Which Selenium commands are implemented?
 - [ ] touchUp
 - [ ] uploadFile
 
-XPath supported:
+XPath support:
 - [ ] axes 
   - [ ] Ancestor
   - [ ] AncestorOrSelf
@@ -103,7 +103,7 @@ XPath supported:
   - [X] Parent
   - [ ] Preceding
   - [ ] PrecedingSibling
-  - [ ] Self
+  - [X] Self
   - [X] Root
 - [ ] predicates
   - [X] position predicate `//node[3]`
@@ -124,7 +124,45 @@ XPath supported:
   - [ ] Modulo
   - [ ] UnaryMinus
   - [ ] Union
- - [ ] methods
+ - [ ] functions (https://developer.mozilla.org/en-US/docs/Web/XPath/Functions)
+  - [ ] boolean()
+  - [ ] ceiling()
+  - [ ] choose()
+  - [ ] concat()
+  - [X] contains()
+  - [ ] count()
+  - [ ] current() XSLT-specific
+  - [ ] document() XSLT-specific
+  - [ ] element-available()
+  - [ ] false()
+  - [ ] floor()
+  - [ ] format-number() XSLT-specific
+  - [ ] function-available()
+  - [ ] generate-id() XSLT-specific
+  - [ ] id() (partially supported)
+  - [ ] key() XSLT-specific
+  - [ ] lang()
+  - [ ] last()
+  - [ ] local-name()
+  - [ ] name()
+  - [ ] namespace-uri()
+  - [X] normalize-space()
+  - [ ] not()
+  - [ ] number()
+  - [ ] position()
+  - [ ] round()
+  - [ ] starts-with()
+  - [ ] string()
+  - [ ] string-length()
+  - [ ] substring()
+  - [ ] substring-after()
+  - [ ] substring-before()
+  - [ ] sum()
+  - [ ] system-property() XSLT-specific
+  - [ ] translate()
+  - [ ] true()
+  - [ ] unparsed-entity-url() XSLT-specific (not supported)
+
 
 ## How to create session
 Add reference to `Selenium.WebDriver` (https://www.nuget.org/packages/Selenium.WebDriver/) and you are ready to go.
