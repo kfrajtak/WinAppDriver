@@ -24,6 +24,11 @@ namespace WinAppDriver.Extensions
                 return textPattern.DocumentRange.GetText(-1).TrimEnd('\r'); // often there is an extra '\r' hanging off the end.
             }
 
+            if (element.IsTabItem() || element.IsListItem())
+            {
+                return element.Current.Name;
+            }
+
             throw new NotSupportedException("GetText for " + element.ToDiagString());
         }
 
@@ -121,6 +126,16 @@ namespace WinAppDriver.Extensions
             }
 
             return element.GetCurrentPropertyValue(prop);
+        }
+
+        public static bool IsTabItem(this AutomationElement automationElement)
+        {
+            return automationElement.Current.ControlType == ControlType.TabItem;
+        }
+
+        public static bool IsListItem(this AutomationElement automationElement)
+        {
+            return automationElement.Current.ControlType == ControlType.ListItem;
         }
     }
 }

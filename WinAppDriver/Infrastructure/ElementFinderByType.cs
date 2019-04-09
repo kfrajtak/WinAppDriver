@@ -11,20 +11,8 @@ namespace WinAppDriver.Infrastructure
 {
     public class BreadthFirstSearch
     {
-        private Enumerator _enumerator;
-
         public IEnumerable<AutomationElement> Find(AutomationElement automationElement, ControlType controlType, CancellationToken cancellationToken)
         {
-            System.Diagnostics.Debug.WriteLine($"FindElements by type {controlType.ProgrammaticName} ...");
-
-            var elementQueue = new Queue<AutomationElement>();
-            var condition = new PropertyCondition(AutomationElement.ControlTypeProperty, controlType);
-            var automationElementCollection = automationElement.FindAll(TreeScope.Children, Condition.TrueCondition);
-            foreach (AutomationElement childElement in automationElementCollection)
-            {
-                elementQueue.Enqueue(childElement);
-            }
-
             return new Enumerator(automationElement, controlType, cancellationToken);
         }
 
@@ -91,12 +79,29 @@ namespace WinAppDriver.Infrastructure
 
                 _current = _elementQueue.Dequeue();
 
-                var children = _current.FindAll(TreeScope.Children, Condition.TrueCondition).Cast<AutomationElement>()
+                AutomationElement childAutomationElement = TreeWalker.ControlViewWalker.GetFirstChild(_current);
+
+                /*var children = _current.FindAll(TreeScope.Children, Condition.TrueCondition).Cast<AutomationElement>()
                     .OrderBy(c => c.Current.BoundingRectangle.TopLeft, new PointComparer())
-                    .ToList();
+                    .ToList();*/
 
-                //System.Diagnostics.Debug.WriteLine($"Children: {string.Join("\n", children.Select(c => c.ToDiagString()))}");
+                //System.Diagnostics.Debug.WriteLine($"FindElements by type {_controlType.ProgrammaticName}, root {_current.ToDiagString()} ... ({children.Count()})");
+                while (childAutomationElement != null)
+                {
+                    if (_cancellationToken.IsCancellationRequested)
+                    {
+                        return false;
+                    }
 
+                    if (_controlType.CanBeNestedUnder(childAutomationElement))
+                    {
+                        _elementQueue.Enqueue(childAutomationElement);
+                    }
+
+                    childAutomationElement = TreeWalker.ControlViewWalker.GetNextSibling(childAutomationElement);
+                }
+
+                /*
                 foreach (AutomationElement automationElement in children)
                 {
                     if (_cancellationToken.IsCancellationRequested)
@@ -110,7 +115,7 @@ namespace WinAppDriver.Infrastructure
                     }
 
                     _elementQueue.Enqueue(automationElement);
-                }
+                }*/
 
                 return true;
             }

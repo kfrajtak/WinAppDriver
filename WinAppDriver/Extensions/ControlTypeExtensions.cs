@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Windows.Automation;
 
 namespace WinAppDriver.Extensions
@@ -19,9 +16,15 @@ namespace WinAppDriver.Extensions
 
             if (controlType.ProgrammaticName == ControlType.Window.ProgrammaticName)
             {
-                if (automationElement.Current.ControlType == ControlType.Custom && automationElement.Current.Name.StartsWith("Row "))
+                // TODO these are application specific optimizations reducing Window lookup time and should be refactored out to configuration or capabilities
+                if (Regex.IsMatch(automationElement.Current.Name, "dbgrid", RegexOptions.Compiled | RegexOptions.IgnoreCase))
                 {
-                    // "ControlType.Custom" "Row 27" 
+                    return false;
+                }
+
+                if (automationElement.Current.ControlType == ControlType.Custom && 
+                    Regex.IsMatch(automationElement.Current.Name, @"Row\s*\d+", RegexOptions.Compiled | RegexOptions.IgnoreCase))
+                {
                     return false;
                 }
             }
@@ -40,7 +43,6 @@ namespace WinAppDriver.Extensions
                     ControlType.Tab,
                     ControlType.TabItem,
                     ControlType.Table,
-                    ControlType.TitleBar,
                     ControlType.Window,
                     ControlType.Custom,
                     ControlType.Document,
