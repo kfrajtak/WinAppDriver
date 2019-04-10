@@ -10,6 +10,7 @@ namespace WinAppDriver.Input
     {
         private readonly JArray _actions;
         private readonly CommandEnvironment _commandEnvironment;
+        private int _x, _y;
 
         public MouseActions(JArray actions, CommandEnvironment commandEnvironment)
         {
@@ -19,6 +20,9 @@ namespace WinAppDriver.Input
 
         public void Execute()
         {
+            _x = 0;
+            _y = 0;
+
             foreach (var action in _actions)
             {
                 var type = action["type"].Value<string>();
@@ -34,24 +38,51 @@ namespace WinAppDriver.Input
                     case "pointerUp":
                         Up(action);
                         break;
+                    case "pause":
+                        Pause(action);
+                        break;
                     default:
                         throw new NotImplementedException("mouse-" + type);
                 }
             }
         }
 
+        private void Pause(JToken action)
+        {
+            var duration = action.Value<int>("duration");
+            if (duration > 0)
+            {
+                System.Threading.Thread.Sleep(duration);
+            }
+        }
+
         private void Move(JToken action)
         {
-            var elementId = action["origin"].First().Last().Value<string>();
-            var element = _commandEnvironment.Cache.GetElement(elementId);
-
-            if (!element.TryGetClickablePoint(out var pt))
+            var origin = action["origin"];
+            if (origin is JValue value && value.Value<string>() == "pointer") // move relatively to actual pointer position
             {
-                var boundingRect = element.Current.BoundingRectangle;
-                pt = new System.Windows.Point(boundingRect.X + boundingRect.Height / 2, boundingRect.Y + boundingRect.Width / 2);
+                // move relatively to inner state
+                _x += action.Value<int>("x");
+                _y += action.Value<int>("y");
+                Mouse.MoveTo(new System.Drawing.Point(_x, _y));
             }
+            else
+            {
+                var elementId = origin.First().Last().Value<string>();
+                var element = _commandEnvironment.Cache.GetElement(elementId);
 
-            Mouse.MoveTo(new System.Drawing.Point((int)pt.X, (int)pt.Y));
+                if (!element.TryGetClickablePoint(out var pt))
+                {
+                    var boundingRect = element.Current.BoundingRectangle;
+                    pt = new System.Windows.Point(boundingRect.X + boundingRect.Height / 2, boundingRect.Y + boundingRect.Width / 2);
+                }
+
+                // set inner state
+                _x = (int)pt.X;
+                _y = (int)pt.Y;
+
+                Mouse.MoveTo(new System.Drawing.Point(_x, _y));
+            }            
 
             System.Threading.Thread.Sleep(action["duration"].Value<int>());
             return;
