@@ -24,14 +24,21 @@ namespace WinAppDriver.Server.CommandHandlers
                 return Response.CreateMissingParametersResponse("handle");
             }
 
-            var windowIdentifier = handle?.ToString();
-            if (windowIdentifier != CommandEnvironment.GlobalWindowHandle)
+            var windowHandleOrName = handle?.ToString();
+            if (windowHandleOrName != CommandEnvironment.GlobalWindowHandle)
             {
                 var windows = new BreadthFirstSearch().Find(environment.Cache.AutomationElement, ControlType.Window, environment.GetCancellationToken())
                     .Where(w => w.Current.ControlType == ControlType.Window)
                     .ToList();
 
-                var matchingWindow = windows.SingleOrDefault(w => w.Current.AutomationId == windowIdentifier);
+                // match by handle first
+                var matchingWindow = windows.SingleOrDefault(w => w.Current.AutomationId == windowHandleOrName);
+                // match by name when not matched by handle
+                if (matchingWindow == null)
+                {
+                    matchingWindow = windows.SingleOrDefault(w => w.GetAutomationElementPropertyValue("Name").Equals(windowHandleOrName));
+                }
+
                 if (matchingWindow != null)
                 {
                     // if any of those windows is modal and it is not the window that user is switching to, return an error
