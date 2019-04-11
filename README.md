@@ -48,22 +48,22 @@ Which Selenium commands are implemented?
 - [ ] getSessionCapabilities
 - [ ] getSessionList
 - [ ] getTitle
-- [ ] getWindowHandles
+- [X] getWindowHandles
 - [ ] getWindowPosition
 - [ ] getWindowSize
 - [ ] goBack
 - [ ] goForward
-- [ ] implicitlyWait
+- [X] implicitlyWait
 - [ ] isElementDisplayed
 - [X] isElementEnabled
 - [X] isElementSelected
 - [ ] maximizeWindow
-- [ ] mouseClick
-- [ ] mouseDoubleClick
-- [ ] mouseDown
-- [ ] mouseMoveTo
-- [ ] mouseUp
-- [ ] newSession
+- [X] mouseClick
+- [X] mouseDoubleClick
+- [X] mouseDown
+- [X] mouseMoveTo
+- [X] mouseUp
+- [X] newSession
 - [X] quit
 - [ ] refresh
 - [ ] screenshot
