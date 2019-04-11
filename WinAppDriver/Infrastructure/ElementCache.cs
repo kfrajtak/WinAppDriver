@@ -15,12 +15,21 @@ namespace WinAppDriver.Infrastructure
 
         public ElementCache(AutomationElement automationElement)
         {
-            // Automation.RemoveAllEventHandlers();
-            Handle = automationElement.NativeElement.CurrentNativeWindowHandle;
-
             AutomationElement = automationElement;
+            Cache(null);
+        }
 
-            AddToCache(new Tuple<string, AutomationElement>(GetNextElementId(), AutomationElement));            
+        public ElementCache(string elementId, AutomationElement automationElement)
+        {
+            AutomationElement = automationElement;
+            Cache(elementId);
+        }
+
+        private void Cache(string elementId)
+        {
+            Handle = AutomationElement.NativeElement.CurrentNativeWindowHandle;
+
+            AddToCache(new Tuple<string, AutomationElement>(elementId ?? GetNextElementId(), AutomationElement));
         }
 
         public IntPtr Handle { get; private set; }
@@ -104,6 +113,21 @@ namespace WinAppDriver.Infrastructure
             return _cache[id.ToString()];
         }
 
+        public bool TryGetElementKey(AutomationElement element, out string key)
+        {
+            foreach (var entry in _cache)
+            {
+                if (entry.Value == element)
+                {
+                    key = entry.Key;
+                    return true;
+                }
+            }
+
+            key = null;
+            return false;
+        }
+
         public void Dispose()
         {
             foreach (var item in _handlers)
@@ -114,6 +138,6 @@ namespace WinAppDriver.Infrastructure
             _handlers.Clear();
             _cache.Clear();
             _cacheReversed.Clear();
-        }
+        }        
     }
 }

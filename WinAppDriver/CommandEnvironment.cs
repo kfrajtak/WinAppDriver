@@ -283,8 +283,15 @@ namespace WinAppDriver.Server
                 throw new Exception("Window handle is 0.");
             }
 
+            string elementKey = null;
+            // find the window in cache
+            if (_elementCache.Count > 0)
+            {
+                Cache.TryGetElementKey(window, out elementKey);
+            }
+            
             var cache = _elementCache.AddOrUpdate(windowHwnd,
-                hwnd => new ElementCache(window),
+                hwnd => new ElementCache(elementKey, window),
                 (e, c) => c);
 
             cache.PrevWindowsHandle = _windowHwnd;
