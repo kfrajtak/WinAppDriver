@@ -8,8 +8,20 @@ namespace WinAppDriver.Server.CommandHandlers
     {
         protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters)
         {
-            var isEnabled = automationElement.GetAutomationElementPropertyValue("IsEnabled");
-            return Response.CreateSuccessResponse(isEnabled);
+            // walk the tree up to be sure all element ancestors are enabled
+            do
+            {
+                var isEnabled = automationElement.GetAutomationElementPropertyValue("IsEnabled");
+                if (!(bool)isEnabled)
+                {
+                    return Response.CreateSuccessResponse(isEnabled);
+                }
+
+                automationElement = TreeWalker.RawViewWalker.GetParent(automationElement);
+            }
+            while (automationElement != null);
+
+            return Response.CreateSuccessResponse(true);
         }
     }
 }

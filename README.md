@@ -55,7 +55,7 @@ Which Selenium commands are implemented?
 - [ ] goForward
 - [ ] implicitlyWait
 - [ ] isElementDisplayed
-- [ ] isElementEnabled
+- [X] isElementEnabled
 - [X] isElementSelected
 - [ ] maximizeWindow
 - [ ] mouseClick
