@@ -77,26 +77,23 @@ namespace WinAppDriver.Input
 
         public void Execute()
         {
-            var keys = _actions
-                .Cast<JObject>().Where(action =>
-                {
-                    var actionType = action.GetValue("type").Value<string>();
-                    return actionType == "keyDown";
-                })
-                .Select(action =>
-                {
-                    var keyCode = action["value"].Value<string>()[0];
-                    if (!TryGetKey(keyCode, out var key))
-                    {
-                        throw new NotSupportedException("Unknown key code: " + (int)keyCode);
-                    }
-                    return key;
-                })
-                .ToList();
-
-            if (keys.Any())
+            foreach (var action in _actions)
             {
-                Microsoft.Test.Input.Keyboard.Type(keys.Last(), keys.Take(keys.Count - 1).ToArray());
+                var type = action["type"].Value<string>();
+                switch (type)
+                {
+                    case "keyDown":
+                        Down(action);
+                        break;
+                    case "keyUp":
+                        Up(action);
+                        break;
+                    case "pause":
+                        Pause(action);
+                        break;
+                    default:
+                        throw new NotImplementedException("mouse-" + type);
+                }
             }
         }
 
@@ -113,6 +110,37 @@ namespace WinAppDriver.Input
             }
 
             return false;
+        }
+
+        private void Pause(JToken action)
+        {
+            var duration = action.Value<int>("duration");
+            if (duration > 0)
+            {
+                System.Threading.Thread.Sleep(duration);
+            }
+        }
+
+        private void Down(JToken action)
+        {
+            var keyCode = action["value"].Value<string>();
+            if (TryGetKey(keyCode[0], out var key))
+            {
+                Microsoft.Test.Input.Keyboard.Press(key);
+                return;
+            }
+
+            Microsoft.Test.Input.Keyboard.Type(keyCode);
+        }
+
+        private void Up(JToken action)
+        {
+            var keyCode = action["value"].Value<string>();
+            if (TryGetKey(keyCode[0], out var key))
+            {
+                Microsoft.Test.Input.Keyboard.Release(key);
+                return;
+            }            
         }
     }
 }

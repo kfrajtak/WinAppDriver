@@ -26,7 +26,6 @@ namespace WinAppDriver.Input
             foreach (var action in _actions)
             {
                 var type = action["type"].Value<string>();
-                System.Diagnostics.Trace.WriteLine(type);
                 switch (type)
                 {
                     case "pointerMove":
@@ -82,9 +81,9 @@ namespace WinAppDriver.Input
                 _y = (int)pt.Y;
 
                 Mouse.MoveTo(new System.Drawing.Point(_x, _y));
-            }            
+            }
 
-            System.Threading.Thread.Sleep(action["duration"].Value<int>());
+            Pause(action);
             return;
 
         }

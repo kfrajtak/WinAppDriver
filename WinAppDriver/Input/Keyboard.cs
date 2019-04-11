@@ -224,8 +224,7 @@ namespace Microsoft.Test.Input
         /// <param name="key">The key to press.</param>
         public static void Press(Key key)
         {
-            var keySpec = GetKeySpecFromKey(key);
-            System.Diagnostics.Trace.WriteLine(keySpec.Name + " " + keySpec.KeyCode);
+            var keySpec = GetKeySpecFromKey(key);            
             SendKeyboardKey(keySpec.KeyCode, true, keySpec.IsExtended, false);
         }
 
@@ -314,6 +313,12 @@ namespace Microsoft.Test.Input
             KeySpec resultKey;
             if (!KeyBoardKeys.TryGetValue(key, out resultKey))
             {
+                if (!Enum.IsDefined(typeof(Key), key))
+                {
+                    // NOTE undefined keys - most likely ASCII
+                    return new KeySpec(key.ToString()[0], false, key.ToString());
+                }
+
                 resultKey = new KeySpec();
             }
 
