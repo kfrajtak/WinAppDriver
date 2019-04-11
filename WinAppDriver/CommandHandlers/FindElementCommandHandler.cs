@@ -59,10 +59,7 @@ namespace WinAppDriver.Server.CommandHandlers
                 return Response.CreateMissingParametersResponse("value");
             }
 
-            var tokenSource = new CancellationTokenSource();
-            tokenSource.CancelAfter(environment.ImplicitWaitTimeout);
-            var token = tokenSource.Token;
-
+            var token = environment.GetCancellationToken();
             var element = environment.Cache.FindElements(mechanism.ToString(), criteria.ToString(), token).FirstOrDefault();
             if (element == null)
             {

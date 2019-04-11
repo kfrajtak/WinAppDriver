@@ -59,9 +59,7 @@ namespace WinAppDriver.Server.CommandHandlers
                 return Response.CreateMissingParametersResponse("value");
             }
 
-            var tokenSource = new CancellationTokenSource();
-            tokenSource.CancelAfter(environment.ImplicitWaitTimeout);
-            var token = tokenSource.Token;
+            var token = environment.GetCancellationToken();
 
             string errorMessage = string.Format(CultureInfo.InvariantCulture, "No elements found for {0} == '{1}'", mechanism.ToString(), criteria.ToString());
 
