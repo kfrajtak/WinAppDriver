@@ -313,12 +313,6 @@ namespace Microsoft.Test.Input
             KeySpec resultKey;
             if (!KeyBoardKeys.TryGetValue(key, out resultKey))
             {
-                if (!Enum.IsDefined(typeof(Key), key))
-                {
-                    // NOTE undefined keys - most likely ASCII
-                    return new KeySpec(key.ToString()[0], false, key.ToString());
-                }
-
                 resultKey = new KeySpec();
             }
 

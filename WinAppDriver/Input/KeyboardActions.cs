@@ -77,6 +77,7 @@ namespace WinAppDriver.Input
 
         public void Execute()
         {
+            // TODO implement a state diagram to speed up typing - isolate group of keypresses (down & up) and create a string for typing (Type method)
             foreach (var action in _actions)
             {
                 var type = action["type"].Value<string>();
@@ -99,6 +100,13 @@ namespace WinAppDriver.Input
 
         private bool TryGetKey(char keyCode, out Microsoft.Test.Input.Key key)
         {
+            // NOTE hack, 0-9 were not sent to controls
+            if (keyCode >= '0' && keyCode <= '9')
+            {
+                key = Microsoft.Test.Input.Key.D0 + (keyCode - '0');
+                return true;
+            }
+
             if (_map.TryGetValue(keyCode, out key))
             {
                 return true;
