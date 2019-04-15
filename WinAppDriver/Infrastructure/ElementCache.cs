@@ -8,6 +8,9 @@ namespace WinAppDriver.Infrastructure
 {
     public class ElementCache : IDisposable
     {
+        private int _counter = 1;
+        private readonly ElementCache _parentCache;
+
         public ElementCache(IntPtr hwnd, AutomationElement automationElement) : this(automationElement)
         {
             Handle = hwnd;
@@ -19,9 +22,10 @@ namespace WinAppDriver.Infrastructure
             Cache(null);
         }
 
-        public ElementCache(string elementId, AutomationElement automationElement)
+        public ElementCache(string elementId, AutomationElement automationElement, ElementCache parentCache)
         {
             AutomationElement = automationElement;
+            _parentCache = parentCache;
             Cache(elementId);
         }
 
@@ -64,8 +68,6 @@ namespace WinAppDriver.Infrastructure
                     return new Tuple<string, AutomationElement>(GetNextElementId(), found);
                 });
         }
-
-        private int _counter = 1;
 
         private string GetNextElementId() => $"{Handle}_{_counter++}";
 
@@ -110,7 +112,17 @@ namespace WinAppDriver.Infrastructure
 
         public AutomationElement GetElement(object id)
         {
-            return _cache[id.ToString()];
+            if (_cache.TryGetValue(id.ToString(), out var element))
+            {
+                return element;
+            }
+
+            if (_parentCache != null)
+            {
+                return _parentCache.GetElement(id);
+            }
+
+            return null;
         }
 
         public bool TryGetElementKey(AutomationElement element, out string key)
@@ -122,6 +134,11 @@ namespace WinAppDriver.Infrastructure
                     key = entry.Key;
                     return true;
                 }
+            }
+
+            if (_parentCache != null)
+            {
+                return _parentCache.TryGetElementKey(element, out key);
             }
 
             key = null;
