@@ -131,8 +131,9 @@ namespace WinAppDriver.Server
             this.handlers.Add(DriverCommand.DeleteAllCookies, new DeleteAllCookiesCommandHandler());
             this.handlers.Add(DriverCommand.GetCurrentWindowHandle, new GetCurrentWindowHandleCommandHandler());
             this.handlers.Add(DriverCommand.GetWindowHandles, new GetWindowHandlesCommandHandler());
-            this.handlers.Add(DriverCommand.GetWindowPosition, new GetWindowPositionCommandHandler());
-            this.handlers.Add(DriverCommand.GetWindowSize, new GetWindowSizeCommandHandler());
+            this.handlers.Add(DriverCommand.GetWindowPosition, new GetWindowRectCommandHandler());
+            this.handlers.Add(DriverCommand.GetWindowSize, new GetWindowRectCommandHandler());
+            this.handlers.Add(DriverCommand.GetWindowRect, new GetWindowRectCommandHandler());
             this.handlers.Add(DriverCommand.SetWindowPosition, new NoOpCommandHandler());
             this.handlers.Add(DriverCommand.SetWindowSize, new NoOpCommandHandler());
             this.handlers.Add(DriverCommand.MaximizeWindow, new NoOpCommandHandler());

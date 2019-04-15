@@ -132,7 +132,6 @@
     <Compile Include="CommandHandlers\GetPageSourceCommandHandler.cs" />
     <Compile Include="CommandHandlers\GetTitleCommandHandler.cs" />
     <Compile Include="CommandHandlers\GetWindowHandlesCommandHandler.cs" />
-    <Compile Include="CommandHandlers\GetWindowPositionCommandHandler.cs" />
     <Compile Include="CommandHandlers\GetWindowRectCommandHandler.cs" />
     <Compile Include="CommandHandlers\GoBackCommandHandler.cs" />
     <Compile Include="CommandHandlers\GoForwardCommandHandler.cs" />

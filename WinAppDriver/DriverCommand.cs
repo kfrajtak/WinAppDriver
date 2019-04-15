@@ -285,6 +285,11 @@ namespace WinAppDriver.Server
         public static readonly string GetWindowSize = "getWindowSize";
 
         /// <summary>
+        /// Represents GetWindowRect command
+        /// </summary>
+        public static readonly string GetWindowRect = "getWindowRect";
+
+        /// <summary>
         /// Represents SetWindowSize command
         /// </summary>
         public static readonly string SetWindowSize = "setWindowSize";
