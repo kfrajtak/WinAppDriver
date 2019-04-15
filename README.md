@@ -50,7 +50,7 @@ Which Selenium commands are implemented?
 - [ ] getTitle
 - [X] getWindowHandles
 - [ ] getWindowPosition
-- [ ] getWindowSize
+- [X] getWindowRect/getWindowSize
 - [ ] goBack
 - [ ] goForward
 - [X] implicitlyWait
