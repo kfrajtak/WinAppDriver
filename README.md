@@ -15,12 +15,9 @@ Why another driver when there already is https://github.com/Microsoft/WinAppDriv
 Which Selenium commands are implemented?
 - [ ] acceptAlert
 - [X] actions
-- [ ] addCookie
 - [X] clearElement
 - [X] clickElement
 - [X] close
-- [ ] deleteAllCookies
-- [ ] deleteCookie
 - [ ] describeElement
 - [ ] dismissAlert
 - [ ] elementEquals
@@ -33,8 +30,6 @@ Which Selenium commands are implemented?
 - [ ] get
 - [ ] getActiveElement
 - [ ] getAlertText
-- [ ] getCookies
-- [ ] getCurrentUrl
 - [ ] getCurrentWindowHandle
 - [ ] getElementAttribute
 - [ ] getElementLocation
@@ -43,16 +38,12 @@ Which Selenium commands are implemented?
 - [X] getElementTagName
 - [X] getElementText
 - [ ] getElementValueOfCssProperty
-- [ ] getOrientation
-- [ ] getPageSource
 - [ ] getSessionCapabilities
 - [ ] getSessionList
 - [ ] getTitle
 - [X] getWindowHandles
 - [X] getWindowPosition
 - [X] getWindowRect/getWindowSize
-- [ ] goBack
-- [ ] goForward
 - [X] implicitlyWait
 - [ ] isElementDisplayed
 - [X] isElementEnabled
@@ -70,14 +61,11 @@ Which Selenium commands are implemented?
 - [X] sendKeysToActiveElement
 - [X] sendKeysToElement
 - [ ] setAlertValue
-- [ ] setOrientation
-- [ ] setScriptTimeout
 - [ ] setTimeout
 - [ ] setWindowPosition
 - [ ] setWindowSize
 - [ ] status
 - [ ] submitElement
-- [ ] switchToFrame
 - [ ] switchToWindow
 - [ ] touchDoubleTap
 - [ ] touchDown
@@ -88,6 +76,20 @@ Which Selenium commands are implemented?
 - [ ] touchSingleTap
 - [ ] touchUp
 - [ ] uploadFile
+
+Unsupported Selenium commands
+- addCookie
+- deleteAllCookies
+- deleteCookie
+- getCookies
+- getCurrentUrl
+- getOrientation
+- getPageSource
+- goBack
+- goForward
+- setOrientation
+- setScriptTimeout
+- switchToFrame
 
 XPath support:
 - [ ] axes 

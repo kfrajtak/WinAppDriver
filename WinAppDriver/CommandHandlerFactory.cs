@@ -24,11 +24,7 @@
 // USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // </copyright>
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WinAppDriver.Server.CommandHandlers;
 
 namespace WinAppDriver.Server
@@ -90,13 +86,13 @@ namespace WinAppDriver.Server
             this.handlers.Add(DriverCommand.NewSession, new NewSessionCommandHandler());
             this.handlers.Add(DriverCommand.Get, new GoToUrlCommandHandler());
             this.handlers.Add(DriverCommand.GetAlertText, new GetAlertTextCommandHandler());
-            this.handlers.Add(DriverCommand.GetCurrentUrl, new GetCurrentUrlCommandHandler());
+            //this.handlers.Add(DriverCommand.GetCurrentUrl, new GetCurrentUrlCommandHandler());
             this.handlers.Add(DriverCommand.GetTitle, new GetTitleCommandHandler());
-            this.handlers.Add(DriverCommand.GetPageSource, new GetPageSourceCommandHandler());
-            this.handlers.Add(DriverCommand.GoForward, new GoForwardCommandHandler());
-            this.handlers.Add(DriverCommand.GoBack, new GoBackCommandHandler());
+            //this.handlers.Add(DriverCommand.GetPageSource, new GetPageSourceCommandHandler());
+            //this.handlers.Add(DriverCommand.GoForward, new GoForwardCommandHandler());
+            //this.handlers.Add(DriverCommand.GoBack, new GoBackCommandHandler());
             this.handlers.Add(DriverCommand.Refresh, new RefreshCommandHandler());
-            this.handlers.Add(DriverCommand.SwitchToFrame, new SwitchToFrameCommandHandler());
+            //this.handlers.Add(DriverCommand.SwitchToFrame, new SwitchToFrameCommandHandler());
             this.handlers.Add(DriverCommand.SwitchToWindow, new SwitchToWindowCommandHandler());
             this.handlers.Add(DriverCommand.ElementEquals, new ElementEqualsCommandHandler());
             this.handlers.Add(DriverCommand.GetActiveElement, new GetActiveElementCommandHandler());
@@ -121,14 +117,14 @@ namespace WinAppDriver.Server
             this.handlers.Add(DriverCommand.ExecuteScript, new ExecuteScriptCommandHandler());
             this.handlers.Add(DriverCommand.ExecuteAsyncScript, new ExecuteAsyncScriptCommandHandler());
             this.handlers.Add(DriverCommand.ImplicitlyWait, new SetImplicitWaitTimeoutCommandHandler());
-            this.handlers.Add(DriverCommand.SetAsyncScriptTimeout, new SetAsyncScriptTimeoutCommandHandler());
-            this.handlers.Add(DriverCommand.SetTimeout, new SetTimeoutCommandHandler());
+            //this.handlers.Add(DriverCommand.SetAsyncScriptTimeout, new SetAsyncScriptTimeoutCommandHandler());
+            //this.handlers.Add(DriverCommand.SetTimeout, new SetTimeoutCommandHandler());
             this.handlers.Add(DriverCommand.Quit, new QuitCommandHandler());
             this.handlers.Add(DriverCommand.Close, new CloseCommandHandler());
             //this.handlers.Add(DriverCommand.AddCookie, new AddCookieCommandHandler());
-            this.handlers.Add(DriverCommand.GetAllCookies, new GetAllCookiesCommandHandler());
+            //this.handlers.Add(DriverCommand.GetAllCookies, new GetAllCookiesCommandHandler());
             //this.handlers.Add(DriverCommand.DeleteCookie, new DeleteCookieCommandHandler());
-            this.handlers.Add(DriverCommand.DeleteAllCookies, new DeleteAllCookiesCommandHandler());
+            //this.handlers.Add(DriverCommand.DeleteAllCookies, new DeleteAllCookiesCommandHandler());
             this.handlers.Add(DriverCommand.GetCurrentWindowHandle, new GetCurrentWindowHandleCommandHandler());
             this.handlers.Add(DriverCommand.GetWindowHandles, new GetWindowHandlesCommandHandler());
             this.handlers.Add(DriverCommand.GetWindowPosition, new GetWindowRectCommandHandler());
@@ -137,7 +133,7 @@ namespace WinAppDriver.Server
             this.handlers.Add(DriverCommand.SetWindowPosition, new NoOpCommandHandler());
             this.handlers.Add(DriverCommand.SetWindowSize, new NoOpCommandHandler());
             this.handlers.Add(DriverCommand.MaximizeWindow, new NoOpCommandHandler());
-            this.handlers.Add(DriverCommand.GetOrientation, new GetOrientationCommandHandler());
+            //this.handlers.Add(DriverCommand.GetOrientation, new GetOrientationCommandHandler());
             this.handlers.Add(DriverCommand.SendKeysToActiveElement, new SendKeysToActiveElementCommandHandler());
             this.handlers.Add(DriverCommand.MouseClick, new MouseClickCommandHandler());
             this.handlers.Add(DriverCommand.MouseMoveTo, new MouseMoveCommandHandler());
