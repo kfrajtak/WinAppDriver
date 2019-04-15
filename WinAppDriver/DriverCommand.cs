@@ -295,6 +295,11 @@ namespace WinAppDriver.Server
         public static readonly string SetWindowSize = "setWindowSize";
 
         /// <summary>
+        /// Represents SetWindowRect command
+        /// </summary>
+        public static readonly string SetWindowRect = "setWindowRect";
+
+        /// <summary>
         /// Represents GetWindowPosition command
         /// </summary>
         public static readonly string GetWindowPosition = "getWindowPosition";
@@ -308,6 +313,11 @@ namespace WinAppDriver.Server
         /// Represents MaximizeWindow command
         /// </summary>
         public static readonly string MaximizeWindow = "maximizeWindow";
+
+        /// <summary>
+        /// Represents MinimizeWindow command
+        /// </summary>
+        public static readonly string MinimizeWindow = "minimizeWindow";
 
         /// <summary>
         /// Represents the DismissAlert command

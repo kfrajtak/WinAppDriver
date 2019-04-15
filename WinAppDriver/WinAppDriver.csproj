@@ -91,6 +91,8 @@
     <Compile Include="CommandHandlers\GetAlertTextCommandHandler.cs" />
     <Compile Include="CommandHandlers\GetElementRectCommandHandler.cs" />
     <Compile Include="CommandHandlers\CloseCommandHandler.cs" />
+    <Compile Include="CommandHandlers\ResizeWindowCommandHandler.cs" />
+    <Compile Include="CommandHandlers\SetWindowRectCommandHandler.cs" />
     <Compile Include="EventHandler.cs" />
     <Compile Include="Exceptions\InvalidSelectorException.cs" />
     <Compile Include="Exceptions\ElementNotDisplayedException.cs" />
@@ -109,7 +111,6 @@
     <Compile Include="CommandHandlers\ClearElementCommandHandler.cs" />
     <Compile Include="CommandHandlers\ClickElementCommandHandler.cs" />
     <Compile Include="CommandHandlers\CommandHandler.cs" />
-    <Compile Include="CommandHandlers\DeleteAllCookiesCommandHandler.cs" />
     <Compile Include="CommandHandlers\ElementEqualsCommandHandler.cs" />
     <Compile Include="CommandHandlers\ExecuteAsyncScriptCommandHandler.cs" />
     <Compile Include="CommandHandlers\ExecuteScriptCommandHandler.cs" />
@@ -118,8 +119,6 @@
     <Compile Include="CommandHandlers\FindElementCommandHandler.cs" />
     <Compile Include="CommandHandlers\FindElementsCommandHandler.cs" />
     <Compile Include="CommandHandlers\GetActiveElementCommandHandler.cs" />
-    <Compile Include="CommandHandlers\GetAllCookiesCommandHandler.cs" />
-    <Compile Include="CommandHandlers\GetCurrentUrlCommandHandler.cs" />
     <Compile Include="CommandHandlers\GetCurrentWindowHandleCommandHandler.cs" />
     <Compile Include="CommandHandlers\GetElementAttributeValueCommandHandler.cs" />
     <Compile Include="CommandHandlers\GetElementCssPropertyValueCommandHandler.cs" />
@@ -128,14 +127,9 @@
     <Compile Include="CommandHandlers\GetElementSizeCommandHandler.cs" />
     <Compile Include="CommandHandlers\GetElementTagNameCommandHandler.cs" />
     <Compile Include="CommandHandlers\GetElementTextCommandHandler.cs" />
-    <Compile Include="CommandHandlers\GetOrientationCommandHandler.cs" />
-    <Compile Include="CommandHandlers\GetPageSourceCommandHandler.cs" />
     <Compile Include="CommandHandlers\GetTitleCommandHandler.cs" />
     <Compile Include="CommandHandlers\GetWindowHandlesCommandHandler.cs" />
     <Compile Include="CommandHandlers\GetWindowRectCommandHandler.cs" />
-    <Compile Include="CommandHandlers\GoBackCommandHandler.cs" />
-    <Compile Include="CommandHandlers\GoForwardCommandHandler.cs" />
-    <Compile Include="CommandHandlers\GoToUrlCommandHandler.cs" />
     <Compile Include="CommandHandlers\IsElementDisplayedCommandHandler.cs" />
     <Compile Include="CommandHandlers\IsElementEnabledCommandHandler.cs" />
     <Compile Include="CommandHandlers\IsElementSelectedCommandHandler.cs" />
@@ -148,7 +142,6 @@
     <Compile Include="CommandHandlers\NoOpCommandHandler.cs" />
     <Compile Include="CommandHandlers\NotImplementedCommandHandler.cs" />
     <Compile Include="CommandHandlers\QuitCommandHandler.cs" />
-    <Compile Include="CommandHandlers\RefreshCommandHandler.cs" />
     <Compile Include="CommandHandlers\ScreenshotCommandHandler.cs" />
     <Compile Include="CommandHandlers\SendKeysCommandHandler.cs" />
     <Compile Include="CommandHandlers\SendKeysToActiveElementCommandHandler.cs" />
@@ -157,7 +150,6 @@
     <Compile Include="CommandHandlers\SetTimeoutCommandHandler.cs" />
     <Compile Include="CommandHandlers\StatusCommandHandler.cs" />
     <Compile Include="CommandHandlers\SubmitCommandHandler.cs" />
-    <Compile Include="CommandHandlers\SwitchToFrameCommandHandler.cs" />
     <Compile Include="CommandHandlers\SwitchToWindowCommandHandler.cs" />
     <Compile Include="DriverCommand.cs" />
     <Compile Include="Infrastructure\CacheStore.cs" />
