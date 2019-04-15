@@ -284,14 +284,16 @@ namespace WinAppDriver.Server
             }
 
             string elementKey = null;
+            ElementCache parentCache = null;
             // find the window in cache
             if (_elementCache.Count > 0)
             {
+                parentCache = Cache;
                 Cache.TryGetElementKey(window, out elementKey);
             }
             
             var cache = _elementCache.AddOrUpdate(windowHwnd,
-                hwnd => new ElementCache(elementKey, window),
+                hwnd => new ElementCache(elementKey, window, parentCache),
                 (e, c) => c);
 
             cache.PrevWindowsHandle = _windowHwnd;
