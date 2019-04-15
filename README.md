@@ -45,7 +45,7 @@ Which Selenium commands are implemented?
 - [X] getWindowPosition
 - [X] getWindowRect/getWindowSize
 - [X] implicitlyWait
-- [ ] isElementDisplayed
+- [X] isElementDisplayed
 - [X] isElementEnabled
 - [X] isElementSelected
 - [ ] maximizeWindow
