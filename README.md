@@ -57,7 +57,7 @@ Which Selenium commands are implemented?
 - [X] newSession
 - [X] quit
 - [ ] refresh
-- [ ] screenshot
+- [X] screenshot
 - [X] sendKeysToActiveElement
 - [X] sendKeysToElement
 - [ ] setAlertValue

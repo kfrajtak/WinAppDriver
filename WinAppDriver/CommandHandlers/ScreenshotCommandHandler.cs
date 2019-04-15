@@ -26,8 +26,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
 using System.IO;
-using System.Threading;
 
 namespace WinAppDriver.Server.CommandHandlers
 {
@@ -44,27 +44,26 @@ namespace WinAppDriver.Server.CommandHandlers
         /// <returns>The JSON serialized string representing the command response.</returns>
         public override Response Execute(CommandEnvironment environment, Dictionary<string, object> parameters)
         {
+            var capture = new Cyotek.Demo.SimpleScreenshotCapture.ScreenshotCapture();
+            var bitmap = capture.CaptureWindow(environment.ApplicationWindowHandle);
             string screenshot = string.Empty;
+
+            using (MemoryStream stream = new MemoryStream())
+            {
+                bitmap.Save(stream, ImageFormat.Png);
+                byte[] imageBytes = stream.ToArray();
+
+                screenshot = Convert.ToBase64String(imageBytes);
+            }
+
+            return Response.CreateSuccessResponse(screenshot);
+            /*
             ManualResetEvent synchronizer = new ManualResetEvent(false);
-            throw new NotImplementedException();/*
+            throw new NotImplementedException();
+
             Deployment.Current.Dispatcher.BeginInvoke(() =>
             {
-                int width = Convert.ToInt32(environment.Browser.ActualWidth);
-                int height = Convert.ToInt32(environment.Browser.ActualHeight);
-                
-                var bitmap = new WriteableBitmap(width, height);
-
-                bitmap.Render(environment.Browser, null);
-                bitmap.Invalidate();
-
-                using (MemoryStream stream = new MemoryStream())
-                {
-                    // TODO: Need to improve performance of SavePng extension method.
-                    bitmap.SavePng(stream);
-                    byte[] imageBytes = stream.ToArray();
-
-                    screenshot = Convert.ToBase64String(imageBytes);
-                }
+                ...
 
                 synchronizer.Set();
             });

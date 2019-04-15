@@ -182,6 +182,8 @@
     <Compile Include="Response.cs" />
     <Compile Include="SeleniumModule.cs" />
     <Compile Include="TextEventArgs.cs" />
+    <Compile Include="Utils\NativeMethods.cs" />
+    <Compile Include="Utils\ScreenshotCapture.cs" />
     <Compile Include="WebBrowserNavigationMonitor.cs" />
     <Compile Include="WebDriverAtoms.cs" />
     <Compile Include="WebDriverStatusCode.cs" />
