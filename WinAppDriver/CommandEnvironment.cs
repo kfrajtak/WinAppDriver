@@ -30,6 +30,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Automation;
+using System.Linq;
 
 namespace WinAppDriver.Server
 {
@@ -108,6 +109,8 @@ namespace WinAppDriver.Server
         }
 
         public CommandEnvironment() { }
+
+        public AutomationElement RootElement => AutomationElement.FromHandle(_hwnd);
 
         public UnexpectedAlertBehavior2.Handler Handler { get; set; }
 
@@ -269,6 +272,13 @@ namespace WinAppDriver.Server
             {
                 this.ClearAlertStatus();
             }
+        }
+
+        public IEnumerable<AutomationElement> GetWindows()
+        {
+            return new BreadthFirstSearch().Find(RootElement, ControlType.Window, GetCancellationToken())
+                .Where(w => w.Current.ControlType == ControlType.Window)
+                .ToList();
         }
 
         public void SwitchToWindow(AutomationElement window)

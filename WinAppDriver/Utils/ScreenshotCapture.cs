@@ -110,7 +110,7 @@ namespace Cyotek.Demo.SimpleScreenshotCapture
             return result;
         }
 
-        public Bitmap CaptureWindow(IntPtr hWnd)
+        public Rectangle GetRectangle(IntPtr hWnd)
         {
             NativeMethods.RECT region;
 
@@ -126,7 +126,12 @@ namespace Cyotek.Demo.SimpleScreenshotCapture
                 }
             }
 
-            return this.CaptureRegion(Rectangle.FromLTRB(region.left, region.top, region.right, region.bottom));
+            return Rectangle.FromLTRB(region.left, region.top, region.right, region.bottom);
+        }
+
+        public Bitmap CaptureWindow(IntPtr hWnd)
+        {
+            return this.CaptureRegion(GetRectangle(hWnd));
         }
 
         public Bitmap CaptureWindow(Form form)

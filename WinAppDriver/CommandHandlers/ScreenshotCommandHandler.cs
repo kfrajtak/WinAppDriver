@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 
@@ -45,7 +46,37 @@ namespace WinAppDriver.Server.CommandHandlers
         public override Response Execute(CommandEnvironment environment, Dictionary<string, object> parameters)
         {
             var capture = new Cyotek.Demo.SimpleScreenshotCapture.ScreenshotCapture();
-            var bitmap = capture.CaptureWindow(environment.ApplicationWindowHandle);
+
+            var region = capture.GetRectangle(environment.ApplicationWindowHandle);
+
+            // expand the screeshot region to include all application windows 
+            var windows = environment.GetWindows();
+            foreach (var window in windows)
+            {
+                var windowRegion = capture.GetRectangle(new IntPtr(window.Current.NativeWindowHandle));
+                if (windowRegion.Left < region.Left)
+                {
+                    region = Rectangle.FromLTRB(windowRegion.Left, region.Top, region.Right, region.Bottom);
+                }
+
+                if (windowRegion.Right > region.Right)
+                {
+                    region = Rectangle.FromLTRB(region.Left, region.Top, windowRegion.Right, region.Bottom);
+                }
+
+                if (windowRegion.Top < region.Top)
+                {
+                    region = Rectangle.FromLTRB(region.Left, windowRegion.Top, region.Right, region.Bottom);
+                }
+
+                if (windowRegion.Bottom > region.Bottom)
+                {
+                    region = Rectangle.FromLTRB(region.Left, region.Top, region.Right, windowRegion.Bottom);
+                }
+            }
+
+            var bitmap = capture.CaptureRegion(region);
+
             string screenshot = string.Empty;
 
             using (MemoryStream stream = new MemoryStream())
@@ -57,20 +88,6 @@ namespace WinAppDriver.Server.CommandHandlers
             }
 
             return Response.CreateSuccessResponse(screenshot);
-            /*
-            ManualResetEvent synchronizer = new ManualResetEvent(false);
-            throw new NotImplementedException();
-
-            Deployment.Current.Dispatcher.BeginInvoke(() =>
-            {
-                ...
-
-                synchronizer.Set();
-            });
-
-            synchronizer.WaitOne();
-
-            return Response.CreateSuccessResponse(screenshot);*/
         }
     }
 }

@@ -26,8 +26,6 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Automation;
-using WinAppDriver.Infrastructure;
 
 namespace WinAppDriver.Server.CommandHandlers
 {
@@ -44,9 +42,7 @@ namespace WinAppDriver.Server.CommandHandlers
         /// <returns>The JSON serialized string representing the command response.</returns>
         public override Response Execute(CommandEnvironment environment, Dictionary<string, object> parameters)
         {
-            var windows = new BreadthFirstSearch().Find(environment.Cache.AutomationElement, ControlType.Window, environment.GetCancellationToken())
-                .Where(w => w.Current.ControlType == ControlType.Window)
-                .ToList();
+            var windows = environment.GetWindows();
             object[] handles = windows.Select(w => w.Current.AutomationId).ToArray();
             return Response.CreateSuccessResponse(handles);
         }
