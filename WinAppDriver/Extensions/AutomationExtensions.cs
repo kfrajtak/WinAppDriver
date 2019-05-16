@@ -29,6 +29,11 @@ namespace WinAppDriver.Extensions
                 return element.Current.Name;
             }
 
+            if (element.Current.ControlType == ControlType.Text)
+            {
+                return element.Current.Name?.ToString();
+            }
+
             throw new NotSupportedException("GetText for " + element.ToDiagString());
         }
 
