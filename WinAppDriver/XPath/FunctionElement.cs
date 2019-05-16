@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
-using System.Threading;
 using System.Windows.Automation;
+using WinAppDriver.Exceptions;
 using WinAppDriver.Extensions;
+using WinAppDriver.XPath.Functions;
 
 namespace WinAppDriver.XPath
 {
-    public class FunctionElement : IXPathExpression, ICondition, IEvaluate
+    public class FunctionElement : FunctionElementBase, ICondition, IEvaluate
     {
         private readonly string _prefix, _name;
         private readonly IList<IXPathExpression> _args;
@@ -17,14 +18,9 @@ namespace WinAppDriver.XPath
             _args = args;
         }
 
-        public IEnumerable<AutomationElement> Find(AutomationElement root, IList<AutomationElement> collection, CancellationToken cancellationToken)
-        {
-            return collection;
-        }
-
         bool ICondition.Matches(AutomationElement element, int index)
         {
-            switch (_name)
+            /*switch (_name)
             {
                 case "contains":
                     if (_args.Count != 2)
@@ -39,7 +35,7 @@ namespace WinAppDriver.XPath
                     }
 
                     throw new System.NotImplementedException($"Unexpected types of parameters of XPath function '{_name}': '{haystack?.GetType().FullName}' and '{needle?.GetType().FullName}'.");
-            }
+            }*/
 
             throw new System.NotImplementedException($"XPath function '{_name}' cannot be used for predicate (yet).");
         }
@@ -58,7 +54,17 @@ namespace WinAppDriver.XPath
                         arg = automationElement.GetText();
                     }
 
-                    return System.Text.RegularExpressions.Regex.Replace(arg.ToString().Trim(), @"\s+", " ");
+                    if (value is string)
+                    {
+                        arg = value.ToString();
+                    }
+
+                    if (arg is string || arg == null)
+                    {
+                        return System.Text.RegularExpressions.Regex.Replace(arg?.ToString().Trim(), @"\s+", " ");
+                    }
+
+                    throw new InvalidSelectorException($"Function normalize-space expects a parameter of type string, {value.GetType()}");
             }
 
             throw new System.NotImplementedException($"XPath function '{_name}' is not implemented (yet).");

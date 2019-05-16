@@ -247,7 +247,7 @@ namespace WinAppDriver.XPath
 
         public IXPathExpression Function(string prefix, string name, IList<IXPathExpression> args)
         {
-            return new FunctionElement(prefix, name, args);
+            return Functions.FunctionElementFactory.GetFunctionElement(prefix, name, args);
         }
     }
 }
