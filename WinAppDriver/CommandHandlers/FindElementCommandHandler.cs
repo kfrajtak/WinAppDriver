@@ -63,7 +63,7 @@ namespace WinAppDriver.Server.CommandHandlers
             var element = environment.Cache.FindElements(mechanism.ToString(), criteria.ToString(), token).FirstOrDefault();
             if (element == null)
             {
-                throw new NoSuchElementException();
+                throw new NoSuchElementException($"No such element found using {mechanism} and criteria '{criteria}'.");
             }
 
             environment.Cache.AddToCache(element);

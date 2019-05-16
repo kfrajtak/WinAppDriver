@@ -3,7 +3,7 @@ using System;
 
 namespace WinAppDriver.Exceptions
 {
-    public class NoSuchElementException : Exception
+    public class NoSuchElementException : Exception, IRemoteException
     {
         public NoSuchElementException(string message = null) : base(message) { }
 

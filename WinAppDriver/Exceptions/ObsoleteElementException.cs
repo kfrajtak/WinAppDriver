@@ -3,7 +3,7 @@ using System;
 
 namespace WinAppDriver.Exceptions
 {
-    public class ObsoleteElementException : Exception
+    public class ObsoleteElementException : Exception, IRemoteException
     {
         public ObsoleteElementException(string message = null) : base(message) { }
 

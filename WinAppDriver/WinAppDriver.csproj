@@ -96,6 +96,7 @@
     <Compile Include="EventHandler.cs" />
     <Compile Include="Exceptions\InvalidSelectorException.cs" />
     <Compile Include="Exceptions\ElementNotDisplayedException.cs" />
+    <Compile Include="Exceptions\IRemoteException.cs" />
     <Compile Include="Exceptions\MissingParameterException.cs" />
     <Compile Include="Exceptions\ObsoleteElementException.cs" />
     <Compile Include="Exceptions\NoSuchElementException.cs" />

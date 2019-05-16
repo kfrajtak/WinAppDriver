@@ -3,7 +3,7 @@ using System;
 
 namespace WinAppDriver.Exceptions
 {
-    public class InvalidSelectorException : Exception
+    public class InvalidSelectorException : Exception, IRemoteException
     {
         public InvalidSelectorException(string message = null) : base(message) { }
 

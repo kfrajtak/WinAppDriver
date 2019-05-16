@@ -197,6 +197,11 @@ namespace WinAppDriver.Server
 
             System.Diagnostics.Debug.WriteLine(exception.ToString());
 
+            if (exception is Exceptions.IRemoteException re)
+            {
+                return re.GetResponse();
+            }
+
             if (exception is System.Windows.Automation.ElementNotEnabledException enee)
             {
                 return Server.Response.CreateErrorResponse(WebDriverStatusCode.InvalidElementState, enee.Message);
