@@ -25,12 +25,11 @@
 // </copyright>
 
 using WinAppDriver.Extensions;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Automation;
+using WinAppDriver.Input;
+using Newtonsoft.Json.Linq;
 
 namespace WinAppDriver.Server.CommandHandlers
 {
@@ -42,10 +41,10 @@ namespace WinAppDriver.Server.CommandHandlers
         /// <summary>
         /// Executes the command.
         /// </summary>
-        /// <param name="environment">The <see cref="CommandEnvironment"/> to use in executing the command.</param>
+        /// <param name="commandEnvironment">The <see cref="CommandEnvironment"/> to use in executing the command.</param>
         /// <param name="parameters">The <see cref="Dictionary{string, object}"/> containing the command parameters.</param>
         /// <returns>The JSON serialized string representing the command response.</returns>
-        protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters)
+        protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment commandEnvironment, Dictionary<string, object> parameters)
         {
             if (!parameters.TryGetValue("text", out var text))
             {
@@ -65,7 +64,32 @@ namespace WinAppDriver.Server.CommandHandlers
             // Normalize line endings to single line feed, as that's what the atom expects.
             //keysAsString = keysAsString.Replace("\r\n", "\n");
             //string result = this.EvaluateAtom(environment, WebDriverAtoms.Type, element, keysAsString, environment.CreateFrameObject());
-            automationElement.SetText(text?.ToString() ?? "");
+
+            if (parameters["value"] is JArray array)
+            {
+                AutomationElement.FromHandle(commandEnvironment.WindowHandle).SetFocus();
+                var actions = array.SelectMany(t =>
+                {
+                    return new[] {
+                        new JObject
+                        {
+                            ["type"] = "keyDown",
+                            ["value"] = t.Value<string>()
+                        },
+                        new JObject
+                        {
+                            ["type"] = "keyUp",
+                            ["value"] = t.Value<string>()
+                        }
+                    };
+                });
+                new KeyboardActions(new JArray(actions.ToArray()), commandEnvironment).Execute();
+            }
+            else
+            {
+                automationElement.SetText(text?.ToString() ?? "");
+            }            
+
             return Response.CreateSuccessResponse();
         }
     }
