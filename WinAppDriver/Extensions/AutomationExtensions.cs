@@ -142,5 +142,34 @@ namespace WinAppDriver.Extensions
         {
             return automationElement.Current.ControlType == ControlType.ListItem;
         }
+
+        /// <summary>
+        /// Retrieves the top-level window that contains the specified UI Automation element.
+        /// </summary>
+        /// <param name="element">The contained element.</param>
+        /// <returns>The containing top-level window element.</returns>
+        /// https://docs.microsoft.com/en-us/dotnet/api/system.windows.automation.treewalker.getparent?view=netframework-4.8#System_Windows_Automation_TreeWalker_GetParent_System_Windows_Automation_AutomationElement_System_Windows_Automation_CacheRequest_
+        public static AutomationElement GetTopLevelWindow(this AutomationElement element)
+        {
+            TreeWalker walker = TreeWalker.ControlViewWalker;
+            AutomationElement node = element;
+            
+            do
+            {
+                if (node == AutomationElement.RootElement)
+                {
+                    return node;
+                }
+
+                if (node.Current.ControlType != ControlType.Window)
+                {
+                    node = walker.GetParent(node);
+                    continue;
+                }
+
+                return node;
+            }
+            while (true);
+        }
     }
 }

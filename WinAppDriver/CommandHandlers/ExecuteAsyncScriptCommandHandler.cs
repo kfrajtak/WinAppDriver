@@ -33,6 +33,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace WinAppDriver.Server.CommandHandlers
 {
@@ -52,7 +53,30 @@ namespace WinAppDriver.Server.CommandHandlers
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Catching general exception type is expressly permitted here to allow proper reporting via JSON-serialized result.")]
         public override Response Execute(CommandEnvironment environment, Dictionary<string, object> parameters)
         {
-            throw new NotImplementedException();
+            object script;
+            if (!parameters.TryGetValue("script", out script))
+            {
+                return Response.CreateMissingParametersResponse("script");
+            }
+
+            object args;
+            if (!parameters.TryGetValue("args", out args))
+            {
+                return Response.CreateMissingParametersResponse("args");
+            }
+
+            if ("clickElement()".Equals(script.ToString()))
+            {
+                var keyValuePairs = JArray.Parse(args.ToString());
+                var elementId = keyValuePairs[0].Last().Last().ToString();
+
+                var automationElement = environment.Cache.GetElement(elementId);
+
+                AutoIt.AutoItX.ControlClick(environment.WindowHandle, automationElement.NativeElement.CurrentNativeWindowHandle);
+                return Response.CreateSuccessResponse();
+            }
+
+            return Response.CreateErrorResponse(WebDriverStatusCode.UnexpectedJavaScriptError, "Not implemented");
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Catching general exception type is expressly permitted here to allow proper reporting via JSON-serialized result.")]
@@ -82,11 +106,6 @@ namespace WinAppDriver.Server.CommandHandlers
             }
 
             return result;
-        }
-
-        private void BrowserNavigatingEventHandler(object sender, EventArgs e)
-        {
-            this.navigationStarted = true;
         }
     }
 }

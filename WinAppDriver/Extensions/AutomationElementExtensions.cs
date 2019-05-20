@@ -18,5 +18,11 @@ namespace WinAppDriver.Extensions
         {
             return (bool)automationElement.GetCurrentPropertyValue(WindowPattern.IsTopmostProperty);
         }
+
+        public static bool IsBlockedByModalWindow(this AutomationElement automationElement)
+        {
+            var value = (WindowInteractionState)automationElement.GetCurrentPropertyValue(WindowPattern.WindowInteractionStateProperty);
+            return value == WindowInteractionState.BlockedByModalWindow;
+        }
     }
 }

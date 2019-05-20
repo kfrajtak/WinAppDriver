@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Automation;
 using System.Linq;
+using WinAppDriver.Extensions;
 
 namespace WinAppDriver.Server
 {
@@ -309,6 +310,25 @@ namespace WinAppDriver.Server
             cache.PrevWindowsHandle = _windowHwnd;
             _windowHwnd = cache.Handle;
             window.SetFocus();
+        }
+
+        public AutomationElement GetModalWindow()
+        {
+            if (_hwnd == IntPtr.Zero)
+            {
+                return null;
+            }
+
+            var windows = GetWindows();
+            foreach (AutomationElement automationElement in windows)
+            {
+                if (automationElement.IsModalWindow())
+                {
+                    return automationElement;
+                }
+            }
+
+            return null;
         }
 
         public void CloseWindow(IntPtr hwnd)

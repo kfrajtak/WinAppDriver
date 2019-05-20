@@ -38,17 +38,9 @@ namespace WinAppDriver.Server.CommandHandlers
     /// </summary>
     internal class ClickElementCommandHandler : AsyncElementCommandHandler
     {
-        private readonly System.Threading.ManualResetEvent _manualResetEvent = new System.Threading.ManualResetEvent(false);
+        private readonly ManualResetEvent _manualResetEvent = new ManualResetEvent(false);
 
-        protected override Task<Response> GetResponseAsync(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters)
-        {
-            return new Task<Response>(() =>
-            {
-                return GetResponse(automationElement, environment, parameters);
-            });
-        }
-
-        protected Response GetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters)
+        protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters)
         {
             if (automationElement.TryGetCurrentPattern(InvokePattern.Pattern, out var objPattern))
             {
@@ -66,7 +58,10 @@ namespace WinAppDriver.Server.CommandHandlers
                     manualResetEvent.Set();
                 }
 
-                alertBehaviorHandler.OnUnexpectedAlert += UnexpectedAlertEventEventHandler;
+                if (alertBehaviorHandler != null)
+                {
+                    alertBehaviorHandler.OnUnexpectedAlert += UnexpectedAlertEventEventHandler;
+                }
 
                 /*Task.Factory.StartNew(p =>
                 {
@@ -109,7 +104,10 @@ namespace WinAppDriver.Server.CommandHandlers
                 // but wait for signal
                 manualResetEvent.WaitOne();
 
-                alertBehaviorHandler.OnUnexpectedAlert -= UnexpectedAlertEventEventHandler;
+                if (alertBehaviorHandler != null)
+                {
+                    alertBehaviorHandler.OnUnexpectedAlert -= UnexpectedAlertEventEventHandler;
+                }
 
                 /*if (args != null) // alert was displayed, now decide what to do next
                 {

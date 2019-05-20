@@ -53,7 +53,7 @@ namespace WinAppDriver.Server
                 }
             }
         }
-        
+
         private void AfterEach(NancyContext context)
         {
             var sb = new StringBuilder();
@@ -124,6 +124,12 @@ namespace WinAppDriver.Server
                         }
                     }
                 }
+
+                // check for unexpected alert (modal dialog)
+                /*if (commandEnvironment.GetModalWindow() != null)
+                {
+                    return Server.Response.CreateErrorResponse(WebDriverStatusCode.UnexpectedAlertOpen, "An alert was found open unexpectedly.");
+                }*/
 
                 Task<Response> t;
 
@@ -209,9 +215,7 @@ namespace WinAppDriver.Server
 
             return Server.Response.CreateErrorResponse(WebDriverStatusCode.UnknownCommand, exception.Message);
         }
-
-        //private 
-
+        
         private static IDictionary<string, T> ToDictionary<T>(object source)
         {
             var dictionary = new Dictionary<string, T>();

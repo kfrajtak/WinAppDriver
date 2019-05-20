@@ -52,55 +52,48 @@ namespace WinAppDriver.Server.CommandHandlers
 
             var token = environment.GetCancellationToken();
 
-            try
+            var element = environment.Cache.FindElements(automationElement, mechanism.ToString(), criteria.ToString(), token).FirstOrDefault();
+            if (element == null)
             {
-                var element = environment.Cache.FindElements(automationElement, mechanism.ToString(), criteria.ToString(), token).FirstOrDefault();
-                if (element == null)
-                {
-                    throw new NoSuchElementException();
-                }
+                throw new NoSuchElementException();
+            }
 
-                environment.Cache.AddToCache(element);
+            environment.Cache.AddToCache(element);
 
-                var response = new Response
-                {
-                    Status = WebDriverStatusCode.Success,
-                    SessionId = environment.SessionId,
-                    Value = new Dictionary<string, object>
+            var response = new Response
+            {
+                Status = WebDriverStatusCode.Success,
+                SessionId = environment.SessionId,
+                Value = new Dictionary<string, object>
                     {
                         { CommandEnvironment.ElementObjectKey, element.Item1 },
                         { string.Empty, element.Item2.Current.AutomationId }
                     }
-                };
+            };
 
-                if (response.Status == WebDriverStatusCode.Success)
+            if (response.Status == WebDriverStatusCode.Success)
+            {
+                // Return early for success
+                var foundElement = response.Value as Dictionary<string, object>;
+                if (foundElement != null && foundElement.ContainsKey(CommandEnvironment.ElementObjectKey))
                 {
-                    // Return early for success
-                    var foundElement = response.Value as Dictionary<string, object>;
-                    if (foundElement != null && foundElement.ContainsKey(CommandEnvironment.ElementObjectKey))
-                    {
-                        return response;
-                    }
-                }
-                else if (response.Status != WebDriverStatusCode.NoSuchElement)
-                {
-                    if (mechanism.ToString().ToUpperInvariant() != "XPATH" && response.Status == WebDriverStatusCode.InvalidSelector)
-                    {
-                        //continue;
-                    }
-
-                    // Also return early for response of not NoSuchElement.
                     return response;
                 }
+            }
+            else if (response.Status != WebDriverStatusCode.NoSuchElement)
+            {
+                if (mechanism.ToString().ToUpperInvariant() != "XPATH" && response.Status == WebDriverStatusCode.InvalidSelector)
+                {
+                    //continue;
+                }
 
-                string errorMessage = string.Format(CultureInfo.InvariantCulture, "No element found for {0} == '{1}'", mechanism.ToString(), criteria.ToString());
-                response = Response.CreateErrorResponse(WebDriverStatusCode.NoSuchElement, errorMessage);
+                // Also return early for response of not NoSuchElement.
                 return response;
             }
-            catch (Exception e)
-            {
-                throw;
-            }
+
+            string errorMessage = string.Format(CultureInfo.InvariantCulture, "No element found for {0} == '{1}'", mechanism.ToString(), criteria.ToString());
+            response = Response.CreateErrorResponse(WebDriverStatusCode.NoSuchElement, errorMessage);
+            return response;
         }
     }
 }
