@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Automation;
+using WinAppDriver.Extensions;
 
 namespace WinAppDriver.Server.CommandHandlers
 {
@@ -29,13 +30,49 @@ namespace WinAppDriver.Server.CommandHandlers
             var element = environment.Cache.GetElement(id);
             if (element != null)
             {
-                return GetResponse(element, environment, parameters);
-
+                return TryGetResponse(element, environment, parameters);
             }
 
             throw new Exceptions.NoSuchElementException();
         }
 
+        protected Response TryGetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters)
+        {
+            try
+            {
+                return GetResponse(automationElement, environment, parameters);
+            }
+            catch (Exception ex)
+            {
+                return FromException(automationElement, ex, environment);
+            }
+        }
+
         protected abstract Response GetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters);
+
+        private Response FromException(AutomationElement element, Exception exception, CommandEnvironment environment)
+        {
+            if (exception is AggregateException aggregateException)
+            {
+                return FromException(element, aggregateException.InnerException, environment);
+            }
+
+            if (exception is ElementNotEnabledException enee)
+            {
+                // maybe the interaction is not possible, because there is a modal window blocking the UI
+                var parentWindow = element.GetTopLevelWindow();
+                if (parentWindow.IsBlockedByModalWindow())
+                {
+                    return Response.CreateErrorResponse(
+                        WebDriverStatusCode.UnexpectedAlertOpen,
+                        "Interaction with the element is not possible, because there is a modal window blocking the UI.",
+                        sessionId: environment.SessionId);
+                }
+
+                return Response.CreateErrorResponse(WebDriverStatusCode.InvalidElementState, enee.Message);
+            }
+
+            throw exception;
+        }
     }
 }

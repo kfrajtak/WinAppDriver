@@ -153,7 +153,7 @@ namespace WinAppDriver.Server
                 }
 
                 bool conversion = false;
-                if (commandHandler is AsyncCommandHandler asyncCommandHandler)
+                if (commandHandler is IAsyncCommandHandler asyncCommandHandler)
                 {
                     conversion = true;
                     t = asyncCommandHandler.ExecuteAsync(commandEnvironment, command.Parameters);                    
