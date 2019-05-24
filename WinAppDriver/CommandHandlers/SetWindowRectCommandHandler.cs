@@ -6,7 +6,7 @@ using System.Windows.Automation;
 namespace WinAppDriver.Server.CommandHandlers
 {
     /// <summary>
-    /// Provides handling for the set timeout command.
+    /// Provides handling for the set window rect/size command.
     /// </summary>
     internal class SetWindowRectCommandHandler : CommandHandler
     {

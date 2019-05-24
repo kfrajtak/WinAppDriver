@@ -31,9 +31,9 @@ Which Selenium commands are implemented?
 - [X] findElements
 - [ ] get
 - [ ] getActiveElement
-- [ ] getAlertText
-- [ ] getCurrentWindowHandle
-- [ ] getElementAttribute
+- [X] getAlertText
+- [X] getCurrentWindowHandle
+- [X] getElementAttribute
 - [ ] getElementLocation
 - [ ] getElementLocationOnceScrolledIntoView
 - [X] getElementSize
@@ -42,7 +42,7 @@ Which Selenium commands are implemented?
 - [ ] getElementValueOfCssProperty
 - [ ] getSessionCapabilities
 - [ ] getSessionList
-- [ ] getTitle
+- [X] getTitle
 - [X] getWindowHandles
 - [X] getWindowPosition
 - [X] getWindowRect/getWindowSize
@@ -50,7 +50,7 @@ Which Selenium commands are implemented?
 - [X] isElementDisplayed
 - [X] isElementEnabled
 - [X] isElementSelected
-- [ ] maximizeWindow
+- [X] maximizeWindow
 - [X] mouseClick
 - [X] mouseDoubleClick
 - [X] mouseDown
@@ -65,10 +65,10 @@ Which Selenium commands are implemented?
 - [ ] setAlertValue
 - [ ] setTimeout
 - [ ] setWindowPosition
-- [ ] setWindowSize
+- [X] setWindowSize
 - [ ] status
 - [ ] submitElement
-- [ ] switchToWindow
+- [X] switchToWindow
 - [ ] touchDoubleTap
 - [ ] touchDown
 - [ ] touchFlick
@@ -113,8 +113,8 @@ XPath support:
   - [X] position predicate `//node[3]`
   - [X] attribute predicate `//node[@attribute = 'X']`
 - [ ] operators
-  - [ ] Or
-  - [ ] And
+  - [X] Or
+  - [X] And
   - [X] Eq 
   - [ ] Ne
   - [ ] Lt 
@@ -179,7 +179,7 @@ public static RemoteWebDriver CreateSession()
   DesiredCapabilities desktopCapabilities = new DesiredCapabilities();
   desktopCapabilities.SetCapability("processName", "<name of the process>");
   return new RemoteWebDriver(
-    new CommandExec(new Uri("http://127.0.0.1:12345"), 
+    new CommandExec(new Uri("http://127.0.0.1:4444"), 
     TimeSpan.FromSeconds(60)), 
     desktopCapabilities);
 }
