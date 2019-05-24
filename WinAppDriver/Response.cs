@@ -117,9 +117,9 @@ namespace WinAppDriver.Server
         /// Creates an error response with the specified error code and message.
         /// </summary>
         /// <param name="errorCode">The error code of the response.</param>
-        /// <param name="errorMessage">The error message containing information about the error.</param>
+        /// <param name="message">The error message containing information about the error.</param>
         /// <returns>The response indicating an unsuccessful command execution.</returns>
-        public static Response CreateErrorResponse(int errorCode, string errorMessage, object payload = null, string sessionId = null)
+        public static Response CreateErrorResponse(int errorCode, string message, string error = null, object payload = null, string sessionId = null)
         {
             Response response = new Response
             {
@@ -129,8 +129,8 @@ namespace WinAppDriver.Server
 
             Dictionary<string, object> errorDetails = new Dictionary<string, object>
             {
-                ["error"] = errorMessage,
-                ["message"] = errorMessage
+                ["error"] = error,
+                ["message"] = message
             };
 
             if (payload != null)

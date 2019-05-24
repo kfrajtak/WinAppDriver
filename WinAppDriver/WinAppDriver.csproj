@@ -84,6 +84,7 @@
     <Compile Include="Behaviors\UnexpectedAlertBehavior2.cs" />
     <Compile Include="Behaviors\UnexpectedAlertBehavior.cs" />
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="CommandHandlers\AcceptAlertCommandHandler.cs" />
     <Compile Include="CommandHandlers\ActionsCommandHandler.cs" />
     <Compile Include="CommandHandlers\IAsyncCommandHandler.cs" />
     <Compile Include="CommandHandlers\AsyncElementCommandHandler.cs" />
@@ -176,6 +177,7 @@
     <Compile Include="SeleniumModule.cs" />
     <Compile Include="TextEventArgs.cs" />
     <Compile Include="Utils\NativeMethods.cs" />
+    <Compile Include="Utils\PointComparer.cs" />
     <Compile Include="Utils\ScreenshotCapture.cs" />
     <Compile Include="WebBrowserNavigationMonitor.cs" />
     <Compile Include="WebDriverAtoms.cs" />

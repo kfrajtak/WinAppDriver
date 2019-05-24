@@ -4,7 +4,7 @@ using System.Windows.Automation;
 
 namespace WinAppDriver.XPath.Functions
 {
-    public class Contains : FunctionElementBase, ICondition
+    public class Contains : FunctionElementBase, ICondition, IEvaluate
     {
         private readonly IList<IXPathExpression> _args;
 
@@ -13,7 +13,12 @@ namespace WinAppDriver.XPath.Functions
             _args = args;
         }
 
-        bool ICondition.Matches(AutomationElement element, int index)
+        public object Evaluate(AutomationElement element)
+        {
+            return Matches(element, -1);
+        }
+
+        public bool Matches(AutomationElement element, int index)
         {
             if (_args.Count != 2)
             {

@@ -1,9 +1,10 @@
-﻿using WinAppDriver.Server;
-using WinAppDriver.Server.CommandHandlers;
-using System;
+﻿using System.Linq;
 using System.Collections.Generic;
+using WinAppDriver.XPath.Iterators;
 using System.Windows.Automation;
+using System;
 using WinAppDriver.Extensions;
+using WinAppDriver.Utils;
 
 namespace WinAppDriver.Server.CommandHandlers
 {
@@ -17,7 +18,13 @@ namespace WinAppDriver.Server.CommandHandlers
                 return Response.CreateErrorResponse(WebDriverStatusCode.NoAlertPresent, string.Empty);
             }
 
-            return Response.CreateSuccessResponse("Blabla");
+            var enumerable = new DescendantIterator(modalWindow, false, environment.GetCancellationToken()).Cast<AutomationElement>()
+                .Where(el => el.Current.ControlType == ControlType.Text || el.Current.ControlType == ControlType.Edit)
+                .OrderBy(el => el.Current.BoundingRectangle.TopLeft, new PointComparer());
+
+            var alertText = string.Join(Environment.NewLine, enumerable.Select(el => el.GetText()));
+            
+            return Response.CreateSuccessResponse(alertText);
         }
     }
 }

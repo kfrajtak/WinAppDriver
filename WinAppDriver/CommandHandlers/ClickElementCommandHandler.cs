@@ -42,6 +42,11 @@ namespace WinAppDriver.Server.CommandHandlers
 
         protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters)
         {
+            return GetResponse(automationElement, environment);
+        }
+
+        public Response GetResponse(AutomationElement automationElement, CommandEnvironment environment)
+        { 
             if (automationElement.TryGetCurrentPattern(InvokePattern.Pattern, out var objPattern))
             {
                 //AutoIt.AutoItX.ControlClick(environment.WindowHandle, automationElement.NativeElement.CurrentNativeWindowHandle);

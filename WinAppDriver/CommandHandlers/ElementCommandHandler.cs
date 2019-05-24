@@ -63,9 +63,12 @@ namespace WinAppDriver.Server.CommandHandlers
                 var parentWindow = element.GetTopLevelWindow();
                 if (parentWindow.IsBlockedByModalWindow())
                 {
+                    var modalWindow = environment.GetModalWindow();
                     return Response.CreateErrorResponse(
                         WebDriverStatusCode.UnexpectedAlertOpen,
                         "Interaction with the element is not possible, because there is a modal window blocking the UI.",
+                        payload: modalWindow?.GetText(),
+                        error: "Invalid element state",
                         sessionId: environment.SessionId);
                 }
 

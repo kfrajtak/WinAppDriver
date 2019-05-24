@@ -80,6 +80,7 @@ namespace WinAppDriver.Server
 
         private object HandleCommand(string commandName, dynamic data, Dictionary<string, object> parameters = null)
         {
+            CommandEnvironment commandEnvironment = null;
             try
             {
                 var p2 = new Dictionary<string, object>(data);
@@ -106,7 +107,7 @@ namespace WinAppDriver.Server
                 };
 
                 var sessionId = command.SessionId?.ToString();
-                var commandEnvironment = new CommandEnvironment();
+                commandEnvironment = new CommandEnvironment();
                 if (sessionId != null)
                 {
                     if (CacheStore.CommandStore.TryGetValue(sessionId, out commandEnvironment))
@@ -148,7 +149,9 @@ namespace WinAppDriver.Server
                     {
                         System.Diagnostics.Trace.WriteLine(commandEnvironment.Handler.Unexpected);
                         return Server.Response.CreateErrorResponse(WebDriverStatusCode.UnexpectedAlertOpen, 
-                            "An alert was found open unexpectedly.", commandEnvironment.Handler.Unexpected);
+                            "An alert was found open unexpectedly.", 
+                            sessionId: commandEnvironment.SessionId,
+                            payload: commandEnvironment.Handler.Unexpected);
                     }
                 }
 
@@ -170,7 +173,7 @@ namespace WinAppDriver.Server
                 {
                     if (task.IsFaulted)
                     {
-                        return FromException(task.Exception?.InnerException);
+                        return FromException(task.Exception, commandEnvironment);
                     }
 
                     return task.Result;
@@ -190,15 +193,15 @@ namespace WinAppDriver.Server
             }
             catch (Exception ex)
             {
-                return FromException(ex);
+                return FromException(ex, commandEnvironment);
             }
         }
 
-        private Response FromException(Exception exception)
+        private Response FromException(Exception exception, CommandEnvironment commandEnvironment)
         {
             if (exception is AggregateException aggregateException)
             {
-                return FromException(aggregateException.InnerException);
+                return FromException(aggregateException.InnerException, commandEnvironment);
             }
 
             System.Diagnostics.Debug.WriteLine(exception.ToString());
@@ -210,10 +213,16 @@ namespace WinAppDriver.Server
 
             if (exception is System.Windows.Automation.ElementNotEnabledException enee)
             {
-                return Server.Response.CreateErrorResponse(WebDriverStatusCode.InvalidElementState, enee.Message);
+                return Server.Response.CreateErrorResponse(
+                    WebDriverStatusCode.InvalidElementState, 
+                    enee.Message, 
+                    sessionId: commandEnvironment?.SessionId);
             }
 
-            return Server.Response.CreateErrorResponse(WebDriverStatusCode.UnknownCommand, exception.Message);
+            return Server.Response.CreateErrorResponse(
+                WebDriverStatusCode.UnknownCommand, 
+                exception.Message, 
+                sessionId: commandEnvironment?.SessionId);
         }
         
         private static IDictionary<string, T> ToDictionary<T>(object source)

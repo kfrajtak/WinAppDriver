@@ -142,6 +142,10 @@ namespace WinAppDriver.XPath
                 case XPathOperator.Lt:
                 case XPathOperator.Ne:
                     break;
+                case XPathOperator.Or:
+                    return (bool)left || (bool)((_right as IEvaluate).Evaluate(element));
+                case XPathOperator.And:
+                    return (bool)left && (bool)((_right as IEvaluate).Evaluate(element));
                 default:
                     throw new System.Exception("Not a relational operator " + _op);
             }

@@ -56,8 +56,8 @@ namespace WinAppDriver.Server.CommandHandlers
         /// <returns>The JSON serialized string representing the command response.</returns>
         public override Response Execute(CommandEnvironment environment, Dictionary<string, object> parameters)
         {
-            string errorMessage = string.Format(CultureInfo.InvariantCulture, "Command '{0}' not implemented", this.commandName);
-            return Response.CreateErrorResponse(501, errorMessage);
+            string message = string.Format(CultureInfo.InvariantCulture, "Command '{0}' not implemented", this.commandName);
+            return Response.CreateErrorResponse(501, message, "Command not implemented");
         }
     }
 }
