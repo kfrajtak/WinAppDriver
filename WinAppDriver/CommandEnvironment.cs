@@ -147,20 +147,14 @@ namespace WinAppDriver.Server
             set { this.mouseState = value; }
         }
 
-        /// <summary>
-        /// Gets the text of the active alert.
-        /// </summary>
-        public string AlertText
+        public object GetDesiredCapabilityValue(string capability)
         {
-            get { return this.alertText; }
-        }
+            if (_desiredCapabilities.TryGetValue(capability, out var value))
+            {
+                return value;
+            }
 
-        /// <summary>
-        /// Gets the type of the active alert.
-        /// </summary>
-        public string AlertType
-        {
-            get { return this.alertType; }
+            return null;
         }
 
         public System.Collections.Concurrent.ConcurrentDictionary<IntPtr, ElementCache> _elementCache

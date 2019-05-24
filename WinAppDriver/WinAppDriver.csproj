@@ -84,7 +84,7 @@
     <Compile Include="Behaviors\UnexpectedAlertBehavior2.cs" />
     <Compile Include="Behaviors\UnexpectedAlertBehavior.cs" />
     <Compile Include="Bootstrapper.cs" />
-    <Compile Include="CommandHandlers\AcceptAlertCommandHandler.cs" />
+    <Compile Include="CommandHandlers\AlertHandlingCommandHandler.cs" />
     <Compile Include="CommandHandlers\ActionsCommandHandler.cs" />
     <Compile Include="CommandHandlers\IAsyncCommandHandler.cs" />
     <Compile Include="CommandHandlers\AsyncElementCommandHandler.cs" />

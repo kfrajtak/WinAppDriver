@@ -40,6 +40,23 @@ namespace WinAppDriver.Extensions
             throw new NotSupportedException("GetText for " + element.ToDiagString());
         }
 
+        public static string GetWindowCaption(this AutomationElement element)
+        {
+            if (element == null)
+            {
+                return null;
+            }
+
+            TreeWalker walker = new TreeWalker(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.TitleBar));
+            AutomationElement elementNode = walker.GetFirstChild(element);
+            if (elementNode != null)
+            {
+                return elementNode.GetText();
+            }
+
+            return element.GetText();
+        }
+
         public static void SetText(this AutomationElement element, string value)
         {
             // https://docs.microsoft.com/en-us/dotnet/framework/ui-automation/add-content-to-a-text-box-using-ui-automation
