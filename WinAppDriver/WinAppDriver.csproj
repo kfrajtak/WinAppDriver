@@ -170,7 +170,6 @@
     <Compile Include="Input\NativeMethods.cs" />
     <Compile Include="Input\SendMouseInputFlags.cs" />
     <Compile Include="JsonNetSerializer.cs" />
-    <Compile Include="MainModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProtocolValueJsonConverter.cs" />
     <Compile Include="Response.cs" />

@@ -72,8 +72,6 @@ namespace WinAppDriver.Server
                 sb.AppendLine($"{header.Key}: {string.Join(",", header.Value)}");
             }
 
-            //sb.AppendLine();
-            //sb.AppendLine(context.Response.Contents.AsString());
             Console.Out.WriteLine(sb.ToString());
             Console.Out.WriteLine();
         }
@@ -189,7 +187,9 @@ namespace WinAppDriver.Server
                 commandEnvironment.Handler.Update();// .IsTopMostActiveWindowDifferent(out var args))
                 System.Diagnostics.Trace.WriteLine("****** ____________" + commandEnvironment.Handler.IsFaulty);
 
-                return t2.Result;
+                var response = t2.Result;
+                response.SessionId = response.SessionId ?? commandEnvironment?.SessionId;
+                return response;
             }
             catch (Exception ex)
             {
@@ -208,7 +208,9 @@ namespace WinAppDriver.Server
 
             if (exception is Exceptions.IRemoteException re)
             {
-                return re.GetResponse();
+                var response = re.GetResponse();
+                response.SessionId = commandEnvironment?.SessionId;
+                return response;
             }
 
             if (exception is System.Windows.Automation.ElementNotEnabledException enee)
