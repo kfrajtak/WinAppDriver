@@ -9,7 +9,7 @@ namespace WinAppDriver.Exceptions
 
         public Response GetResponse()
         {
-            return Response.CreateErrorResponse(WebDriverStatusCode.NoSuchElement, Message);
+            return Response.CreateErrorResponse(WebDriverStatusCode.NoSuchElement, Message, "No such element found");
         }
     }
 }
