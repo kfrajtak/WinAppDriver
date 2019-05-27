@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Automation;
 using WinAppDriver.Extensions;
@@ -63,7 +61,7 @@ namespace WinAppDriver.XPath
             }
         }
 
-        object IEvaluate.Evaluate(AutomationElement automationElement)
+        object IEvaluate.Evaluate(AutomationElement automationElement, System.Type expectedType)
         {
             switch (_xpathAxis)
             {

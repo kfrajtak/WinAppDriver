@@ -13,7 +13,7 @@ namespace WinAppDriver.XPath.Functions
             _args = args;
         }
 
-        public object Evaluate(AutomationElement element)
+        public object Evaluate(AutomationElement element, Type expectedType)
         {
             return Matches(element, -1);
         }
@@ -25,8 +25,8 @@ namespace WinAppDriver.XPath.Functions
                 throw new NotImplementedException($"XPath function 'contains' requires 2 parameters.");
             }
 
-            var haystack = (_args[0] as IEvaluate).Evaluate(element);
-            var needle = (_args[1] as IEvaluate).Evaluate(element);
+            var haystack = (_args[0] as IEvaluate).Evaluate(element, typeof(string));
+            var needle = (_args[1] as IEvaluate).Evaluate(element, typeof(string));
             if (haystack is string && needle is string)
             {
                 return haystack.ToString().Contains(needle.ToString());

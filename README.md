@@ -109,24 +109,24 @@ XPath support:
   - [ ] PrecedingSibling
   - [X] Self
   - [X] Root
-- [ ] predicates
+- [X] predicates
   - [X] position predicate `//node[3]`
   - [X] attribute predicate `//node[@attribute = 'X']`
 - [ ] operators
   - [X] Or
   - [X] And
   - [X] Eq 
-  - [ ] Ne
-  - [ ] Lt 
-  - [ ] Le 
-  - [ ] Gt 
-  - [ ] Ge
-  - [ ] Plus 
-  - [ ] Minus 
-  - [ ] Multiply 
-  - [ ] Divide 
-  - [ ] Modulo
-  - [ ] UnaryMinus
+  - [X] Ne
+  - [X] Lt 
+  - [X] Le 
+  - [X] Gt 
+  - [X] Ge
+  - [X] Plus 
+  - [X] Minus 
+  - [X] Multiply 
+  - [X] Divide 
+  - [X] Modulo
+  - [X] UnaryMinus
   - [ ] Union
  - [ ] functions (https://developer.mozilla.org/en-US/docs/Web/XPath/Functions)
   - [ ] boolean()

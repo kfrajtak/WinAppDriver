@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows.Automation;
 using WinAppDriver.Exceptions;
 using WinAppDriver.Extensions;
@@ -40,14 +41,14 @@ namespace WinAppDriver.XPath
             throw new System.NotImplementedException($"XPath function '{_name}' cannot be used for predicate (yet).");
         }
 
-        object IEvaluate.Evaluate(AutomationElement element)
+        object IEvaluate.Evaluate(AutomationElement element, Type expectedType)
         {
             switch (_name)
             {
                 // The normalize-space function strips leading and trailing white-space from a string, 
                 // replaces sequences of whitespace characters by a single space
                 case "normalize-space":
-                    var value = (_args[0] as IEvaluate).Evaluate(element);
+                    var value = (_args[0] as IEvaluate).Evaluate(element, typeof(string));
                     var arg = string.Empty;
                     if (value is AutomationElement automationElement)
                     {
@@ -67,7 +68,7 @@ namespace WinAppDriver.XPath
                     throw new InvalidSelectorException($"Function normalize-space expects a parameter of type string, {value.GetType()}");
             }
 
-            throw new System.NotImplementedException($"XPath function '{_name}' is not implemented (yet).");
+            throw new NotImplementedException($"XPath function '{_name}' is not implemented (yet).");
         }
     }
 }
