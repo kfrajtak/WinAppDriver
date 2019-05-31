@@ -36,7 +36,7 @@ namespace WinAppDriver.Server.CommandHandlers
             throw new Exceptions.NoSuchElementException();
         }
 
-        protected Response TryGetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters)
+        public Response TryGetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters)
         {
             try
             {

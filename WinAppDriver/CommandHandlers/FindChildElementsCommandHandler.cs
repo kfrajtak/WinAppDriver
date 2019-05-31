@@ -24,14 +24,11 @@
 // USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // </copyright>
 
-using WinAppDriver.Extensions;
-using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Threading;
 using System.Windows.Automation;
-using static WinAppDriver.Server.CommandHandlers.FindElementsCommandHandler;
+using WinAppDriver.Infrastructure;
+using System;
 
 namespace WinAppDriver.Server.CommandHandlers
 {
@@ -54,55 +51,46 @@ namespace WinAppDriver.Server.CommandHandlers
 
             var token = environment.GetCancellationToken();
 
-            try
+            var elements = environment.Cache.FindElements(automationElement, new ElementFinder(mechanism.ToString(), criteria.ToString()), token)
+                .ToList()
+                .Distinct(new TupleEqualityComparer())
+                .ToList();
+
+            if (token.IsCancellationRequested)
             {
-                var elements = environment.Cache.FindElements(automationElement, mechanism.ToString(), criteria.ToString(), token)
-                    .ToList()
-                    .Distinct(new TupleEqualityComparer())
-                    .ToList();
+                string errorMessage = $"No elements found using {mechanism} and criteria '{criteria}', operation timed out.";
+                return Response.CreateErrorResponse(WebDriverStatusCode.Timeout, errorMessage);
+            }
 
-                foreach (var e in elements)
-                {
-                    System.Diagnostics.Debug.WriteLine($"{e.Item1} :: {e.Item2.ToDiagString()}");
-                }
+            environment.Cache.AddToCache(elements.ToArray());
 
-                environment.Cache.AddToCache(elements.ToArray());
-
-                var response = new Response
-                {
-                    Status = WebDriverStatusCode.Success,
-                    SessionId = "",
-                    Value = elements.Select(e => new Dictionary<string, object>
+            return new Response
+            {
+                Status = WebDriverStatusCode.Success,
+                SessionId = environment.SessionId,
+                Value = elements.Select(e => new Dictionary<string, object>
                     {
                         { CommandEnvironment.ElementObjectKey, e.Item1 },
                         { string.Empty, e.Item2.Current.AutomationId }
                     }).ToList()
-                };
+            };
+        }
 
-                if (response.Status == WebDriverStatusCode.Success)
-                {
-                    // Return early for success
-                    return response;
-                }
-
-                if (response.Status != WebDriverStatusCode.NoSuchElement)
-                {
-                    if (mechanism.ToString().ToUpperInvariant() != "XPATH" && response.Status == WebDriverStatusCode.InvalidSelector)
-                    {
-                        //continue;
-                    }
-
-                    // Also return early for response of not NoSuchElement.
-                    return response;
-                }
-
-                string errorMessage = string.Format(CultureInfo.InvariantCulture, "No element found for {0} == '{1}'", mechanism.ToString(), criteria.ToString());
-                response = Response.CreateErrorResponse(WebDriverStatusCode.NoSuchElement, errorMessage);
-                return response;
-            }
-            catch (Exception e)
+        private class TupleEqualityComparer : IEqualityComparer<Tuple<string, AutomationElement>>
+        {
+            public bool Equals(Tuple<string, AutomationElement> x, Tuple<string, AutomationElement> y)
             {
-                throw;
+                if (x != null && y != null)
+                {
+                    return x.Item1 == y.Item1 && x.Item2.Current.AutomationId == y.Item2.Current.AutomationId;
+                }
+
+                return false;
+            }
+
+            public int GetHashCode(Tuple<string, AutomationElement> obj)
+            {
+                return obj.GetHashCode();
             }
         }
     }

@@ -24,12 +24,11 @@
 // USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // </copyright>
 
-using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Windows.Automation;
 using WinAppDriver.Exceptions;
+using WinAppDriver.Infrastructure;
 
 namespace WinAppDriver.Server.CommandHandlers
 {
@@ -52,15 +51,16 @@ namespace WinAppDriver.Server.CommandHandlers
 
             var token = environment.GetCancellationToken();
 
-            var element = environment.Cache.FindElements(automationElement, mechanism.ToString(), criteria.ToString(), token).FirstOrDefault();
+            var element = environment.Cache.FindElements(automationElement, new ElementFinder(mechanism.ToString(), criteria.ToString()), token).FirstOrDefault();
             if (element == null)
             {
-                throw new NoSuchElementException();
+                string errorMessage = $"No such element found using {mechanism} and criteria '{criteria}'.";
+                throw new NoSuchElementException(errorMessage);
             }
 
             environment.Cache.AddToCache(element);
 
-            var response = new Response
+            return new Response
             {
                 Status = WebDriverStatusCode.Success,
                 SessionId = environment.SessionId,
@@ -70,30 +70,6 @@ namespace WinAppDriver.Server.CommandHandlers
                         { string.Empty, element.Item2.Current.AutomationId }
                     }
             };
-
-            if (response.Status == WebDriverStatusCode.Success)
-            {
-                // Return early for success
-                var foundElement = response.Value as Dictionary<string, object>;
-                if (foundElement != null && foundElement.ContainsKey(CommandEnvironment.ElementObjectKey))
-                {
-                    return response;
-                }
-            }
-            else if (response.Status != WebDriverStatusCode.NoSuchElement)
-            {
-                if (mechanism.ToString().ToUpperInvariant() != "XPATH" && response.Status == WebDriverStatusCode.InvalidSelector)
-                {
-                    //continue;
-                }
-
-                // Also return early for response of not NoSuchElement.
-                return response;
-            }
-
-            string errorMessage = string.Format(CultureInfo.InvariantCulture, "No element found for {0} == '{1}'", mechanism.ToString(), criteria.ToString());
-            response = Response.CreateErrorResponse(WebDriverStatusCode.NoSuchElement, errorMessage);
-            return response;
         }
     }
 }

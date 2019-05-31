@@ -49,14 +49,14 @@ namespace WinAppDriver.Infrastructure
 
         public AutomationElement AutomationElement { get; }
 
-        public IEnumerable<Tuple<string, AutomationElement>> FindElements(string mechanism, string criteria, CancellationToken cancellationToken)
+        public IEnumerable<Tuple<string, AutomationElement>> FindElements(IElementFinder finder, CancellationToken cancellationToken)
         {
-            return FindElements(AutomationElement, mechanism, criteria, cancellationToken);
+            return FindElements(AutomationElement, finder, cancellationToken);
         }
 
-        public IEnumerable<Tuple<string, AutomationElement>> FindElements(AutomationElement automationElement, string mechanism, string criteria, CancellationToken cancellationToken)
+        public IEnumerable<Tuple<string, AutomationElement>> FindElements(AutomationElement automationElement, IElementFinder finder, CancellationToken cancellationToken)
         {
-            return new ElementFinder().Find(automationElement, mechanism, criteria, cancellationToken)
+            return finder.Find(automationElement, cancellationToken)
                 .Distinct()
                 .Select(found =>
                 {
