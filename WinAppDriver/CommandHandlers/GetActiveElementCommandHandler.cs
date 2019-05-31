@@ -24,11 +24,10 @@
 // USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // </copyright>
 
-using System;
+using OpenQA.Selenium;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using WinAppDriver.Infrastructure.ElementFinders;
 
 namespace WinAppDriver.Server.CommandHandlers
 {
@@ -45,8 +44,30 @@ namespace WinAppDriver.Server.CommandHandlers
         /// <returns>The JSON serialized string representing the command response.</returns>
         public override Response Execute(CommandEnvironment environment, Dictionary<string, object> parameters)
         {
-            string result = this.EvaluateAtom(environment, WebDriverAtoms.ActiveElement);
-            return Response.FromJson(result);
+            var token = environment.GetCancellationToken();
+
+            var element = environment.Cache
+                .FindElements(new ActiveElementFinder(), token)
+                .FirstOrDefault();
+
+            if (element == null)
+            {
+                string errorMessage = "Active element cannot be found.";
+                throw new NoSuchElementException(errorMessage);
+            }
+
+            environment.Cache.AddToCache(element);
+
+            return new Response
+            {
+                Status = WebDriverStatusCode.Success,
+                SessionId = environment.SessionId,
+                Value = new Dictionary<string, object>
+                    {
+                        { CommandEnvironment.ElementObjectKey, element.Item1 },
+                        { string.Empty, element.Item2.Current.AutomationId }
+                    }
+            };
         }
     }
 }

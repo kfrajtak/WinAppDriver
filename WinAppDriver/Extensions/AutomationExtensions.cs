@@ -32,6 +32,7 @@ namespace WinAppDriver.Extensions
             var current = element.Current;
             if (current.ControlType == ControlType.Text ||
                 current.ControlType == ControlType.Button ||
+                current.ControlType == ControlType.RadioButton ||
                 current.ControlType == ControlType.Window)
             {
                 return current.Name?.ToString().Trim();

@@ -30,7 +30,7 @@ Which Selenium commands are implemented?
 - [X] findElement
 - [X] findElements
 - [ ] get
-- [ ] getActiveElement
+- [X] getActiveElement
 - [X] getAlertText
 - [X] getCurrentWindowHandle
 - [X] getElementAttribute
@@ -58,7 +58,6 @@ Which Selenium commands are implemented?
 - [X] mouseUp
 - [X] newSession
 - [X] quit
-- [ ] refresh
 - [X] screenshot
 - [X] sendKeysToActiveElement
 - [X] sendKeysToElement
@@ -89,6 +88,7 @@ Unsupported Selenium commands
 - getPageSource
 - goBack
 - goForward
+- refresh
 - setOrientation
 - setScriptTimeout
 - switchToFrame

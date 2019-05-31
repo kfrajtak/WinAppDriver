@@ -9,13 +9,29 @@ using WinAppDriver.XPath;
 
 namespace WinAppDriver.Infrastructure
 {
-    public class ElementFinder
+    public interface IElementFinder
+    {
+        IEnumerable<AutomationElement> Find(AutomationElement automationElement, CancellationToken cancellationToken);
+    }
+
+    public class ElementFinder : IElementFinder
     {
         private Regex _tagNameSelectorRegex = new Regex("^[A-Za-z]+$");
         private Regex _elementIdSelectorRegex = new Regex("^#[A-Za-z0-9]+$");
+        private readonly string _mechanism;
+        private readonly string _criteria;
 
-        public IEnumerable<AutomationElement> Find(AutomationElement automationElement, string mechanism, string criteria, CancellationToken cancellationToken)
+        public ElementFinder(string mechanism, string criteria)
         {
+            _criteria = criteria;
+            _mechanism = mechanism;
+        }
+
+        public IEnumerable<AutomationElement> Find(AutomationElement automationElement, CancellationToken cancellationToken)
+        {
+            var mechanism = _mechanism;
+            var criteria = _criteria;
+
             System.Diagnostics.Debug.WriteLine($"FindElements {mechanism} '{criteria}'... ({automationElement.ToDiagString()})");
 
             switch (mechanism)

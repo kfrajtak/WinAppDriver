@@ -159,6 +159,7 @@
     <Compile Include="Infrastructure\ElementCacheFactory.cs" />
     <Compile Include="Infrastructure\ElementFinderByType.cs" />
     <Compile Include="Infrastructure\ElementFinder.cs" />
+    <Compile Include="Infrastructure\ElementFinders\ActiveElementFinder.cs" />
     <Compile Include="Input\Key.cs" />
     <Compile Include="Input\Keyboard.cs" />
     <Compile Include="Input\KeyboardActions.cs" />
