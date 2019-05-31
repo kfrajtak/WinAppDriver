@@ -117,7 +117,7 @@ namespace WinAppDriver.Server
             this.handlers.Add(DriverCommand.GetWindowPosition, new GetWindowRectCommandHandler());
             this.handlers.Add(DriverCommand.GetWindowSize, new GetWindowRectCommandHandler());
             this.handlers.Add(DriverCommand.GetWindowRect, new GetWindowRectCommandHandler());
-            this.handlers.Add(DriverCommand.SetWindowPosition, new NoOpCommandHandler());
+            this.handlers.Add(DriverCommand.SetWindowPosition, new SetWindowRectCommandHandler());
             this.handlers.Add(DriverCommand.SetWindowSize, new SetWindowRectCommandHandler());
             this.handlers.Add(DriverCommand.SetWindowRect, new SetWindowRectCommandHandler());
             this.handlers.Add(DriverCommand.MaximizeWindow, new ResizeWindowCommandHandler(System.Windows.Automation.WindowVisualState.Maximized));

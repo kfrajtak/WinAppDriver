@@ -62,7 +62,7 @@ Which Selenium commands are implemented?
 - [X] sendKeysToActiveElement
 - [X] sendKeysToElement
 - [ ] setAlertValue
-- [ ] setWindowPosition
+- [X] setWindowPosition
 - [X] setWindowSize
 - [ ] status
 - [ ] submitElement
