@@ -33,15 +33,15 @@ namespace WinAppDriver.Server.CommandHandlers
             _defaultCaptions = defaultCaptions;
         }
 
-        public override Response Execute(CommandEnvironment environment, Dictionary<string, object> parameters)
+        public override Response Execute(CommandEnvironment environment, Dictionary<string, object> parameters, System.Threading.CancellationToken cancellationToken)
         {
-            var modalWindow = environment.GetModalWindow();
+            var modalWindow = environment.GetModalWindow(cancellationToken);
             if (modalWindow == null)
             {
                 return Response.CreateErrorResponse(WebDriverStatusCode.NoAlertPresent, string.Empty);
             }
 
-            var buttons = new DescendantIterator(modalWindow, false, environment.GetCancellationToken())
+            var buttons = new DescendantIterator(modalWindow, false, cancellationToken)
                 .Cast<AutomationElement>()
                 .Where(el => el.Current.ControlType == ControlType.Button)
                 .ToList();

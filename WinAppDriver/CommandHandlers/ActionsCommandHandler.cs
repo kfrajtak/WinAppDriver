@@ -11,7 +11,7 @@ namespace WinAppDriver.Server.CommandHandlers
         [DllImport("USER32.DLL")]
         public static extern bool SetForegroundWindow(IntPtr hWnd);
 
-        public override Response Execute(CommandEnvironment commandEnvironment, Dictionary<string, object> parameters)
+        public override Response Execute(CommandEnvironment commandEnvironment, Dictionary<string, object> parameters, System.Threading.CancellationToken cancellationToken)
         {
             if (!parameters.TryGetValue("actions", out object o))
             {

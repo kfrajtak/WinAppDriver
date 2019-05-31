@@ -8,7 +8,7 @@ namespace WinAppDriver.Server.CommandHandlers
     /// </summary>
     internal class IsElementDisplayedCommandHandler : ElementCommandHandler
     {
-        protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters)
+        protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters, System.Threading.CancellationToken cancellationToken)
         {
             return Response.CreateSuccessResponse(!automationElement.Current.IsOffscreen);
         }

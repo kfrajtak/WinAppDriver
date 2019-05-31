@@ -117,6 +117,8 @@ namespace WinAppDriver.Server
 
         public UnexpectedAlertEventArgs Unexpected { get; set; }
 
+        public CancellationTokenSource CancellationTokenSource => _cancellationTokenSource;
+
         public CancellationToken GetCancellationToken()
         {
             if (_cancellationTokenSource == null)
@@ -269,9 +271,9 @@ namespace WinAppDriver.Server
             }
         }
 
-        public IEnumerable<AutomationElement> GetWindows()
+        public IEnumerable<AutomationElement> GetWindows(CancellationToken cancellationToken)
         {
-            return new BreadthFirstSearch().Find(RootElement, ControlType.Window, GetCancellationToken())
+            return new BreadthFirstSearch().Find(RootElement, ControlType.Window, cancellationToken)
                 .Where(w => w.Current.ControlType == ControlType.Window)
                 .ToList();
         }
@@ -306,14 +308,14 @@ namespace WinAppDriver.Server
             window.SetFocus();
         }
 
-        public AutomationElement GetModalWindow()
+        public AutomationElement GetModalWindow(CancellationToken cancellationToken)
         {
             if (_hwnd == IntPtr.Zero)
             {
                 return null;
             }
 
-            var windows = GetWindows();
+            var windows = GetWindows(cancellationToken);
             foreach (AutomationElement automationElement in windows)
             {
                 if (automationElement.IsModalWindow())

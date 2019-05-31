@@ -39,7 +39,7 @@ namespace WinAppDriver.Server.CommandHandlers
     /// </summary>
     internal class ClearElementCommandHandler : ElementCommandHandler
     {
-        protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters)
+        protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters, System.Threading.CancellationToken cancellationToken)
         {
             automationElement.SetText("");
             return Response.CreateSuccessResponse();

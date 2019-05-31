@@ -11,7 +11,7 @@ namespace WinAppDriver.Server.CommandHandlers
         /// <summary>
         /// Closes the current window
         /// </summary>
-        public override Response Execute(CommandEnvironment environment, Dictionary<string, object> parameters)
+        public override Response Execute(CommandEnvironment environment, Dictionary<string, object> parameters, System.Threading.CancellationToken cancellationToken)
         {
             var hwnd = environment.WindowHandle;
             var window = environment.Cache.AutomationElement;

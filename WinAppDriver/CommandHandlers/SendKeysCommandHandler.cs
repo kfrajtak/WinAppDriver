@@ -44,7 +44,7 @@ namespace WinAppDriver.Server.CommandHandlers
         /// <param name="commandEnvironment">The <see cref="CommandEnvironment"/> to use in executing the command.</param>
         /// <param name="parameters">The <see cref="Dictionary{string, object}"/> containing the command parameters.</param>
         /// <returns>The JSON serialized string representing the command response.</returns>
-        protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment commandEnvironment, Dictionary<string, object> parameters)
+        protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment commandEnvironment, Dictionary<string, object> parameters, System.Threading.CancellationToken cancellationToken)
         {
             if (!parameters.TryGetValue("text", out var text))
             {

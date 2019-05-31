@@ -51,7 +51,7 @@ namespace WinAppDriver.Server.CommandHandlers
         /// <param name="parameters">The <see cref="Dictionary{string, object}"/> containing the command parameters.</param>
         /// <returns>The JSON serialized string representing the command response.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Catching general exception type is expressly permitted here to allow proper reporting via JSON-serialized result.")]
-        public override Response Execute(CommandEnvironment environment, Dictionary<string, object> parameters)
+        public override Response Execute(CommandEnvironment environment, Dictionary<string, object> parameters, System.Threading.CancellationToken cancellationToken)
         {
             object script;
             if (!parameters.TryGetValue("script", out script))

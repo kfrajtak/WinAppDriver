@@ -24,14 +24,9 @@
 // USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // </copyright>
 
-using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Automation;
-using System.Windows.Forms;
 
 namespace WinAppDriver.Server.CommandHandlers
 {
@@ -45,7 +40,7 @@ namespace WinAppDriver.Server.CommandHandlers
             _parameterName = "element";
         }
 
-        protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters)
+        protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters, System.Threading.CancellationToken cancellationToken)
         {
             var offsetX = 0;
             if (parameters.ContainsKey("xoffset") && !int.TryParse(parameters["xoffset"]?.ToString(), out offsetX))

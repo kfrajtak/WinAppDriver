@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using WinAppDriver.Server.CommandHandlers;
 using System.Text;
 using WinAppDriver.Behaviors;
+using System.Threading;
 
 namespace WinAppDriver.Server
 {
@@ -78,52 +79,49 @@ namespace WinAppDriver.Server
 
         private object HandleCommand(string commandName, dynamic data, Dictionary<string, object> parameters = null)
         {
+            var p2 = new Dictionary<string, object>(data);
+            parameters = parameters ?? new Dictionary<string, object>();
+
+            foreach (var pair in parameters)
+            {
+                if (!p2.ContainsKey(pair.Key))
+                {
+                    p2.Add(pair.Key, pair.Value);
+                }
+            }
+
+            if (p2.ContainsKey("id"))
+            {
+                p2.Add("ID", p2["id"]);
+            }
+
+            var command = new Command
+            {
+                CommandName = commandName,
+                Parameters = p2,
+                SessionId = data.sessionId
+            };
+
+            var sessionId = command.SessionId?.ToString();
+
             CommandEnvironment commandEnvironment = null;
+            if (sessionId != null)
+            {
+                if (!CacheStore.CommandStore.TryGetValue(sessionId, out commandEnvironment))
+                {
+                    if (commandName != DriverCommand.Close && commandName != DriverCommand.Quit)
+                    {
+                        return Server.Response.CreateErrorResponse(WebDriverStatusCode.UnhandledError, "Cache not available for session " + sessionId);
+                    }
+                }
+            }
+
+            commandEnvironment = commandEnvironment ?? new CommandEnvironment();
+
+            var cancellationToken = commandEnvironment.GetCancellationToken();
+
             try
             {
-                var p2 = new Dictionary<string, object>(data);
-                parameters = parameters ?? new Dictionary<string, object>();
-
-                foreach (var pair in parameters)
-                {
-                    if (!p2.ContainsKey(pair.Key))
-                    {
-                        p2.Add(pair.Key, pair.Value);
-                    }
-                }
-
-                if (p2.ContainsKey("id"))
-                {
-                    p2.Add("ID", p2["id"]);
-                }
-
-                var command = new Command
-                {
-                    CommandName = commandName,
-                    Parameters = p2,
-                    SessionId = data.sessionId
-                };
-
-                var sessionId = command.SessionId?.ToString();
-                commandEnvironment = new CommandEnvironment();
-                if (sessionId != null)
-                {
-                    if (CacheStore.CommandStore.TryGetValue(sessionId, out commandEnvironment))
-                    {
-                        /*commandEnvironment = new CommandEnvironment(elementCache)
-                        {
-                            SessionId = sessionId
-                        };*/
-                    }
-                    else
-                    {
-                        if (commandName != DriverCommand.Close && commandName != DriverCommand.Quit)
-                        {
-                            throw new NotSupportedException("Cache not available for session " + sessionId);
-                        }
-                    }
-                }
-
                 // check for unexpected alert (modal dialog)
                 /*if (commandEnvironment.GetModalWindow() != null)
                 {
@@ -134,7 +132,7 @@ namespace WinAppDriver.Server
 
                 var commandHandler = CommandHandlerFactory.Instance.GetHandler(command.CommandName);
 
-                System.Diagnostics.Debug.WriteLine($"{commandName} [{System.Threading.Thread.CurrentThread.ManagedThreadId}]");
+                System.Diagnostics.Debug.WriteLine($"{commandName} [{Thread.CurrentThread.ManagedThreadId}]");
 
                 // check for unexpected active windows
                 if (commandEnvironment.Handler == null)
@@ -157,14 +155,14 @@ namespace WinAppDriver.Server
                 if (commandHandler is IAsyncCommandHandler asyncCommandHandler)
                 {
                     conversion = true;
-                    t = asyncCommandHandler.ExecuteAsync(commandEnvironment, command.Parameters);                    
+                    t = asyncCommandHandler.ExecuteAsync(commandEnvironment, command.Parameters, cancellationToken);                    
                 }
                 else
                 {
                     t = Task.Factory.StartNew(() =>
                     {
-                        return commandHandler.Execute(commandEnvironment, command.Parameters);
-                    }, commandEnvironment.GetCancellationToken());
+                        return commandHandler.Execute(commandEnvironment, command.Parameters, cancellationToken);
+                    });
                 }
 
                 var t2 = t.ContinueWith(task =>
@@ -193,6 +191,7 @@ namespace WinAppDriver.Server
             }
             catch (Exception ex)
             {
+                commandEnvironment.CancellationTokenSource.Cancel(); // stop all work
                 return FromException(ex, commandEnvironment);
             }
         }

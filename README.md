@@ -29,7 +29,6 @@ Which Selenium commands are implemented?
 - [X] findChildElements
 - [X] findElement
 - [X] findElements
-- [ ] get
 - [X] getActiveElement
 - [X] getAlertText
 - [X] getCurrentWindowHandle
@@ -81,6 +80,7 @@ Unsupported Selenium commands
 - addCookie
 - deleteAllCookies
 - deleteCookie
+- get
 - getCookies
 - getCurrentUrl
 - getOrientation

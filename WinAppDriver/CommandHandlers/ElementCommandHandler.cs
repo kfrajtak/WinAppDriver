@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Windows.Automation;
 using WinAppDriver.Extensions;
 
@@ -20,7 +21,7 @@ namespace WinAppDriver.Server.CommandHandlers
         /// <param name="environment">The <see cref="CommandEnvironment"/> to use in executing the command.</param>
         /// <param name="parameters">The <see cref="Dictionary{string, object}"/> containing the command parameters.</param>
         /// <returns>The JSON serialized string representing the command response.</returns>
-        public override Response Execute(CommandEnvironment environment, Dictionary<string, object> parameters)
+        public override Response Execute(CommandEnvironment environment, Dictionary<string, object> parameters, System.Threading.CancellationToken cancellationToken)
         {
             if (!parameters.TryGetValue(_parameterName, out object id))
             {
@@ -30,31 +31,31 @@ namespace WinAppDriver.Server.CommandHandlers
             var element = environment.Cache.GetElement(id);
             if (element != null)
             {
-                return TryGetResponse(element, environment, parameters);
+                return TryGetResponse(element, environment, parameters, cancellationToken);
             }
 
             throw new Exceptions.NoSuchElementException();
         }
 
-        public Response TryGetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters)
+        public Response TryGetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters, System.Threading.CancellationToken cancellationToken)
         {
             try
             {
-                return GetResponse(automationElement, environment, parameters);
+                return GetResponse(automationElement, environment, parameters, cancellationToken);
             }
             catch (Exception ex)
             {
-                return FromException(automationElement, ex, environment);
+                return FromException(automationElement, ex, environment, cancellationToken);
             }
         }
 
-        protected abstract Response GetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters);
+        protected abstract Response GetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters, System.Threading.CancellationToken cancellationToken);
 
-        private Response FromException(AutomationElement element, Exception exception, CommandEnvironment environment)
+        private Response FromException(AutomationElement element, Exception exception, CommandEnvironment environment, CancellationToken cancellationToken)
         {
             if (exception is AggregateException aggregateException)
             {
-                return FromException(element, aggregateException.InnerException, environment);
+                return FromException(element, aggregateException.InnerException, environment, cancellationToken);
             }
 
             if (exception is ElementNotEnabledException enee)
@@ -63,8 +64,7 @@ namespace WinAppDriver.Server.CommandHandlers
                 var parentWindow = element.GetTopLevelWindow();
                 if (parentWindow.IsBlockedByModalWindow())
                 {
-                    var modalWindow = environment.GetModalWindow();
-
+                    var modalWindow = environment.GetModalWindow(cancellationToken);
 
                     return Response.CreateErrorResponse(
                         WebDriverStatusCode.UnexpectedAlertOpen,

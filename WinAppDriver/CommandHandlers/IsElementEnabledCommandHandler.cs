@@ -6,7 +6,7 @@ namespace WinAppDriver.Server.CommandHandlers
 {
     internal class IsElementEnabledCommandHandler : ElementCommandHandler
     {
-        protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters)
+        protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters, System.Threading.CancellationToken cancellationToken)
         {
             // walk the tree up to be sure all element ancestors are enabled
             do

@@ -37,7 +37,7 @@ namespace WinAppDriver.Server.CommandHandlers
     /// </summary>
     internal class FindChildElementsCommandHandler : ElementCommandHandler
     {
-        protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters)
+        protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters, System.Threading.CancellationToken cancellationToken)
         {
             if (!parameters.TryGetValue("using", out var mechanism))
             {
@@ -49,14 +49,12 @@ namespace WinAppDriver.Server.CommandHandlers
                 return Response.CreateMissingParametersResponse("value");
             }
 
-            var token = environment.GetCancellationToken();
-
-            var elements = environment.Cache.FindElements(automationElement, new ElementFinder(mechanism.ToString(), criteria.ToString()), token)
+            var elements = environment.Cache.FindElements(automationElement, new ElementFinder(mechanism.ToString(), criteria.ToString()), cancellationToken)
                 .ToList()
                 .Distinct(new TupleEqualityComparer())
                 .ToList();
 
-            if (token.IsCancellationRequested)
+            if (cancellationToken.IsCancellationRequested)
             {
                 string errorMessage = $"No elements found using {mechanism} and criteria '{criteria}', operation timed out.";
                 return Response.CreateErrorResponse(WebDriverStatusCode.Timeout, errorMessage);

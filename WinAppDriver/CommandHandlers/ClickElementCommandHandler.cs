@@ -40,7 +40,7 @@ namespace WinAppDriver.Server.CommandHandlers
     {
         private readonly ManualResetEvent _manualResetEvent = new ManualResetEvent(false);
 
-        protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters)
+        protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters, System.Threading.CancellationToken cancellationToken)
         {
             return GetResponse(automationElement, environment);
         }

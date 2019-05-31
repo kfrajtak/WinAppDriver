@@ -9,7 +9,7 @@ namespace WinAppDriver.Server.CommandHandlers
     /// </summary>
     internal class GetElementTagNameCommandHandler : ElementCommandHandler
     {
-        protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters)
+        protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters, System.Threading.CancellationToken cancellationToken)
         {
             var value = (ControlType)automationElement.GetAutomationElementPropertyValue("ControlType");
             return Response.CreateSuccessResponse(value.ProgrammaticName);

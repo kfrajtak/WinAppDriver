@@ -8,7 +8,7 @@ namespace WinAppDriver.Server.CommandHandlers
     /// </summary>
     internal class GetElementSizeCommandHandler : ElementCommandHandler
     {
-        protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters)
+        protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters, System.Threading.CancellationToken cancellationToken)
         {
             var rect = automationElement.Current.BoundingRectangle;
             return Response.CreateSuccessResponse(new { width = (int)rect.Width, height = (int)rect.Height });

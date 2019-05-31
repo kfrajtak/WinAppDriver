@@ -9,7 +9,7 @@ namespace WinAppDriver.Server.CommandHandlers
     /// </summary>
     internal class GetElementTextCommandHandler : ElementCommandHandler
     {
-        protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters)
+        protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters, System.Threading.CancellationToken cancellationToken)
         {
             return Response.CreateSuccessResponse(automationElement.GetText());
         }

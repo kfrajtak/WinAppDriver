@@ -34,7 +34,7 @@ namespace WinAppDriver.Server.CommandHandlers
     /// </summary>
     internal class GetElementLocationCommandHandler : ElementCommandHandler
     {
-        protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters)
+        protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters, System.Threading.CancellationToken cancellationToken)
         {
             var rect = automationElement.Current.BoundingRectangle;
             return Response.CreateSuccessResponse(new { x = (int)rect.Left, y = (int)rect.Top, width = (int)rect.Width, height = (int)rect.Height });

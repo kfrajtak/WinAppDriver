@@ -37,7 +37,7 @@ namespace WinAppDriver.Server.CommandHandlers
     /// </summary>
     internal class FindChildElementCommandHandler : ElementCommandHandler
     {
-        protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters)
+        protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters, System.Threading.CancellationToken cancellationToken)
         {
             if (!parameters.TryGetValue("using", out var mechanism))
             {
@@ -49,9 +49,7 @@ namespace WinAppDriver.Server.CommandHandlers
                 return Response.CreateMissingParametersResponse("value");
             }
 
-            var token = environment.GetCancellationToken();
-
-            var element = environment.Cache.FindElements(automationElement, new ElementFinder(mechanism.ToString(), criteria.ToString()), token).FirstOrDefault();
+            var element = environment.Cache.FindElements(automationElement, new ElementFinder(mechanism.ToString(), criteria.ToString()), cancellationToken).FirstOrDefault();
             if (element == null)
             {
                 string errorMessage = $"No such element found using {mechanism} and criteria '{criteria}'.";

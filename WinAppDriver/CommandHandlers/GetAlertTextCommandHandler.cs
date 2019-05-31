@@ -10,15 +10,15 @@ namespace WinAppDriver.Server.CommandHandlers
 {
     internal class GetAlertTextCommandHandler : CommandHandler
     {
-        public override Response Execute(CommandEnvironment environment, Dictionary<string, object> parameters)
+        public override Response Execute(CommandEnvironment environment, Dictionary<string, object> parameters, System.Threading.CancellationToken cancellationToken)
         {
-            var modalWindow = environment.GetModalWindow();
+            var modalWindow = environment.GetModalWindow(cancellationToken);
             if (modalWindow == null)
             {
                 return Response.CreateErrorResponse(WebDriverStatusCode.NoAlertPresent, string.Empty);
             }
 
-            var enumerable = new DescendantIterator(modalWindow, false, environment.GetCancellationToken()).Cast<AutomationElement>()
+            var enumerable = new DescendantIterator(modalWindow, false, cancellationToken).Cast<AutomationElement>()
                 .Where(el => el.Current.ControlType == ControlType.Text || el.Current.ControlType == ControlType.Edit)
                 .OrderBy(el => el.Current.BoundingRectangle.TopLeft, new PointComparer());
 
