@@ -24,35 +24,20 @@
 // USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // </copyright>
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Automation;
 
 namespace WinAppDriver.Server.CommandHandlers
 {
     /// <summary>
     /// Provides handling for the get element location command.
     /// </summary>
-    internal class GetElementLocationCommandHandler : CommandHandler
+    internal class GetElementLocationCommandHandler : ElementCommandHandler
     {
-        /// <summary>
-        /// Executes the command.
-        /// </summary>
-        /// <param name="environment">The <see cref="CommandEnvironment"/> to use in executing the command.</param>
-        /// <param name="parameters">The <see cref="Dictionary{string, object}"/> containing the command parameters.</param>
-        /// <returns>The JSON serialized string representing the command response.</returns>
-        public override Response Execute(CommandEnvironment environment, Dictionary<string, object> parameters)
+        protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters)
         {
-            object element;
-            if (!parameters.TryGetValue("ID", out element))
-            {
-                return Response.CreateMissingParametersResponse("ID");
-            }
-
-            string result = this.EvaluateAtom(environment, WebDriverAtoms.GetTopLeftCoordinates, element, environment.CreateFrameObject());
-            return Response.FromJson(result);
+            var rect = automationElement.Current.BoundingRectangle;
+            return Response.CreateSuccessResponse(new { x = (int)rect.Left, y = (int)rect.Top, width = (int)rect.Width, height = (int)rect.Height });
         }
     }
 }

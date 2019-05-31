@@ -34,7 +34,7 @@ Which Selenium commands are implemented?
 - [X] getAlertText
 - [X] getCurrentWindowHandle
 - [X] getElementAttribute
-- [ ] getElementLocation
+- [X] getElementLocation
 - [ ] getElementLocationOnceScrolledIntoView
 - [X] getElementSize
 - [X] getElementTagName
@@ -62,7 +62,6 @@ Which Selenium commands are implemented?
 - [X] sendKeysToActiveElement
 - [X] sendKeysToElement
 - [ ] setAlertValue
-- [ ] setTimeout
 - [ ] setWindowPosition
 - [X] setWindowSize
 - [ ] status
@@ -91,6 +90,7 @@ Unsupported Selenium commands
 - refresh
 - setOrientation
 - setScriptTimeout
+- setTimeout
 - switchToFrame
 
 XPath support:
