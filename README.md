@@ -15,6 +15,7 @@ Why another driver when there already is https://github.com/Microsoft/WinAppDriv
 ## Installation
 Currently there is no installer. Clone the repository and build the executable from the sources.
 
+## Selenium
 Which Selenium commands are implemented?
 - [X] acceptAlert 
   - default captions to locate the accpet button are `Ok` and `Yes`, additional captions can be added by setting `acceptAlertButtonCaptions` capability with a semicolon separated list of values
