@@ -117,18 +117,6 @@ namespace WinAppDriver.Server
 
         public UnexpectedAlertEventArgs Unexpected { get; set; }
 
-        public CancellationTokenSource CancellationTokenSource => _cancellationTokenSource;
-
-        public CancellationToken GetCancellationToken()
-        {
-            if (_cancellationTokenSource == null)
-            {
-                _cancellationTokenSource = new CancellationTokenSource();
-                _cancellationTokenSource.CancelAfter(ImplicitWaitTimeout);
-            }
-            return _cancellationTokenSource.Token;
-        }
-
         /// <summary>
         /// Gets or sets the keyboard state of the driver.
         /// </summary>

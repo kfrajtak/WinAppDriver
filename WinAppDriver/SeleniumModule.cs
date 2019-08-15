@@ -118,7 +118,8 @@ namespace WinAppDriver.Server
 
             commandEnvironment = commandEnvironment ?? new CommandEnvironment();
 
-            var cancellationToken = commandEnvironment.GetCancellationToken();
+            var cancellationTokenSource = new CancellationTokenSource();
+            var cancellationToken = GetCancellationToken(commandEnvironment, cancellationTokenSource);
 
             try
             {
@@ -191,9 +192,18 @@ namespace WinAppDriver.Server
             }
             catch (Exception ex)
             {
-                commandEnvironment.CancellationTokenSource.Cancel(); // stop all work
+                cancellationTokenSource.Cancel(); // stop all work
                 return FromException(ex, commandEnvironment);
             }
+        }
+
+        private CancellationToken GetCancellationToken(CommandEnvironment commandEnvironment, CancellationTokenSource cancellationTokenSource)
+        {
+            if (!System.Diagnostics.Debugger.IsAttached)
+            {
+                cancellationTokenSource.CancelAfter(commandEnvironment.ImplicitWaitTimeout);
+            }
+            return cancellationTokenSource.Token;
         }
 
         private Response FromException(Exception exception, CommandEnvironment commandEnvironment)
