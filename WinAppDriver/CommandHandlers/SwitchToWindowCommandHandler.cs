@@ -27,28 +27,25 @@ namespace WinAppDriver.Server.CommandHandlers
             var windowHandleOrName = handle?.ToString();
             if (windowHandleOrName != CommandEnvironment.GlobalWindowHandle)
             {
-                var windows = new BreadthFirstSearch().Find(environment.Cache.AutomationElement, ControlType.Window, cancellationToken)
+                var windows = new BreadthFirstSearch().Find(environment.RootElement, ControlType.Window, cancellationToken)
                     .Where(w => w.Current.ControlType == ControlType.Window)
                     .ToList();
 
-                // match by handle first
-                var matchingWindow = windows.SingleOrDefault(w => w.Current.AutomationId == windowHandleOrName);
-                // match by name when not matched by handle
-                if (matchingWindow == null)
-                {
-                    matchingWindow = windows.SingleOrDefault(w => w.GetAutomationElementPropertyValue("Name").Equals(windowHandleOrName));
-                }
+                // match by handle first or match by name
+                var matchingWindow = windows.SingleOrDefault(w => w.Current.AutomationId == windowHandleOrName)
+                    ??
+                    windows.SingleOrDefault(w => w.GetAutomationElementPropertyValue("Name").Equals(windowHandleOrName));
 
                 if (matchingWindow != null)
                 {
                     // if any of those windows is modal and it is not the window that user is switching to, return an error
-                    var modalWindow = windows.FirstOrDefault(w => (bool)w.GetAutomationElementPropertyValue(WindowPattern.IsModalProperty) == true);
+                    var modalWindow = windows.Find(w => (bool)w.GetAutomationElementPropertyValue(WindowPattern.IsModalProperty));
                     if (modalWindow != null && modalWindow != matchingWindow)
                     {
                         return Response.CreateErrorResponse(WebDriverStatusCode.UnhandledError, "Window is not enabled.");
                     }
 
-                    environment.SwitchToWindow(matchingWindow);                    
+                    environment.SwitchToWindow(matchingWindow);
                     return Response.CreateSuccessResponse();
                 }
 
