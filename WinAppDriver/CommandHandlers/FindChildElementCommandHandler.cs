@@ -52,7 +52,7 @@ namespace WinAppDriver.Server.CommandHandlers
             var element = environment.Cache.FindElements(automationElement, new ElementFinder(mechanism.ToString(), criteria.ToString()), cancellationToken).FirstOrDefault();
             if (element == null)
             {
-                string errorMessage = $"No such element found using {mechanism} and criteria '{criteria}'.";
+                var errorMessage = $"No such element found using {mechanism} and criteria '{criteria}' in the control tree with element with AutomationId='{automationElement.Current.AutomationId}' as root.";
                 throw new NoSuchElementException(errorMessage);
             }
 
