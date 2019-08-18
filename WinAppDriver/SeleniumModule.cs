@@ -32,7 +32,7 @@ namespace WinAppDriver.Server
                         Get[command.Value.ResourcePath] = p => HandleCommand(command.Key, p);
                         break;
                     case CommandInfo.PostCommand:
-                        Post[command.Value.ResourcePath] = p => 
+                        Post[command.Value.ResourcePath] = p =>
                         {
                             var body = Request.Body.AsString();
                             var parameters = JObject.Parse(body).ToObject<Dictionary<string, object>>();
@@ -40,7 +40,7 @@ namespace WinAppDriver.Server
                         };
                         break;
                     case CommandInfo.DeleteCommand:
-                        Delete[command.Value.ResourcePath] = p => 
+                        Delete[command.Value.ResourcePath] = p =>
                         {
                             var body = Request.Body.AsString();
                             if (body == null || body.Trim().Length == 0)
@@ -67,7 +67,7 @@ namespace WinAppDriver.Server
             context.Request.Body.Seek(0, System.IO.SeekOrigin.Begin);
             sb.AppendLine(context.Request.Body.AsString());
             sb.AppendLine();
-            sb.AppendLine($"{context.Response.StatusCode}");
+            sb.AppendLine(context.Response.StatusCode.ToString());
             foreach (var header in context.Response.Headers)
             {
                 sb.AppendLine($"{header.Key}: {string.Join(",", header.Value)}");
@@ -107,12 +107,9 @@ namespace WinAppDriver.Server
             CommandEnvironment commandEnvironment = null;
             if (sessionId != null)
             {
-                if (!CacheStore.CommandStore.TryGetValue(sessionId, out commandEnvironment))
+                if (!CacheStore.CommandStore.TryGetValue(sessionId, out commandEnvironment) && commandName != DriverCommand.Close && commandName != DriverCommand.Quit)
                 {
-                    if (commandName != DriverCommand.Close && commandName != DriverCommand.Quit)
-                    {
-                        return Server.Response.CreateErrorResponse(WebDriverStatusCode.UnhandledError, "Cache not available for session " + sessionId);
-                    }
+                    return Server.Response.CreateErrorResponse(WebDriverStatusCode.UnhandledError, "Cache not available for session " + sessionId);
                 }
             }
 
@@ -145,8 +142,8 @@ namespace WinAppDriver.Server
                     if (commandHandler.UnexpectedAlertCheckRequired && commandEnvironment.Handler.IsFaulty)// .IsTopMostActiveWindowDifferent(out var args))
                     {
                         System.Diagnostics.Trace.WriteLine(commandEnvironment.Handler.Unexpected);
-                        return Server.Response.CreateErrorResponse(WebDriverStatusCode.UnexpectedAlertOpen, 
-                            "An alert was found open unexpectedly.", 
+                        return Server.Response.CreateErrorResponse(WebDriverStatusCode.UnexpectedAlertOpen,
+                            "An alert was found open unexpectedly.",
                             sessionId: commandEnvironment.SessionId,
                             payload: commandEnvironment.Handler.Unexpected);
                     }
@@ -156,14 +153,11 @@ namespace WinAppDriver.Server
                 if (commandHandler is IAsyncCommandHandler asyncCommandHandler)
                 {
                     conversion = true;
-                    t = asyncCommandHandler.ExecuteAsync(commandEnvironment, command.Parameters, cancellationToken);                    
+                    t = asyncCommandHandler.ExecuteAsync(commandEnvironment, command.Parameters, cancellationToken);
                 }
                 else
                 {
-                    t = Task.Factory.StartNew(() =>
-                    {
-                        return commandHandler.Execute(commandEnvironment, command.Parameters, cancellationToken);
-                    });
+                    t = Task.Factory.StartNew(() => commandHandler.Execute(commandEnvironment, command.Parameters, cancellationToken));
                 }
 
                 var t2 = t.ContinueWith(task =>
@@ -175,7 +169,7 @@ namespace WinAppDriver.Server
 
                     return task.Result;
                 });
-                
+
                 if (conversion)
                 {
                     t.Start();
@@ -225,36 +219,15 @@ namespace WinAppDriver.Server
             if (exception is System.Windows.Automation.ElementNotEnabledException enee)
             {
                 return Server.Response.CreateErrorResponse(
-                    WebDriverStatusCode.InvalidElementState, 
-                    enee.Message, 
+                    WebDriverStatusCode.InvalidElementState,
+                    enee.Message,
                     sessionId: commandEnvironment?.SessionId);
             }
 
             return Server.Response.CreateErrorResponse(
-                WebDriverStatusCode.UnknownCommand, 
-                exception.Message, 
+                WebDriverStatusCode.UnknownCommand,
+                exception.Message,
                 sessionId: commandEnvironment?.SessionId);
-        }
-        
-        private static IDictionary<string, T> ToDictionary<T>(object source)
-        {
-            var dictionary = new Dictionary<string, T>();
-
-            void AddPropertyToDictionary(PropertyDescriptor property)
-            {
-                object value = property.GetValue(source);
-                if (value is T t)
-                {
-                    dictionary.Add(property.Name, t);
-                }
-            }
-                        
-            foreach (PropertyDescriptor property in TypeDescriptor.GetProperties(source))
-            {
-                AddPropertyToDictionary(property);
-            }
-
-            return dictionary;
         }
     }
 }

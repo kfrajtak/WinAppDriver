@@ -57,8 +57,6 @@ namespace WinAppDriver.Server
 
         private IntPtr _hwnd, _windowHwnd;
         private string focusedFrame = string.Empty;
-        private Dictionary<string, object> keyboardState = null;
-        private Dictionary<string, object> mouseState = new Dictionary<string, object>();
 
         private Dictionary<string, object> _desiredCapabilities;
 
@@ -99,14 +97,16 @@ namespace WinAppDriver.Server
 
             SwitchToWindow(_hwnd, element);
 
-            if (!desiredCapabilities.TryGetValue(OpenQA.Selenium.Remote.CapabilityType.UnexpectedAlertBehavior, out var unexpectedAlertBehavior) ||
-                !Enum.TryParse(unexpectedAlertBehavior?.ToString(), true, out _unexpectedAlertBehavior))
+            if (!desiredCapabilities.TryGetValue(OpenQA.Selenium.Remote.CapabilityType.UnexpectedAlertBehavior, out var unexpectedAlertBehavior)
+                || !Enum.TryParse(unexpectedAlertBehavior?.ToString(), true, out _unexpectedAlertBehavior))
             {
                 _unexpectedAlertBehavior = UnexpectedAlertBehaviorReaction.DismissAndNotify;
             }
 
             Cache.AddHandler(Behaviors.UnexpectedAlertBehavior.CreateHandler(element, _hwnd, this));
-            CacheStore.CommandStore.AddOrUpdate(sessionId, this, (k, c) => c);
+            CacheStore.CommandStore.AddOrUpdate(sessionId, this, (_, c) => c);
+
+            ImplicitWaitTimeout = (int)TimeSpan.FromMinutes(1).TotalMilliseconds;
         }
 
         public CommandEnvironment() { }
@@ -121,21 +121,13 @@ namespace WinAppDriver.Server
         /// Gets or sets the keyboard state of the driver.
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Values are typed correctly for JSON serialization/deserialization.")]
-        public Dictionary<string, object> KeyboardState
-        {
-            get { return this.keyboardState; }
-            set { this.keyboardState = value; }
-        }
+        public Dictionary<string, object> KeyboardState { get; set; }
 
         /// <summary>
         /// Gets or sets the mouse state of the driver.
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Values are typed correctly for JSON serialization/deserialization.")]
-        public Dictionary<string, object> MouseState
-        {
-            get { return this.mouseState; }
-            set { this.mouseState = value; }
-        }
+        public Dictionary<string, object> MouseState { get; set; } = new Dictionary<string, object>();
 
         public object GetDesiredCapabilityValue(string capability)
         {
@@ -176,11 +168,7 @@ namespace WinAppDriver.Server
         /// <summary>
         /// Gets or sets the implicit wait timeout in milliseconds.
         /// </summary>
-        public int ImplicitWaitTimeout
-        {
-            get { return this.implicitWaitTimeout; }
-            set { this.implicitWaitTimeout = value; }
-        }
+        public int ImplicitWaitTimeout { get; set; }
 
         /// <summary>
         /// Gets or sets the asynchronous script timeout in milliseconds.
@@ -236,12 +224,12 @@ namespace WinAppDriver.Server
 
         private void BrowserNavigatingEventHandler(object sender, EventArgs e)
         {
-            this.mouseState.Clear();
+            this.MouseState.Clear();
             Dictionary<string, object> clientXY = new Dictionary<string, object>();
             clientXY["x"] = 0;
             clientXY["y"] = 0;
-            this.mouseState["clientXY"] = clientXY;
-            this.mouseState["element"] = null;
+            this.MouseState["clientXY"] = clientXY;
+            this.MouseState["element"] = null;
         }
 
         private void BrowserScriptNotifyEventHandler(object sender, EventArgs e)
