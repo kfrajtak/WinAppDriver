@@ -89,7 +89,7 @@ namespace WinAppDriver.Server
             sb.Append(", ");
             if (Context.Items["response"] is Response response && response.Value != null)
             {
-                sb.Append($"response body: {JsonConvert.SerializeObject(response.Value)}");
+                sb.Append("response body: ").Append(JsonConvert.SerializeObject(response.Value));
             }
             else
             {
@@ -131,15 +131,14 @@ namespace WinAppDriver.Server
                 SessionId = data.sessionId
             };
 
-            var sessionId = command.SessionId?.ToString();
+            var sessionId = command.SessionId;
+
+            NLog.MappedDiagnosticsContext.Set("SessionId", sessionId);
 
             CommandEnvironment commandEnvironment = null;
-            if (sessionId != null)
+            if (sessionId != null && !CacheStore.CommandStore.TryGetValue(sessionId, out commandEnvironment) && commandName != DriverCommand.Close && commandName != DriverCommand.Quit)
             {
-                if (!CacheStore.CommandStore.TryGetValue(sessionId, out commandEnvironment) && commandName != DriverCommand.Close && commandName != DriverCommand.Quit)
-                {
-                    return Server.Response.CreateErrorResponse(WebDriverStatusCode.UnhandledError, "Cache not available for session " + sessionId);
-                }
+                return Server.Response.CreateErrorResponse(WebDriverStatusCode.UnhandledError, $"Cache for session '{sessionId}' was not found in the cache store, that session was probably closed earlier.");
             }
 
             commandEnvironment = commandEnvironment ?? new CommandEnvironment();
@@ -220,7 +219,7 @@ namespace WinAppDriver.Server
 
         private CancellationToken GetCancellationToken(CommandEnvironment commandEnvironment, CancellationTokenSource cancellationTokenSource)
         {
-            if (!System.Diagnostics.Debugger.IsAttached)
+            if (!Debugger.IsAttached)
             {
                 cancellationTokenSource.CancelAfter(commandEnvironment.ImplicitWaitTimeout);
             }
@@ -239,7 +238,7 @@ namespace WinAppDriver.Server
                 return FromException(aggregateException.InnerException, commandEnvironment);
             }
 
-            System.Diagnostics.Debug.WriteLine(exception.ToString());
+            Logger.Error(exception, "An unxpected error has occurred");
 
             if (exception is Exceptions.IRemoteException re)
             {
