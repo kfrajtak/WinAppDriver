@@ -5,17 +5,21 @@ using Newtonsoft.Json.Linq;
 using OpenQA.Selenium.Remote;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Threading.Tasks;
 using WinAppDriver.Server.CommandHandlers;
 using System.Text;
 using WinAppDriver.Behaviors;
 using System.Threading;
+using Newtonsoft.Json;
+using System.Diagnostics;
+using System.Linq;
 
 namespace WinAppDriver.Server
 {
     public class SeleniumModule : NancyModule
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         public SeleniumModule()
         {
             var repository = new W3CWireProtocolCommandInfoRepository();
@@ -23,6 +27,8 @@ namespace WinAppDriver.Server
             var commandDictionary = (Dictionary<string, CommandInfo>)field.GetValue(repository);
 
             After += AfterEach;
+
+            Before += BeforeEach;
 
             foreach (var command in commandDictionary)
             {
@@ -55,29 +61,52 @@ namespace WinAppDriver.Server
             }
         }
 
-        private void AfterEach(NancyContext context)
+        private Nancy.Response BeforeEach(NancyContext context)
         {
+            var sw = new Stopwatch();
+            sw.Start();
+
             var sb = new StringBuilder();
-            sb.AppendLine($"{context.Request.Method} {context.Request.Url}");
-            foreach(var header in context.Request.Headers)
-            {
-                sb.AppendLine($"{header.Key}: {string.Join(",", header.Value)}");
-            }
-
+            sb.Append($"{context.Request.Method} {context.Request.Url}, headers: ");
+            sb.Append(string.Join(", ", context.Request.Headers.Select(header => $"{header.Key}={string.Join(",", header.Value)}")));
+            sb.Append(", request body: ");
             context.Request.Body.Seek(0, System.IO.SeekOrigin.Begin);
-            sb.AppendLine(context.Request.Body.AsString());
-            sb.AppendLine();
-            sb.AppendLine(context.Response.StatusCode.ToString());
-            foreach (var header in context.Response.Headers)
-            {
-                sb.AppendLine($"{header.Key}: {string.Join(",", header.Value)}");
-            }
-
-            Console.Out.WriteLine(sb.ToString());
-            Console.Out.WriteLine();
+            sb.Append(context.Request.Body.AsString());
+            context.Request.Body.Seek(0, System.IO.SeekOrigin.Begin);
+            Logger.Info(sb.ToString());
+            context.Items["sw"] = sw;
+            return null;
         }
 
-        private object HandleCommand(string commandName, dynamic data, Dictionary<string, object> parameters = null)
+        private void AfterEach(NancyContext context)
+        {
+            var sw = context.Items["sw"] as Stopwatch;
+            sw.Stop();
+
+            var sb = new StringBuilder();
+            sb.Append($"Request end {context.Response.StatusCode}, elapsed {sw.Elapsed}, headers: ");
+            sb.Append(string.Join(", ", context.Response.Headers.Select(header => $"{header.Key}={string.Join(",", header.Value)}")));
+            sb.Append(", ");
+            if (Context.Items["response"] is Response response && response.Value != null)
+            {
+                sb.Append($"response body: {JsonConvert.SerializeObject(response.Value)}");
+            }
+            else
+            {
+                sb.Append("empty response body.");
+            }
+
+            Logger.Info(sb.ToString());
+        }
+
+        private Response HandleCommand(string commandName, dynamic data, Dictionary<string, object> parameters = null)
+        {
+            var response = HandleCommand_(commandName, data, parameters);
+            Context.Items["response"] = response;
+            return response;
+        }
+
+        private Response HandleCommand_(string commandName, dynamic data, Dictionary<string, object> parameters = null)
         {
             var p2 = new Dictionary<string, object>(data);
             parameters = parameters ?? new Dictionary<string, object>();
@@ -130,7 +159,7 @@ namespace WinAppDriver.Server
 
                 var commandHandler = CommandHandlerFactory.Instance.GetHandler(command.CommandName);
 
-                System.Diagnostics.Debug.WriteLine($"{commandName} [{Thread.CurrentThread.ManagedThreadId}]");
+                Logger.Debug($"Handling command '{commandName}' with {commandHandler.GetType().Name}.");
 
                 // check for unexpected active windows
                 if (commandEnvironment.Handler == null)
@@ -139,9 +168,8 @@ namespace WinAppDriver.Server
                 }
                 else
                 {
-                    if (commandHandler.UnexpectedAlertCheckRequired && commandEnvironment.Handler.IsFaulty)// .IsTopMostActiveWindowDifferent(out var args))
+                    if (commandHandler.UnexpectedAlertCheckRequired && commandEnvironment.Handler.IsFaulty)
                     {
-                        System.Diagnostics.Trace.WriteLine(commandEnvironment.Handler.Unexpected);
                         return Server.Response.CreateErrorResponse(WebDriverStatusCode.UnexpectedAlertOpen,
                             "An alert was found open unexpectedly.",
                             sessionId: commandEnvironment.SessionId,
@@ -177,8 +205,7 @@ namespace WinAppDriver.Server
 
                 t.Wait();
 
-                commandEnvironment.Handler.Update();// .IsTopMostActiveWindowDifferent(out var args))
-                System.Diagnostics.Trace.WriteLine("****** ____________" + commandEnvironment.Handler.IsFaulty);
+                commandEnvironment.Handler.Update();
 
                 var response = t2.Result;
                 response.SessionId = response.SessionId ?? commandEnvironment?.SessionId;
@@ -200,6 +227,11 @@ namespace WinAppDriver.Server
             return cancellationTokenSource.Token;
         }
 
+        /// <summary>
+        /// Creates an error response from an exception.
+        /// </summary>
+        /// <param name="exception">Exception to create an error response from.</param>
+        /// <param name="commandEnvironment">Command environment</param>
         private Response FromException(Exception exception, CommandEnvironment commandEnvironment)
         {
             if (exception is AggregateException aggregateException)

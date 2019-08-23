@@ -1,7 +1,5 @@
 ﻿using WinAppDriver.Server;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace ClientApp
 {
@@ -11,9 +9,20 @@ namespace ClientApp
         /// The main entry point for the application.
         /// </summary>
         [MTAThread]
-        static void Main()
+        static void Main(string[] args)
         {
-            var commandDispatcher = new DriverHost("http://localhost:4444");
+            var uri = new Uri("http://localhost:4444");
+
+            if (args.Length == 1)
+            {
+                if (!Uri.TryCreate(args[0], UriKind.Absolute, out uri))
+                {
+                    Console.Out.WriteLine($"Provided value '{args[0]}' is not a valid URI.");
+                    return;
+                }
+            }
+
+            var commandDispatcher = new DriverHost(uri);
             commandDispatcher.Start();
             Console.ReadLine();
         }

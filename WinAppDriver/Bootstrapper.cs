@@ -1,18 +1,12 @@
 ﻿using Nancy;
 using Nancy.Bootstrapper;
 using Nancy.TinyIoc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace WinAppDriver.Server
 {
     public class Bootstrapper : DefaultNancyBootstrapper
     {
-        public Bootstrapper()
-        {
-        }
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         protected override void ConfigureRequestContainer(TinyIoCContainer container, NancyContext context)
         {
@@ -21,6 +15,12 @@ namespace WinAppDriver.Server
         protected override void RequestStartup(TinyIoCContainer container, IPipelines pipelines, NancyContext context)
         {
             base.RequestStartup(container, pipelines, context);
+
+            pipelines.OnError += (_, ex) =>
+            {
+                Logger.Error(ex, "Unexpected error has occurred.");
+                return null;
+            };
         }
-    }   
+    }
 }

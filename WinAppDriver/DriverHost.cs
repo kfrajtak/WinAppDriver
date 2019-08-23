@@ -7,11 +7,12 @@ namespace WinAppDriver.Server
     {
         private readonly Uri _uri;
         private Host _host;
-        private readonly ManualResetEvent _manualResetEvent;
 
-        public DriverHost(string uri)
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
+        public DriverHost(Uri uri)
         {
-            _uri = new Uri(uri);
+            _uri = uri;
         }
 
         public void Start()
@@ -20,18 +21,12 @@ namespace WinAppDriver.Server
             {
                 _host = new Host(_uri);
                 _host.Start();
-                Console.WriteLine($"Running on {_uri}");
-                _manualResetEvent.WaitOne();
+                Logger.Info($"Server started at {_uri}");
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine(e.ToString());
+                Logger.Error(e);
             }
-        }
-
-        public void Stop()
-        {
-            _manualResetEvent.Set();
         }
     }
 }
