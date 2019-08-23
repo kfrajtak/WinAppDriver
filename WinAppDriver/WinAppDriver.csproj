@@ -156,7 +156,6 @@
     <Compile Include="CommandHandlers\ScreenshotCommandHandler.cs" />
     <Compile Include="CommandHandlers\SendKeysCommandHandler.cs" />
     <Compile Include="CommandHandlers\SendKeysToActiveElementCommandHandler.cs" />
-    <Compile Include="CommandHandlers\SetAsyncScriptTimeoutCommandHandler.cs" />
     <Compile Include="CommandHandlers\SetImplicitWaitTimeoutCommandHandler.cs" />
     <Compile Include="CommandHandlers\SetTimeoutCommandHandler.cs" />
     <Compile Include="CommandHandlers\StatusCommandHandler.cs" />
@@ -212,6 +211,7 @@
       <Name>XPathParser</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\AutoItX.Dotnet.3.3.14.5\build\AutoItX.Dotnet.targets" Condition="Exists('..\packages\AutoItX.Dotnet.3.3.14.5\build\AutoItX.Dotnet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
