@@ -27,9 +27,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WinAppDriver.Server.CommandHandlers
 {
@@ -62,10 +59,6 @@ namespace WinAppDriver.Server.CommandHandlers
             {
                 case "implicit":
                     environment.ImplicitWaitTimeout = Convert.ToInt32(value, CultureInfo.InvariantCulture);
-                    break;
-
-                case "script":
-                    environment.AsyncScriptTimeout = Convert.ToInt32(value, CultureInfo.InvariantCulture);
                     break;
 
                 case "page load":
