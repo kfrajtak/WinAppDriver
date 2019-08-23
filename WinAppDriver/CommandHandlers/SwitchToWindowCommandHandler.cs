@@ -42,7 +42,8 @@ namespace WinAppDriver.Server.CommandHandlers
                     var modalWindow = windows.Find(w => (bool)w.GetAutomationElementPropertyValue(WindowPattern.IsModalProperty));
                     if (modalWindow != null && modalWindow != matchingWindow)
                     {
-                        return Response.CreateErrorResponse(WebDriverStatusCode.UnhandledError, "Window is not enabled.");
+                        return Response.CreateErrorResponse(WebDriverStatusCode.UnhandledError, $"Cannot switch to window with handle or name '{windowHandleOrName}', " +
+                            $"a modal dialog with id '{modalWindow.Current.AutomationId}' is currently open.");
                     }
 
                     environment.SwitchToWindow(matchingWindow);
