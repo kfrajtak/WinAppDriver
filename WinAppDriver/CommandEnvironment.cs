@@ -60,16 +60,13 @@ namespace WinAppDriver.Server
 
         private Dictionary<string, object> _desiredCapabilities;
 
-        private CancellationTokenSource _cancellationTokenSource;
-
-        private int implicitWaitTimeout = 60000;
-        private int asyncScriptTimeout = -1;
-        private int pageLoadTimeout = -1;
         private bool isBlocked;
         private string alertText = string.Empty;
         private string alertType = string.Empty;
 
         private readonly UnexpectedAlertBehaviorReaction _unexpectedAlertBehavior = UnexpectedAlertBehaviorReaction.DismissAndNotify;
+
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         public UnexpectedAlertBehaviorReaction UnexpectedAlertBehavior => _unexpectedAlertBehavior;
 
@@ -89,7 +86,7 @@ namespace WinAppDriver.Server
         public CommandEnvironment(string sessionId, Dictionary<string, object> desiredCapabilities)
         {
             SessionId = sessionId;
-           
+
             _hwnd = new IntPtr(int.Parse(sessionId));
             var element = AutomationElement.FromHandle(_hwnd);
 
@@ -107,6 +104,10 @@ namespace WinAppDriver.Server
             CacheStore.CommandStore.AddOrUpdate(sessionId, this, (_, c) => c);
 
             ImplicitWaitTimeout = (int)TimeSpan.FromMinutes(1).TotalMilliseconds;
+
+            AutomationEventHandler eventHandler = new AutomationEventHandler(OnWindowOpenOrClose);
+            Automation.AddAutomationEventHandler(WindowPattern.WindowClosedEvent, element, TreeScope.Element, eventHandler);
+            Automation.AddAutomationEventHandler(WindowPattern.WindowOpenedEvent, element, TreeScope.Element, eventHandler);            
         }
 
         public CommandEnvironment() { }
@@ -116,18 +117,6 @@ namespace WinAppDriver.Server
         public UnexpectedAlertBehavior2.Handler Handler { get; set; }
 
         public UnexpectedAlertEventArgs Unexpected { get; set; }
-
-        /// <summary>
-        /// Gets or sets the keyboard state of the driver.
-        /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Values are typed correctly for JSON serialization/deserialization.")]
-        public Dictionary<string, object> KeyboardState { get; set; }
-
-        /// <summary>
-        /// Gets or sets the mouse state of the driver.
-        /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Values are typed correctly for JSON serialization/deserialization.")]
-        public Dictionary<string, object> MouseState { get; set; } = new Dictionary<string, object>();
 
         public object GetDesiredCapabilityValue(string capability)
         {
@@ -157,38 +146,16 @@ namespace WinAppDriver.Server
         }
 
         /// <summary>
-        /// Gets or sets the ID of the currently focused frame in the browser.
-        /// </summary>
-        public string FocusedFrame
-        {
-            get { return this.focusedFrame; }
-            set { this.focusedFrame = value; }
-        }
-
-        /// <summary>
         /// Gets or sets the implicit wait timeout in milliseconds.
         /// </summary>
         public int ImplicitWaitTimeout { get; set; }
 
         /// <summary>
-        /// Gets or sets the asynchronous script timeout in milliseconds.
-        /// </summary>
-        public int AsyncScriptTimeout
-        {
-            get { return this.asyncScriptTimeout; }
-            set { this.asyncScriptTimeout = value; }
-        }
-
-        /// <summary>
         /// Gets or sets the page load timeout in milliseconds.
         /// </summary>
-        public int PageLoadTimeout
-        {
-            get { return this.pageLoadTimeout; }
-            set { this.pageLoadTimeout = value; }
-        }
+        public int PageLoadTimeout { get; set; } = -1;
 
-        public string SessionId { get; private set; }
+        public string SessionId { get; }
 
         /// <summary>
         /// Creates a serializable object for the currently focused frame.
@@ -215,36 +182,6 @@ namespace WinAppDriver.Server
             this.isBlocked = false;
             this.alertType = string.Empty;
             this.alertText = string.Empty;
-        }
-
-        private void ClearCache()
-        {
-            //await this.browser.ClearInternetCacheAsync();
-        }
-
-        private void BrowserNavigatingEventHandler(object sender, EventArgs e)
-        {
-            this.MouseState.Clear();
-            Dictionary<string, object> clientXY = new Dictionary<string, object>();
-            clientXY["x"] = 0;
-            clientXY["y"] = 0;
-            this.MouseState["clientXY"] = clientXY;
-            this.MouseState["element"] = null;
-        }
-
-        private void BrowserScriptNotifyEventHandler(object sender, EventArgs e)
-        {
-            if (!this.isBlocked)
-            { 
-                /*string[] valueParts = e.Value.Split(new char[] { ':' }, 2);
-                this.alertType = valueParts[0];
-                this.alertText = valueParts[1];
-                this.isBlocked = true;*/
-            }
-            else
-            {
-                this.ClearAlertStatus();
-            }
         }
 
         public IEnumerable<AutomationElement> GetWindows(CancellationToken cancellationToken)
@@ -274,10 +211,10 @@ namespace WinAppDriver.Server
                 parentCache = Cache;
                 Cache.TryGetElementKey(window, out elementKey);
             }
-            
+
             var cache = _elementCache.AddOrUpdate(windowHwnd,
-                hwnd => new ElementCache(elementKey, window, parentCache),
-                (e, c) => c);
+                _ => new ElementCache(elementKey, window, parentCache),
+                (_, c) => c);
 
             cache.PrevWindowsHandle = _windowHwnd;
             _windowHwnd = cache.Handle;
@@ -291,8 +228,7 @@ namespace WinAppDriver.Server
                 return null;
             }
 
-            var windows = GetWindows(cancellationToken);
-            foreach (AutomationElement automationElement in windows)
+            foreach (AutomationElement automationElement in GetWindows(cancellationToken))
             {
                 if (automationElement.IsModalWindow())
                 {
@@ -319,10 +255,7 @@ namespace WinAppDriver.Server
 
         public void Dispose()
         {
-            if (Cache != null)
-            {
-                Cache.Dispose();
-            }
+            Cache?.Dispose();
 
             Microsoft.Test.Input.Mouse.Reset();
             Microsoft.Test.Input.Keyboard.Reset();
