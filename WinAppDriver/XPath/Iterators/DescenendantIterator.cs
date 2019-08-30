@@ -10,7 +10,7 @@ namespace WinAppDriver.XPath.Iterators
 {
     public class DescendantIterator : IEnumerable<AutomationElement>
     {
-        private Enumerator _enumerator;
+        private readonly Enumerator _enumerator;
 
         public DescendantIterator(AutomationElement automationElement, bool includeSelf, CancellationToken cancellationToken)
         {
@@ -20,22 +20,15 @@ namespace WinAppDriver.XPath.Iterators
                 treeScope |= TreeScope.Element;
             }
 
-            var elementQueue = new Queue<AutomationElement>();
-            var automationElementCollection = automationElement.FindAll(treeScope, Condition.TrueCondition);
-            foreach (AutomationElement childElement in automationElementCollection)
-            {
-                elementQueue.Enqueue(childElement);
-
-            }
-
-            _enumerator = new Enumerator(elementQueue, cancellationToken);
+            _enumerator = new Enumerator(automationElement, includeSelf, cancellationToken);
         }
 
-        public class Enumerator : IEnumerator<AutomationElement>
+        private class Enumerator : IEnumerator<AutomationElement>
         {
             private readonly CancellationToken _cancellationToken;
+            private readonly AutomationElement _automationElement;
 
-            private class PointComparer : IComparer<System.Windows.Point>
+            private class PointComparer : IComparer<Point>
             {
                 public int Compare(Point a, Point b)
                 {
@@ -63,33 +56,32 @@ namespace WinAppDriver.XPath.Iterators
             object IEnumerator.Current => Current;
 
             private readonly Queue<AutomationElement> _elementQueue;
-            public Enumerator(Queue<AutomationElement> queue, CancellationToken cancellationToken)
+            private readonly bool _originalIncludeSelf;
+            private bool? _includeSelf;
+
+            public Enumerator(AutomationElement automationElement, bool includeSelf, CancellationToken cancellationToken)
             {
-                _elementQueue = queue;
+                _elementQueue = new Queue<AutomationElement>();
+                _elementQueue.Enqueue(automationElement);
+
                 _cancellationToken = cancellationToken;
+                _automationElement = automationElement;
+                _includeSelf = includeSelf;
+                _originalIncludeSelf = includeSelf;
             }
 
             public bool MoveNext()
             {
-                if (_elementQueue.Count == 0 || _cancellationToken.IsCancellationRequested)
+                if (_cancellationToken.IsCancellationRequested || _elementQueue.Count == 0)
                 {
                     return false;
                 }
 
                 Current = _elementQueue.Dequeue();
-                System.Diagnostics.Debug.WriteLine("Current " + Current.ToDiagString());
 
-                /*var condition = Condition.TrueCondition;
-                if (!Current.ControlType.CanBeNestedUnder(automationElement.Current.ControlType))
-                {
-                    condition = Condition.FalseCondition;
-                }*/
-
-                var children = Current.FindAll(TreeScope.Children, Condition.TrueCondition).Cast<AutomationElement>()
+                var children = Current.GetChildren(_cancellationToken)
                     .OrderBy(c => c.Current.BoundingRectangle.TopLeft, new PointComparer())
                     .ToList();
-
-                System.Diagnostics.Debug.WriteLine($"Children: {string.Join("\n", children.Select(c => c.ToDiagString()))}");
 
                 foreach (AutomationElement automationElement in children)
                 {
@@ -101,12 +93,28 @@ namespace WinAppDriver.XPath.Iterators
                     _elementQueue.Enqueue(automationElement);
                 }
 
+                if (_includeSelf.HasValue)
+                {
+                    // the root node should not be included
+                    if (!_includeSelf.Value)
+                    {
+                        Current = _elementQueue.Count > 0
+                            ? _elementQueue.Dequeue() // dequeue the next node in the queue (if possible)
+                            : null;
+                    }
+
+                    _includeSelf = null; // never do this again
+                    return Current != null; // the next node may have be
+                }
+
                 return true;
             }
 
             public void Reset()
             {
-                throw new System.NotImplementedException();
+                _includeSelf = _originalIncludeSelf;
+                _elementQueue.Clear();
+                _elementQueue.Enqueue(_automationElement);
             }
 
             public void Dispose()
