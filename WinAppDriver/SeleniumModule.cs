@@ -238,8 +238,6 @@ namespace WinAppDriver.Server
                 return FromException(aggregateException.InnerException, commandEnvironment);
             }
 
-            Logger.Error(exception, "An unxpected error has occurred");
-
             if (exception is Exceptions.IRemoteException re)
             {
                 var response = re.GetResponse();
@@ -254,6 +252,9 @@ namespace WinAppDriver.Server
                     enee.Message,
                     sessionId: commandEnvironment?.SessionId);
             }
+
+            // log the unexpected exception
+            Logger.Error(exception, "An unxpected error has occurred");
 
             return Server.Response.CreateErrorResponse(
                 WebDriverStatusCode.UnknownCommand,

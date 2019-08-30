@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Windows.Automation;
 using WinAppDriver.Extensions;
@@ -11,8 +12,6 @@ namespace WinAppDriver.Server.CommandHandlers
     /// </summary>
     internal abstract class ElementCommandHandler : CommandHandler
     {
-        private TimeSpan atomExecutionTimeout = TimeSpan.FromMilliseconds(-1);
-
         protected string _parameterName = "ID";
 
         /// <summary>
@@ -77,7 +76,9 @@ namespace WinAppDriver.Server.CommandHandlers
                 return Response.CreateErrorResponse(WebDriverStatusCode.InvalidElementState, enee.Message);
             }
 
-            throw exception;
+            ExceptionDispatchInfo.Capture(exception).Throw();
+
+            return null;
         }
     }
 }
