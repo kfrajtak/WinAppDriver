@@ -24,21 +24,12 @@
 // USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // </copyright>
 
-using WinAppDriver.Behaviors;
 using WinAppDriver.Infrastructure;
 using Newtonsoft.Json.Linq;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.IO;
-using System.ComponentModel;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Automation;
-using WinAppDriver;
 
 namespace WinAppDriver.Server.CommandHandlers
 {
@@ -63,8 +54,6 @@ namespace WinAppDriver.Server.CommandHandlers
             responseValue["handlesAlerts"] = true;
 
             var desiredCapabilities = JObject.Parse(parameters["desiredCapabilities"]?.ToString() ?? "{}").ToObject<Dictionary<string, object>>();
-            //parameters["desiredCapabilities"] as Dictionary<string, string> ?? new Dictionary<string, string>();
-
 
             // extend capabilities with one more required parameter
             if (!desiredCapabilities.TryGetValue("mode", out var mode))
@@ -84,19 +73,16 @@ namespace WinAppDriver.Server.CommandHandlers
                 return Response.CreateMissingParametersResponse("exePath");
             }
 
-
             Process process = null;
             if (processName != null)
             {
-                
                 process = Process.GetProcessesByName(processName.ToString()).FirstOrDefault();
 
                 // searching by name as regular expression pattern
                 if (process == null)
                 {
-                        var regex = new Regex(processName.ToString());
-                        process = Process.GetProcesses()
-                            .Where(x => regex.IsMatch(x.ProcessName)).FirstOrDefault();            
+                    var regex = new Regex(processName.ToString());
+                    process = Process.GetProcesses().FirstOrDefault(x => regex.IsMatch(x.ProcessName));
                 }
 
                 if (process == null)
@@ -117,29 +103,13 @@ namespace WinAppDriver.Server.CommandHandlers
             var sessionId = process?.MainWindowHandle.ToString();
             if (sessionId != null)
             {
-                /*if (CacheStore.Store.TryGetValue(sessionId, out var elementCache))
-                {
-                    CacheStore.Store.TryRemove(sessionId, out elementCache);
-                }
-                else
-                {
-                    CacheStore.Store.AddOrUpdate(sessionId, ElementCacheFactory.Get(sessionId), (k, c) =>
-                    {
-                        c.Handle = process.MainWindowHandle;
-                        return c;
-                    });
-                }*/
+                // new session is starting, remove the old command environment context
                 if (CacheStore.CommandStore.TryGetValue(sessionId, out var commandEnvironment))
                 {
                     CacheStore.CommandStore.TryRemove(sessionId, out commandEnvironment);
                 }
 
-                //var cache = ElementCacheFactory.Get(sessionId);
                 commandEnvironment = new CommandEnvironment(sessionId, desiredCapabilities);
-                //var e = cache.AutomationElement;
-                //e = AutomationElement.FromHandle(cache.Handle);
-                //cache.AddHandler(UnexpectedAlertBehavior.CreateHandler(e, cache.Handle, commandEnvironment));
-                //CacheStore.CommandStore.AddOrUpdate(sessionId, commandEnvironment, (k, c) => c);
             }
 
             Response response = Response.CreateSuccessResponse(responseValue);
@@ -147,7 +117,5 @@ namespace WinAppDriver.Server.CommandHandlers
             response.Status = null;
             return response;
         }
-
-        
     }
 }

@@ -24,7 +24,6 @@
 // USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // </copyright>
 
-using System;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -44,10 +43,8 @@ namespace WinAppDriver.Server.CommandHandlers
         /// </summary>
         /// <param name="environment">The <see cref="CommandEnvironment"/> to use in executing the command.</param>
         /// <param name="parameters">The <see cref="Dictionary{string, object}"/> containing the command parameters.</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>The JSON serialized string representing the command response.</returns>
-        public virtual Response Execute(CommandEnvironment environment, Dictionary<string, object> parameters, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract Response Execute(CommandEnvironment environment, Dictionary<string, object> parameters, CancellationToken cancellationToken);
     }
 }

@@ -130,7 +130,12 @@ namespace WinAppDriver.Extensions
 
         public static string ToDiagString(this AutomationElement automationElement)
         {
-            return $"\"{automationElement.Current.ControlType.ProgrammaticName}\" \"{automationElement.Current.Name}\" {automationElement.Current.AutomationId} ({automationElement.Current.LocalizedControlType}/{automationElement.Current.ClassName}) [{automationElement.Current.BoundingRectangle.TopLeft}]";
+            if (automationElement == null)
+            {
+                return "---";
+            }
+
+            return $"\"{automationElement.Current.ControlType.ProgrammaticName}\" \"{automationElement.Current.Name}\" {automationElement.Current.AutomationId} ({automationElement.Current.LocalizedControlType}/{automationElement.Current.ClassName}) [{automationElement.Current.BoundingRectangle.TopLeft}]  #{automationElement.Current.ProcessId}";
         }
 
         public static object GetAutomationElementPropertyValue(this AutomationElement element, AutomationProperty property)
