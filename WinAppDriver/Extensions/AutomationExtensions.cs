@@ -179,8 +179,8 @@ namespace WinAppDriver.Extensions
         {
             TreeWalker walker = TreeWalker.ControlViewWalker;
             AutomationElement node = element;
-            
-            do
+
+            while (true)
             {
                 if (node == AutomationElement.RootElement)
                 {
@@ -195,7 +195,6 @@ namespace WinAppDriver.Extensions
 
                 return node;
             }
-            while (true);
         }
     }
 }

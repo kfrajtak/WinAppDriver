@@ -30,7 +30,7 @@ namespace WinAppDriver.Infrastructure
 
             public Enumerator(AutomationElement automationElement, ControlType controlType, CancellationToken cancellationToken)
             {
-                _elementQueue = new Queue<AutomationElement>(); ;
+                _elementQueue = new Queue<AutomationElement>();
                 _elementQueue.Enqueue(automationElement);
                 _controlType = controlType;
                 _cancellationToken = cancellationToken;
@@ -43,12 +43,6 @@ namespace WinAppDriver.Infrastructure
                     return false;
                 }
 
-                /*if (_matching.Any())
-                {
-                    Current = _matching.Dequeue();
-                    return true;
-                }*/
-
                 if (_elementQueue.Count == 0)
                 {
                     return false;
@@ -58,11 +52,6 @@ namespace WinAppDriver.Infrastructure
 
                 AutomationElement childAutomationElement = TreeWalker.ControlViewWalker.GetFirstChild(_current);
 
-                /*var children = _current.FindAll(TreeScope.Children, Condition.TrueCondition).Cast<AutomationElement>()
-                    .OrderBy(c => c.Current.BoundingRectangle.TopLeft, new PointComparer())
-                    .ToList();*/
-
-                //System.Diagnostics.Debug.WriteLine($"FindElements by type {_controlType.ProgrammaticName}, root {_current.ToDiagString()} ... ({children.Count()})");
                 while (childAutomationElement != null)
                 {
                     if (_cancellationToken.IsCancellationRequested)
@@ -77,22 +66,6 @@ namespace WinAppDriver.Infrastructure
 
                     childAutomationElement = TreeWalker.ControlViewWalker.GetNextSibling(childAutomationElement);
                 }
-
-                /*
-                foreach (AutomationElement automationElement in children)
-                {
-                    if (_cancellationToken.IsCancellationRequested)
-                    {
-                        return false;
-                    }
-
-                    if (!_controlType.CanBeNestedUnder(automationElement))
-                    {
-                        continue;
-                    }
-
-                    _elementQueue.Enqueue(automationElement);
-                }*/
 
                 return true;
             }
