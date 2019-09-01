@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.28010.2019
+VisualStudioVersion = 15.0.28307.168
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinAppDriver.Server", "WinAppDriver.Server\WinAppDriver.Server.csproj", "{E061097B-700E-4340-824D-F33805C4ED5B}"
 EndProject
@@ -15,6 +15,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{350FAA2A-87F5-4A31-997C-E722DDC22B71}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebDriverAPI", "Tests\WebDriverAPI\WebDriverAPI.csproj", "{81529391-98A1-478C-98A2-E59A2E826796}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,9 +42,16 @@ Global
 		{A8072758-E8D2-4551-89C2-564BDE162403}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A8072758-E8D2-4551-89C2-564BDE162403}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A8072758-E8D2-4551-89C2-564BDE162403}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81529391-98A1-478C-98A2-E59A2E826796}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81529391-98A1-478C-98A2-E59A2E826796}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81529391-98A1-478C-98A2-E59A2E826796}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81529391-98A1-478C-98A2-E59A2E826796}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{81529391-98A1-478C-98A2-E59A2E826796} = {350FAA2A-87F5-4A31-997C-E722DDC22B71}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {30B28346-3E4C-411F-91B7-821B628C764F}

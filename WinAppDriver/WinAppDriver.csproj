@@ -104,6 +104,7 @@
     <Compile Include="CommandHandlers\ResizeWindowCommandHandler.cs" />
     <Compile Include="CommandHandlers\SetWindowRectCommandHandler.cs" />
     <Compile Include="EventHandler.cs" />
+    <Compile Include="Exceptions\InvalidParameterValueException.cs" />
     <Compile Include="Exceptions\InvalidSelectorException.cs" />
     <Compile Include="Exceptions\ElementNotDisplayedException.cs" />
     <Compile Include="Exceptions\IRemoteException.cs" />
@@ -113,6 +114,7 @@
     <Compile Include="Extensions\AutomationElementExtensions.cs" />
     <Compile Include="Extensions\AutomationExtensions.cs" />
     <Compile Include="Extensions\ControlTypeExtensions.cs" />
+    <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Host.cs" />
     <Compile Include="Command.cs" />
