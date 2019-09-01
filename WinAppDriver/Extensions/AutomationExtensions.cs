@@ -29,16 +29,16 @@ namespace WinAppDriver.Extensions
                 return element.Current.Name;
             }
 
-            var current = element.Current;
+            var current = element.Current;/*
             if (current.ControlType == ControlType.Text ||
                 current.ControlType == ControlType.Button ||
                 current.ControlType == ControlType.RadioButton ||
                 current.ControlType == ControlType.Window)
             {
                 return current.Name?.ToString().Trim();
-            }
-
-            throw new NotSupportedException("GetText for " + element.ToDiagString());
+            }*/
+            return current.Name?.ToString().Trim();
+            // throw new NotSupportedException("GetText for " + element.ToDiagString());
         }
 
         public static string GetWindowCaption(this AutomationElement element)
@@ -135,7 +135,8 @@ namespace WinAppDriver.Extensions
                 return "---";
             }
 
-            return $"\"{automationElement.Current.ControlType.ProgrammaticName}\" \"{automationElement.Current.Name}\" {automationElement.Current.AutomationId} ({automationElement.Current.LocalizedControlType}/{automationElement.Current.ClassName}) [{automationElement.Current.BoundingRectangle.TopLeft}]  #{automationElement.Current.ProcessId}";
+            var current = automationElement.Current;
+            return $"\"{current.ControlType.ProgrammaticName}\" \"{current.Name}\" {current.AutomationId} ({current.LocalizedControlType}/{current.ClassName}) [{current.BoundingRectangle.TopLeft}] #{current.ProcessId}";
         }
 
         public static object GetAutomationElementPropertyValue(this AutomationElement element, AutomationProperty property)
