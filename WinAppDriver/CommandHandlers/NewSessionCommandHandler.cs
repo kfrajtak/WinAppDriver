@@ -30,6 +30,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
+using WinAppDriver.Extensions;
 
 namespace WinAppDriver.Server.CommandHandlers
 {
@@ -38,6 +39,8 @@ namespace WinAppDriver.Server.CommandHandlers
     /// </summary>
     internal class NewSessionCommandHandler : CommandHandler
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         /// <summary>
         /// Executes the command.
         /// </summary>
@@ -58,30 +61,29 @@ namespace WinAppDriver.Server.CommandHandlers
             // extend capabilities with one more required parameter
             if (!desiredCapabilities.TryGetValue("mode", out var mode))
             {
-                return Response.CreateMissingParametersResponse("mode");
+                mode = "start";
+                //return Response.CreateMissingParametersResponse("mode");
             }
 
-            // check does mode is process and capabilities contain processName simultaneounsy
-            if (mode?.ToString() == "attach" & !desiredCapabilities.TryGetValue("processName", out var processName))
+            var mainWindowTitle = "";
+            if (desiredCapabilities.TryGetValue("mainWindowTitle", out var mwt))
             {
-                return Response.CreateMissingParametersResponse("processName");
+                mainWindowTitle = mwt?.ToString() ?? "";
             }
 
-            // check does mode is process and capabilities contain exePath simultaneounsy
-            if (mode?.ToString() == "start" & !desiredCapabilities.TryGetValue("exePath", out var exePath))
-            {
-                return Response.CreateMissingParametersResponse("exePath");
-            }
-
+            var attached = false;
             Process process = null;
-            if (processName != null)
+            // check does mode is process and capabilities contain processName simultaneounsy
+            if (mode?.ToString() == "attach")// & !desiredCapabilities.TryGetValue("processName", out var processName))
             {
-                process = Process.GetProcessesByName(processName.ToString()).FirstOrDefault();
+                var processName = desiredCapabilities.GetParameterValue<string>("processName");
+
+                process = Process.GetProcessesByName(processName).FirstOrDefault();
 
                 // searching by name as regular expression pattern
                 if (process == null)
                 {
-                    var regex = new Regex(processName.ToString());
+                    var regex = new Regex(processName);
                     process = Process.GetProcesses().FirstOrDefault(x => regex.IsMatch(x.ProcessName));
                 }
 
@@ -90,27 +92,63 @@ namespace WinAppDriver.Server.CommandHandlers
                     return Response.CreateErrorResponse(-1, $"Cannot attach to process '{processName}', no such process found.");
                 }
             }
-
-            if (exePath != null)
+            else
             {
-                process = ApplicationProcess.StartProcessFromPath(exePath.ToString());
-                if (process == null)
+                object exePath = string.Empty;
+                // check does mode is process and capabilities contain exePath simultaneounsy
+                if (mode?.ToString() == "start")
                 {
-                    return Response.CreateErrorResponse(-1, "Cannot start process.");
+                    if (!desiredCapabilities.TryGetValue("exePath", out exePath)
+                        && !desiredCapabilities.TryGetValue("app", out exePath))
+                    {
+                        return Response.CreateMissingParametersResponse("exePath or app");
+                    }
+
+                    desiredCapabilities.TryGetParameterValue<string>("processName", out var processName);
+
+                    process = ApplicationProcess.StartProcessFromPath(exePath.ToString(), processName, mainWindowTitle);
+                    if (process == null)
+                    {
+                        return Response.CreateErrorResponse(-1, "Cannot start process.");
+                    }
                 }
             }
 
-            var sessionId = process?.MainWindowHandle.ToString();
-            if (sessionId != null)
+            if (process == null)
             {
-                // new session is starting, remove the old command environment context
-                if (CacheStore.CommandStore.TryGetValue(sessionId, out var commandEnvironment))
-                {
-                    CacheStore.CommandStore.TryRemove(sessionId, out commandEnvironment);
-                }
-
-                commandEnvironment = new CommandEnvironment(sessionId, desiredCapabilities);
+                return Response.CreateErrorResponse(WebDriverStatusCode.UnhandledError,
+                    $"Cannot start process or attach to process");
             }
+
+            var sessionId = process.MainWindowHandle.ToString();
+            var processId = $"'{process.ProcessName}', pid = {process.Id}";
+            if (sessionId == null)
+            {
+                return Response.CreateErrorResponse(WebDriverStatusCode.UnhandledError,
+                    $"Cannot get main windows handle for the process {processId}.");
+            }
+
+            // new session is starting, remove the old command environment context
+            if (CacheStore.CommandStore.TryGetValue(sessionId, out var commandEnvironment))
+            {
+                CacheStore.CommandStore.TryRemove(sessionId, out commandEnvironment);
+                commandEnvironment.Dispose();
+            }
+
+            commandEnvironment = new CommandEnvironment(sessionId, desiredCapabilities);
+            if (!attached)
+            {
+                commandEnvironment.Pid = process.Id;
+                Logger.Info($"Session '{sessionId}' created process {processId}.");
+            }
+            else
+            {
+                Logger.Info($"Session '{sessionId}' attached to process {processId}.");
+            }
+
+            CacheStore.CommandStore.AddOrUpdate(sessionId, commandEnvironment, (key, _) => _);
+
+            NLog.MappedDiagnosticsContext.Set("SessionId", sessionId);
 
             Response response = Response.CreateSuccessResponse(responseValue);
             response.SessionId = sessionId;

@@ -32,6 +32,7 @@ using System.Threading;
 using System.Windows.Automation;
 using System.Linq;
 using WinAppDriver.Extensions;
+using System.Diagnostics;
 
 namespace WinAppDriver.Server
 {
@@ -54,9 +55,8 @@ namespace WinAppDriver.Server
         /// The global window handle string used, since the driver only supports one window.
         /// </summary>
         public const string GlobalWindowHandle = "WPDriverWindowHandle";
-
-        private IntPtr _hwnd, _windowHwnd;
-        private string focusedFrame = string.Empty;
+        private readonly IntPtr _hwnd;
+        private IntPtr _windowHwnd;
 
         private Dictionary<string, object> _desiredCapabilities;
 
@@ -69,6 +69,8 @@ namespace WinAppDriver.Server
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         public UnexpectedAlertBehaviorReaction UnexpectedAlertBehavior => _unexpectedAlertBehavior;
+
+        public int Pid { get; set; }
 
         /*// <summary>
         /// Initializes a new instance of the <see cref="CommandEnvironment"/> class.
@@ -90,6 +92,8 @@ namespace WinAppDriver.Server
             _hwnd = new IntPtr(int.Parse(sessionId));
             var element = AutomationElement.FromHandle(_hwnd);
 
+            RootElement = element;
+
             _desiredCapabilities = desiredCapabilities ?? new Dictionary<string, object>();
 
             SwitchToWindow(_hwnd, element);
@@ -105,14 +109,14 @@ namespace WinAppDriver.Server
 
             ImplicitWaitTimeout = (int)TimeSpan.FromMinutes(1).TotalMilliseconds;
 
-            AutomationEventHandler eventHandler = new AutomationEventHandler(OnWindowOpenOrClose);
-            Automation.AddAutomationEventHandler(WindowPattern.WindowClosedEvent, element, TreeScope.Element, eventHandler);
-            Automation.AddAutomationEventHandler(WindowPattern.WindowOpenedEvent, element, TreeScope.Element, eventHandler);            
+            //AutomationEventHandler eventHandler = new AutomationEventHandler(OnWindowOpenOrClose);
+            //Automation.AddAutomationEventHandler(WindowPattern.WindowClosedEvent, element, TreeScope.Element, eventHandler);
+            //Automation.AddAutomationEventHandler(WindowPattern.WindowOpenedEvent, element, TreeScope.Element, eventHandler);            
         }
 
         public CommandEnvironment() { }
 
-        public AutomationElement RootElement => AutomationElement.FromHandle(_hwnd);
+        public AutomationElement RootElement { get; }
 
         public UnexpectedAlertBehavior2.Handler Handler { get; set; }
 
@@ -156,23 +160,6 @@ namespace WinAppDriver.Server
         public int PageLoadTimeout { get; set; } = -1;
 
         public string SessionId { get; }
-
-        /// <summary>
-        /// Creates a serializable object for the currently focused frame.
-        /// </summary>
-        /// <returns>A <see cref="Dictionary{string, object}"/> representing the currently focused
-        /// frame that can be serialized into a format the atoms will expect.</returns>
-        public Dictionary<string, object> CreateFrameObject()
-        {
-            if (string.IsNullOrEmpty(this.focusedFrame))
-            {
-                return null;
-            }
-
-            Dictionary<string, object> returnValue = new Dictionary<string, object>();
-            returnValue[WindowObjectKey] = this.focusedFrame;
-            return returnValue;
-        }
 
         /// <summary>
         /// Clears the alert status of the driver.
@@ -253,12 +240,56 @@ namespace WinAppDriver.Server
             }
         }
 
+        private void OnWindowOpenOrClose(object src, AutomationEventArgs e)
+        {
+            // Make sure the element still exists. Elements such as tooltips
+            // can disappear before the event is processed.
+            AutomationElement sourceElement;
+            try
+            {
+                sourceElement = src as AutomationElement;
+            }
+            catch (ElementNotAvailableException)
+            {
+                return;
+            }
+
+            Logger.Info("OnWindowOpenOrClose " + e.EventId);
+            if (e.EventId == WindowPattern.WindowOpenedEvent)
+            {
+                // TODO: event handling
+                return;
+            }
+            if (e.EventId == WindowPattern.WindowClosedEvent)
+            {
+                // TODO: event handling
+                return;
+            }
+        }
+
         public void Dispose()
         {
+            //AutomationEventHandler eventHandler = new AutomationEventHandler(OnWindowOpenOrClose);
+            //Automation.RemoveAutomationEventHandler(WindowPattern.WindowClosedEvent, RootElement, eventHandler);
+            //Automation.AddAutomationEventHandler(WindowPattern.WindowOpenedEvent, element, TreeScope.Element, eventHandler);
+
             Cache?.Dispose();
 
             Microsoft.Test.Input.Mouse.Reset();
             Microsoft.Test.Input.Keyboard.Reset();
+
+            if (Pid > 0)
+            {
+                try
+                {
+                    Process.GetProcessById(Pid).Kill();
+                    Logger.Info($"Process with pid = {Pid} created by this session was terminated.");
+                }
+                catch (Exception ex)
+                {
+                    Logger.Warn(ex, $"Process with pid = {Pid} created by this session was not terminated.");
+                }
+            }
         }
     }
 }
