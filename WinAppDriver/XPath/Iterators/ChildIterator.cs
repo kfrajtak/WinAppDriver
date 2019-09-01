@@ -63,8 +63,6 @@ namespace WinAppDriver.XPath.Iterators
                 return false;
             }
 
-            var automationId = (_started ? Current : _automationElement).ToDiagString();
-
             if (!_started)
             {
                 _started = true;

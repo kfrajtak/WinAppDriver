@@ -83,12 +83,7 @@ namespace WinAppDriver.XPath
 
             var condition = _condition as ICondition ?? throw new System.Exception($"PredicateElement condition ({_condition.GetType().Name}) does not implement ICondition.");
 
-            return input.Where((e, index) =>
-            {
-                var matches = condition.Matches(e, index);
-                System.Diagnostics.Debug.WriteLine($"PredicateElement: {e.ToDiagString()} at {index}: match? {matches}");
-                return matches;
-            });
+            return input.Where((e, index) => condition.Matches(e, index));
         }
     }
 
