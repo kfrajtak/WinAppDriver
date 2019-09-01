@@ -24,7 +24,7 @@
 // USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // </copyright>
 
-using System;
+using WinAppDriver.Exceptions;
 using System.Collections.Generic;
 using System.Globalization;
 
@@ -43,30 +43,30 @@ namespace WinAppDriver.Server.CommandHandlers
         /// <returns>The JSON serialized string representing the command response.</returns>
         public override Response Execute(CommandEnvironment environment, Dictionary<string, object> parameters, System.Threading.CancellationToken cancellationToken)
         {
-            object timeoutType;
-            if (!parameters.TryGetValue("type", out timeoutType))
+            var timeOut = -1;
+            var timeOutType = string.Empty;
+            if (Extensions.DictionaryExtensions.TryGetParameterValue(parameters, "type", out timeOutType))
             {
-                return Response.CreateMissingParametersResponse("type");
+                timeOut = Extensions.DictionaryExtensions.GetParameterValue<int>(parameters, "ms");
+            }
+            else
+            {
+                timeOutType = "implicit";
+                timeOut = Extensions.DictionaryExtensions.GetParameterValue<int>(parameters, timeOutType);                
             }
 
-            object value;
-            if (!parameters.TryGetValue("ms", out value))
-            {
-                return Response.CreateMissingParametersResponse("ms");
-            }
-
-            switch (timeoutType.ToString())
+            switch (timeOutType)
             {
                 case "implicit":
-                    environment.ImplicitWaitTimeout = Convert.ToInt32(value, CultureInfo.InvariantCulture);
+                    environment.ImplicitWaitTimeout = timeOut;
                     break;
 
                 case "page load":
-                    environment.PageLoadTimeout = Convert.ToInt32(value, CultureInfo.InvariantCulture);
+                    environment.PageLoadTimeout = timeOut;
                     break;
 
                 default:
-                    return Response.CreateErrorResponse(WebDriverStatusCode.UnhandledError, string.Format(CultureInfo.InvariantCulture, "'{0}' is not a valid timeout type", timeoutType.ToString()));
+                    return Response.CreateErrorResponse(WebDriverStatusCode.UnhandledError, string.Format(CultureInfo.InvariantCulture, "'{0}' is not a valid timeout type", timeOutType));
             }
 
             return Response.CreateSuccessResponse();

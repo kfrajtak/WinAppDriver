@@ -24,11 +24,7 @@
 // USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // </copyright>
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Automation;
 using WinAppDriver.Extensions;
 
@@ -41,9 +37,9 @@ namespace WinAppDriver.Server.CommandHandlers
     {
         protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters, System.Threading.CancellationToken cancellationToken)
         {
-            if (!parameters.TryGetValue("NAME", out var attributeName))
+            if (!parameters.TryGetValue("name", out var attributeName))
             {
-                return Response.CreateMissingParametersResponse("NAME");
+                return Response.CreateMissingParametersResponse("name");
             }
 
             var value = automationElement.GetAutomationElementPropertyValue(attributeName.ToString());
