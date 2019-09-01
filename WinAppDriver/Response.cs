@@ -148,10 +148,11 @@ namespace WinAppDriver.Server
         /// <returns>The response indicating an unsuccessful command execution.</returns>
         public static Response CreateMissingParametersResponse(string missingParameters)
         {
-            Response response = new Response();
-            response.Status = 400;
-            response.Value = missingParameters;
-            return response;
+            return new Response
+            {
+                Status = WebDriverStatusCode.UnhandledError,
+                Value = $"Missing parameter '{missingParameters}' in request."
+            };
         }
 
         /// <summary>
