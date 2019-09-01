@@ -16,7 +16,10 @@ Why another driver when there already is https://github.com/Microsoft/WinAppDriv
 Currently there is no installer. Clone the repository and build the executable from the sources.
 
 ## Selenium
-Which Selenium commands are implemented?
+### Client driver version
+Latest client driver version 3.141.0.0 must be used when calling the server.
+
+### Which Selenium commands are implemented?
 - [X] acceptAlert 
   - default captions to locate the accpet button are `Ok` and `Yes`, additional captions can be added by setting `acceptAlertButtonCaptions` capability with a semicolon separated list of values
 - [X] actions
@@ -65,6 +68,7 @@ Which Selenium commands are implemented?
 - [X] sendKeysToActiveElement
 - [X] sendKeysToElement
 - [ ] setAlertValue
+- [X] setTimeout
 - [X] setWindowPosition
 - [X] setWindowSize
 - [ ] status
@@ -94,7 +98,6 @@ Unsupported Selenium commands
 - refresh
 - setOrientation
 - setScriptTimeout
-- setTimeout
 - switchToFrame
 
 XPath support:

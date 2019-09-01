@@ -430,5 +430,7 @@ namespace WinAppDriver.Server
         public static readonly string TouchFlick = "touchFlick";
 
         public static readonly string GetElementRect = "getElementRect";
+
+        public static readonly string SetTimeouts = "setTimeouts";
     }
 }
