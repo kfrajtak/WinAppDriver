@@ -91,6 +91,8 @@ namespace WinAppDriver.Server.CommandHandlers
                 {
                     return Response.CreateErrorResponse(-1, $"Cannot attach to process '{processName}', no such process found.");
                 }
+
+                attached = true;
             }
             else
             {
@@ -121,6 +123,7 @@ namespace WinAppDriver.Server.CommandHandlers
             }
 
             var sessionId = process.MainWindowHandle.ToString();
+            NLog.MappedDiagnosticsContext.Set("SessionId", sessionId);
             var processId = $"'{process.ProcessName}', pid = {process.Id}";
             if (sessionId == null)
             {
@@ -147,8 +150,6 @@ namespace WinAppDriver.Server.CommandHandlers
             }
 
             CacheStore.CommandStore.AddOrUpdate(sessionId, commandEnvironment, (key, _) => _);
-
-            NLog.MappedDiagnosticsContext.Set("SessionId", sessionId);
 
             Response response = Response.CreateSuccessResponse(responseValue);
             response.SessionId = sessionId;
