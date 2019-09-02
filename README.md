@@ -178,7 +178,7 @@ XPath support:
 ## How to create session
 Add reference to `Selenium.WebDriver` (https://www.nuget.org/packages/Selenium.WebDriver/) and you are ready to go.
 
-The driver is currently not able to start the system under test. You have to set process name in capapabilities. The IP address is currently hardwired to `http://127.0.0.1:4444`.
+The driver is currently not able to start the system under test. You have to set process name in capapabilities. When no command line argumennt is provided, the server will be started at default IP address `http://127.0.0.1:4444`.
 
 ```
 public static RemoteWebDriver CreateSession()
@@ -196,6 +196,17 @@ Recommended element location is using XPath expression (though with a limited ex
 ```
 var webBrowser = session.FindElement(By.XPath("//Pane[@AutomationId='webBrowser']"));
 ```
+
+Element location mechanisms that are supported
+- XPath
+- Id, i.e. UI automation element automation id
+- CSS class (limited)
+  - tag name, for example `TextBox`
+  - id, for example `#id`
+- Class name, i.e. UI automation element class name
+- Tag name
+- Accesibility id, i.e. UI automation element automation id
+- Name, i.e. UI automation element name
 
 Windows in the Win application are not like windows in browser. The windows (`ControlType.Window`) can be nested inside the control tree, for example in a `Tab` element. 
 
