@@ -93,7 +93,7 @@ namespace WinAppDriver.Input
                         Pause(action);
                         break;
                     default:
-                        throw new NotImplementedException("mouse-" + type);
+                        throw new NotImplementedException("key-" + type);
                 }
             }
         }
@@ -148,7 +148,7 @@ namespace WinAppDriver.Input
             {
                 Microsoft.Test.Input.Keyboard.Release(key);
                 return;
-            }            
+            }
         }
     }
 }

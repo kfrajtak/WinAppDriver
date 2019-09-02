@@ -141,6 +141,8 @@ namespace WinAppDriver.Server
 
         public IntPtr WindowHandle => _windowHwnd;
 
+        public AutomationElement Window => Cache.AutomationElement;
+
         /// <summary>
         /// Gets a value indicating whether execution of the next command should be blocked.
         /// </summary>

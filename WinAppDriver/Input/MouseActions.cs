@@ -67,13 +67,14 @@ namespace WinAppDriver.Input
             }
             else
             {
+                // move pointer to an element location
                 var elementId = origin.First().Last().Value<string>();
                 var element = _commandEnvironment.Cache.GetElement(elementId);
 
                 if (!element.TryGetClickablePoint(out var pt))
                 {
                     var boundingRect = element.Current.BoundingRectangle;
-                    pt = new System.Windows.Point(boundingRect.X + boundingRect.Height / 2, boundingRect.Y + boundingRect.Width / 2);
+                    pt = new System.Windows.Point(boundingRect.X + (boundingRect.Height / 2), boundingRect.Y + (boundingRect.Width / 2));
                 }
 
                 // set inner state
@@ -84,8 +85,6 @@ namespace WinAppDriver.Input
             }
 
             Pause(action);
-            return;
-
         }
 
         private void Down(JToken action)
