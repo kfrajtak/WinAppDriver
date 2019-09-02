@@ -22,12 +22,41 @@ namespace WinAppDriver.Server.CommandHandlers
 
             var actionsToExecute = new List<Action>();
 
-            SetForegroundWindow(commandEnvironment.WindowHandle);
+            var numberOfRetries = 10;
+            Exception e = null;
+            while (numberOfRetries-- >= 0)
+            {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return null;
+                }
 
-            System.Windows.Automation.AutomationElement.FromHandle(commandEnvironment.WindowHandle).SetFocus();
+                try
+                {
+                    SetForegroundWindow(commandEnvironment.WindowHandle);
+                    //System.Windows.Automation.AutomationElement.FromHandle(commandEnvironment.WindowHandle).SetFocus();
+                    commandEnvironment.Window.SetFocus();
+                    e = null;
+                    break;
+                }
+                catch (COMException comEx)
+                {
+                    e = comEx;
 
-            Microsoft.Test.Input.Mouse.Reset();
-            Microsoft.Test.Input.Keyboard.Reset();
+                    if (comEx.Message.Contains("0x80131505"))
+                    {
+                        System.Threading.Thread.Sleep(250);
+                        continue;
+                    }
+
+                    throw;
+                }
+            }
+
+            if (e != null)
+            {
+                throw e;
+            }
 
             try
             {

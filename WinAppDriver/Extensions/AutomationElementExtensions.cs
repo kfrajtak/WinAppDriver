@@ -27,7 +27,7 @@ namespace WinAppDriver.Extensions
 
         public static IEnumerable<AutomationElement> GetChildren(this AutomationElement automationElement, System.Threading.CancellationToken cancellationToken)
         {
-            var child = TreeWalker.ControlViewWalker.GetFirstChild(automationElement);
+            var child = TreeWalker.ControlViewWalker.GetFirstChild(automationElement, cancellationToken);
             while (child != null)
             {
                 if (cancellationToken.IsCancellationRequested)

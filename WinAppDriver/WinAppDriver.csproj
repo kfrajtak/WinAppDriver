@@ -116,6 +116,7 @@
     <Compile Include="Extensions\ControlTypeExtensions.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Extensions\TreeWalkerExtensions.cs" />
     <Compile Include="Host.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="DriverHost.cs" />

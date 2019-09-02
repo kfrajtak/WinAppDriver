@@ -66,7 +66,7 @@ namespace WinAppDriver.XPath.Iterators
             if (!_started)
             {
                 _started = true;
-                Current = _treeWalker.GetFirstChild(_automationElement);
+                Current = _treeWalker.GetFirstChild(_automationElement, _cancellationToken);
             }
             else
             {
