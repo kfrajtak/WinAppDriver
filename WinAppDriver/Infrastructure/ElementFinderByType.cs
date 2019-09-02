@@ -50,7 +50,7 @@ namespace WinAppDriver.Infrastructure
 
                 _current = _elementQueue.Dequeue();
 
-                AutomationElement childAutomationElement = TreeWalker.ControlViewWalker.GetFirstChild(_current);
+                AutomationElement childAutomationElement = TreeWalker.ControlViewWalker.GetFirstChild(_current, _cancellationToken);
 
                 while (childAutomationElement != null)
                 {
