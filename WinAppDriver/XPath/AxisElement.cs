@@ -4,26 +4,27 @@ using System.Windows.Automation;
 using WinAppDriver.Extensions;
 using WinAppDriver.XPath.Iterators;
 using CodePlex.XPathParser;
+using WinAppDriver.Infrastructure;
+using System.Linq;
 
 namespace WinAppDriver.XPath
 {   
     public class AxisElement : IXPathExpression, IEvaluate
     {
-        private readonly string _prefix, _name;
+        private readonly string _prefix;
         private readonly System.Xml.XPath.XPathNodeType _nodeType;
-        private readonly XPathAxis _xpathAxis;
 
         public AxisElement(XPathAxis xpathAxis, System.Xml.XPath.XPathNodeType nodeType, string prefix, string name)
         {
-            _xpathAxis = xpathAxis;
+            Axis = xpathAxis;
             _nodeType = nodeType;
             _prefix = prefix;
-            _name = name;
+            Name = name;
         }
 
-        public string Name => _name;
+        public string Name { get; }
 
-        public XPathAxis Axis => _xpathAxis;
+        public XPathAxis Axis { get; }
 
         public IEnumerable<AutomationElement> Find(AutomationElement automationElement, IList<AutomationElement> collection, CancellationToken cancellationToken)
         {
@@ -32,20 +33,20 @@ namespace WinAppDriver.XPath
                 return new List<AutomationElement>();
             }
 
-            switch (_xpathAxis)
+            var isWindow = Name?.Equals("window", System.StringComparison.InvariantCultureIgnoreCase) == true;
+
+            switch (Axis)
             {
                 case XPathAxis.Child:
                     // TODO window
-                    if (Name != null && Name.Equals("window", System.StringComparison.InvariantCultureIgnoreCase) &&
-                        automationElement.Current.ControlType == ControlType.Window)
+                    if (isWindow && automationElement.Current.ControlType == ControlType.Window)
                     {
                         return new List<AutomationElement> { automationElement };
                     }
                     return new ChildIterator(Name, automationElement, cancellationToken);
                 case XPathAxis.Descendant:
-                    return new DescendantIterator(automationElement, false, cancellationToken);
                 case XPathAxis.DescendantOrSelf:
-                    return new DescendantIterator(automationElement, true, cancellationToken);
+                    return new DescendantIterator(automationElement, Axis == XPathAxis.DescendantOrSelf, cancellationToken);
                 case XPathAxis.Root:
                     return new List<AutomationElement> { automationElement };
                 case XPathAxis.Parent:
@@ -57,22 +58,22 @@ namespace WinAppDriver.XPath
                 case XPathAxis.Self:
                     return new List<AutomationElement> { automationElement };
                 default:
-                    throw new System.NotSupportedException(_xpathAxis.ToString());
+                    throw new System.NotSupportedException(Axis.ToString());
             }
         }
 
         object IEvaluate.Evaluate(AutomationElement automationElement, System.Type expectedType)
         {
-            switch (_xpathAxis)
+            switch (Axis)
             {
                 case XPathAxis.Attribute:
-                    var attributeValue = automationElement.GetAutomationElementPropertyValue(_name);
-                    System.Diagnostics.Debug.WriteLine($"{_xpathAxis}: {automationElement.Current.LocalizedControlType}#{automationElement.Current.AutomationId} @{_name} => {attributeValue}");
+                    var attributeValue = automationElement.GetAutomationElementPropertyValue(Name);
+                    System.Diagnostics.Debug.WriteLine($"{Axis}: {automationElement.Current.LocalizedControlType}#{automationElement.Current.AutomationId} @{Name} => {attributeValue}");
                     return attributeValue;
                 case XPathAxis.Self:
                     return automationElement;
                 default:
-                    throw new System.NotSupportedException(_xpathAxis.ToString());
+                    throw new System.NotSupportedException(Axis.ToString());
             }
         }
     }

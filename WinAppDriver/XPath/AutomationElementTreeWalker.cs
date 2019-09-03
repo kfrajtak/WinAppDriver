@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading;
 using System.Windows.Automation;
-using WinAppDriver.Extensions;
 using CodePlex.XPathParser;
 using System;
 using System.Reflection;
@@ -12,7 +11,7 @@ namespace WinAppDriver.XPath
 {
     public interface IXPathExpression
     {
-        IEnumerable<AutomationElement> Find(AutomationElement root, IList<AutomationElement> collection, CancellationToken cancellationToken);        
+        IEnumerable<AutomationElement> Find(AutomationElement root, IList<AutomationElement> collection, CancellationToken cancellationToken);
     }
 
     public interface IEvaluate
@@ -284,7 +283,7 @@ namespace WinAppDriver.XPath
 
             return null;
         }
-    }    
+    }
 
     public class JoinStepElement : IXPathExpression
     {
@@ -314,16 +313,11 @@ namespace WinAppDriver.XPath
             System.Diagnostics.Debug.WriteLine(GetHashCode() + " JoinStep >> " + right.Count);
             return right;*/
         }
-    }        
+    }
 
     public class AutomationElementTreeWalker
     {
         private readonly IXPathExpression _xPathExpresion;
-
-        public AutomationElementTreeWalker(string xPath)
-        {
-            _xPathExpresion = new XPathParser<IXPathExpression>().Parse(xPath, new WalkerBuilder());
-        }
 
         public AutomationElementTreeWalker(IXPathExpression xPathExpresion)
         {

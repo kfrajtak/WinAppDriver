@@ -24,12 +24,7 @@
 // USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // </copyright>
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace WinAppDriver.Server.CommandHandlers
 {
@@ -46,8 +41,7 @@ namespace WinAppDriver.Server.CommandHandlers
         /// <returns>The JSON serialized string representing the command response.</returns>
         public override Response Execute(CommandEnvironment environment, Dictionary<string, object> parameters, System.Threading.CancellationToken cancellationToken)
         {
-            string handle = CommandEnvironment.GlobalWindowHandle;
-            return Response.CreateSuccessResponse(handle);
+            return Response.CreateSuccessResponse(CommandEnvironment.GlobalWindowHandle);
         }
     }
 }
