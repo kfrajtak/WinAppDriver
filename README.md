@@ -192,7 +192,6 @@ public static RemoteWebDriver CreateSessionByAttachingToRunningProcess()
     desktopCapabilities);
 }
 
-```
 public static RemoteWebDriver CreateSessionByStartingTheApplication()
 {
   DesiredCapabilities desktopCapabilities = new DesiredCapabilities();
@@ -205,7 +204,6 @@ public static RemoteWebDriver CreateSessionByStartingTheApplication()
     TimeSpan.FromSeconds(60)), 
     desktopCapabilities);
 }
-```
 ```
 
 Recommended element location is using XPath expression (though with a limited expression support)
