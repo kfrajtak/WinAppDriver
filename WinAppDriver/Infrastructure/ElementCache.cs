@@ -43,9 +43,9 @@ namespace WinAppDriver.Infrastructure
         /// </summary>
         public IntPtr PrevWindowsHandle { get; set; }
 
-        private Dictionary<string, AutomationElement> _cache = new Dictionary<string, AutomationElement>();
-        private Dictionary<AutomationElement, string> _cacheReversed = new Dictionary<AutomationElement, string>();
-        private IList<IDisposable> _handlers = new List<IDisposable>();
+        private readonly Dictionary<string, AutomationElement> _cache = new Dictionary<string, AutomationElement>();
+        private readonly Dictionary<AutomationElement, string> _cacheReversed = new Dictionary<AutomationElement, string>();
+        private readonly IList<IDisposable> _handlers = new List<IDisposable>();
 
         public AutomationElement AutomationElement { get; }
 
@@ -69,7 +69,7 @@ namespace WinAppDriver.Infrastructure
                 });
         }
 
-        private string GetNextElementId() => $"{Handle}_{_counter++}";
+        private string GetNextElementId() => $"{Handle}{(_counter++).ToString().PadLeft(5, '0')}";
 
         public void AddToCache(params Tuple<string, AutomationElement>[] automationElements)
         {
@@ -155,6 +155,6 @@ namespace WinAppDriver.Infrastructure
             _handlers.Clear();
             _cache.Clear();
             _cacheReversed.Clear();
-        }        
+        }
     }
 }

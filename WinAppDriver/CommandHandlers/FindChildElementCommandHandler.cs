@@ -24,8 +24,10 @@
 // USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // </copyright>
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Automation;
 using WinAppDriver.Exceptions;
 using WinAppDriver.Infrastructure;
@@ -49,7 +51,17 @@ namespace WinAppDriver.Server.CommandHandlers
                 return Response.CreateMissingParametersResponse("value");
             }
 
-            var element = environment.Cache.FindElements(automationElement, new ElementFinder(mechanism.ToString(), criteria.ToString()), cancellationToken).FirstOrDefault();
+            Tuple<string, AutomationElement> element = null;
+            var elementFinder = new ElementFinder(mechanism.ToString(), criteria.ToString());
+            if (Regex.IsMatch(criteria.ToString(), @"^\/\/Window(\[|$)")) // TODO ugly disgusting hack
+            {
+                element = environment.Cache.FindElements(environment.RootElement, elementFinder, cancellationToken).FirstOrDefault();
+            }
+            else
+            {
+                element = environment.Cache.FindElements(automationElement, elementFinder, cancellationToken).FirstOrDefault();
+            }
+
             if (element == null)
             {
                 var errorMessage = $"No such element found using {mechanism} and criteria '{criteria}' in the control tree with element with AutomationId='{automationElement.Current.AutomationId}' as root.";

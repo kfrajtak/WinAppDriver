@@ -108,10 +108,6 @@ namespace WinAppDriver.Server
             CacheStore.CommandStore.AddOrUpdate(sessionId, this, (_, c) => c);
 
             ImplicitWaitTimeout = (int)TimeSpan.FromMinutes(1).TotalMilliseconds;
-
-            //AutomationEventHandler eventHandler = new AutomationEventHandler(OnWindowOpenOrClose);
-            //Automation.AddAutomationEventHandler(WindowPattern.WindowClosedEvent, element, TreeScope.Element, eventHandler);
-            //Automation.AddAutomationEventHandler(WindowPattern.WindowOpenedEvent, element, TreeScope.Element, eventHandler);            
         }
 
         public CommandEnvironment() { }
@@ -242,39 +238,8 @@ namespace WinAppDriver.Server
             }
         }
 
-        private void OnWindowOpenOrClose(object src, AutomationEventArgs e)
-        {
-            // Make sure the element still exists. Elements such as tooltips
-            // can disappear before the event is processed.
-            AutomationElement sourceElement;
-            try
-            {
-                sourceElement = src as AutomationElement;
-            }
-            catch (ElementNotAvailableException)
-            {
-                return;
-            }
-
-            Logger.Info("OnWindowOpenOrClose " + e.EventId);
-            if (e.EventId == WindowPattern.WindowOpenedEvent)
-            {
-                // TODO: event handling
-                return;
-            }
-            if (e.EventId == WindowPattern.WindowClosedEvent)
-            {
-                // TODO: event handling
-                return;
-            }
-        }
-
         public void Dispose()
         {
-            //AutomationEventHandler eventHandler = new AutomationEventHandler(OnWindowOpenOrClose);
-            //Automation.RemoveAutomationEventHandler(WindowPattern.WindowClosedEvent, RootElement, eventHandler);
-            //Automation.AddAutomationEventHandler(WindowPattern.WindowOpenedEvent, element, TreeScope.Element, eventHandler);
-
             Cache?.Dispose();
 
             Microsoft.Test.Input.Mouse.Reset();
