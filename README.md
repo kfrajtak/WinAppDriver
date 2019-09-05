@@ -176,7 +176,7 @@ XPath support:
 
 
 ## How to create session
-Add reference to `Selenium.WebDriver` (https://www.nuget.org/packages/Selenium.WebDriver/) and you are ready to go.
+Add reference to `Selenium.WebDriver` v3.141.0 (https://www.nuget.org/packages/Selenium.WebDriver/3.141.0) and you are ready to go.
 
 The driver is currently not able to start the system under test. You have to set process name in capapabilities. When no command line argumennt is provided, the server will be started at default IP address `http://127.0.0.1:4444`.
 
@@ -197,8 +197,10 @@ public static RemoteWebDriver CreateSessionByStartingTheApplication()
   DesiredCapabilities desktopCapabilities = new DesiredCapabilities();
   desktopCapabilities.SetCapability("app", "<name of the process>");  // or "exePath"
   // following capabilities should be provided for UWP applications like Calculator or Clocks & Alarms 
-  desktopCapabilities.SetCapability("processName", "<name of the process>"); // optional - to identify the process
-  desktopCapabilities.SetCapability("mainWindowTitle", "<name of the process>");  // optional - to identify the main window
+  // optional - to identify the process
+  desktopCapabilities.SetCapability("processName", "<name of the process>"); 
+  // optional - to identify the main window
+  desktopCapabilities.SetCapability("mainWindowTitle", "<name of the process>");  
   return new RemoteWebDriver(
     new CommandExec(new Uri("http://127.0.0.1:4444"), 
     TimeSpan.FromSeconds(60)), 
