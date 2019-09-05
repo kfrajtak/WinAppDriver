@@ -181,15 +181,31 @@ Add reference to `Selenium.WebDriver` (https://www.nuget.org/packages/Selenium.W
 The driver is currently not able to start the system under test. You have to set process name in capapabilities. When no command line argumennt is provided, the server will be started at default IP address `http://127.0.0.1:4444`.
 
 ```
-public static RemoteWebDriver CreateSession()
+public static RemoteWebDriver CreateSessionByAttachingToRunningProcess()
 {
   DesiredCapabilities desktopCapabilities = new DesiredCapabilities();
   desktopCapabilities.SetCapability("processName", "<name of the process>");
+  desktopCapabilities.SetCapability("mode", "attach");
   return new RemoteWebDriver(
     new CommandExec(new Uri("http://127.0.0.1:4444"), 
     TimeSpan.FromSeconds(60)), 
     desktopCapabilities);
 }
+
+```
+public static RemoteWebDriver CreateSessionByStartingTheApplication()
+{
+  DesiredCapabilities desktopCapabilities = new DesiredCapabilities();
+  desktopCapabilities.SetCapability("app", "<name of the process>");  // or "exePath"
+  // following capabilities should be provided for UWP applications like Calculator or Clocks & Alarms 
+  desktopCapabilities.SetCapability("processName", "<name of the process>"); // optional - to identify the process
+  desktopCapabilities.SetCapability("mainWindowTitle", "<name of the process>");  // optional - to identify the main window
+  return new RemoteWebDriver(
+    new CommandExec(new Uri("http://127.0.0.1:4444"), 
+    TimeSpan.FromSeconds(60)), 
+    desktopCapabilities);
+}
+```
 ```
 
 Recommended element location is using XPath expression (though with a limited expression support)
