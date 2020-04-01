@@ -290,6 +290,12 @@ namespace Microsoft.Test.Input
                     // the key type inside a shift press/release if necessary.
                     int vKeyValue = NativeMethods.VkKeyScan(c);
                     bool keyIsShifted = (vKeyValue & NativeMethods.VKeyShiftMask) == NativeMethods.VKeyShiftMask;
+                    System.Console.Out.WriteLine(c + " " + keyIsShifted);
+                    if (c >= 'A' && c <= 'Z')
+                    {
+                        keyIsShifted = true;
+                    }
+
                     Key key = (Key)(vKeyValue & NativeMethods.VKeyCharMask);
 
                     if (keyIsShifted)
@@ -333,7 +339,7 @@ namespace Microsoft.Test.Input
                 Release(modifierKey);
             }
         }
-
+        
         private static void SendKeyboardKey(ushort key, bool isKeyDown, bool isExtended, bool isUnicode)
         {
             var input = new NativeMethods.INPUT();

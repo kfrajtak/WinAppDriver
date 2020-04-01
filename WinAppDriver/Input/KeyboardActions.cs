@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.Test.Input;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,62 +12,79 @@ namespace WinAppDriver.Input
         private readonly JArray _actions;
         private readonly CommandEnvironment _commandEnvironment;
 
-        private static Dictionary<int, Microsoft.Test.Input.Key> _map = new Dictionary<int, Microsoft.Test.Input.Key>
+        private static Dictionary<int, Key> _map = new Dictionary<int, Key>
         {
-            //{ 57344, Microsoft.Test.Input.Key.Null },
-            { 57345, Microsoft.Test.Input.Key.Cancel },
-            { 57346, Microsoft.Test.Input.Key.Help },
-            { 57347, Microsoft.Test.Input.Key.Back },
-            { 57348, Microsoft.Test.Input.Key.Tab },
-            { 57349, Microsoft.Test.Input.Key.Clear },
-            { 57350, Microsoft.Test.Input.Key.Return },
-            { 57351, Microsoft.Test.Input.Key.Enter },
-            { 57352, Microsoft.Test.Input.Key.Shift },
-            { 57353, Microsoft.Test.Input.Key.LeftCtrl },
-            { 57354, Microsoft.Test.Input.Key.LeftAlt },
-            { 57355, Microsoft.Test.Input.Key.Pause },
-            { 57356, Microsoft.Test.Input.Key.Escape },
-            { 57357, Microsoft.Test.Input.Key.Space },
-            { 57358, Microsoft.Test.Input.Key.PageUp },
-            { 57359, Microsoft.Test.Input.Key.PageDown },
-            { 57360, Microsoft.Test.Input.Key.End },
-            { 57361, Microsoft.Test.Input.Key.Home },
-            { 57362, Microsoft.Test.Input.Key.Left },
-            { 57363, Microsoft.Test.Input.Key.Up },
-            { 57364, Microsoft.Test.Input.Key.Right },
-            { 57365, Microsoft.Test.Input.Key.Down },
-            { 57366, Microsoft.Test.Input.Key.Insert },
-            { 57367, Microsoft.Test.Input.Key.Delete },
-            { 57368, Microsoft.Test.Input.Key.OemSemicolon },
-            //{ 57369, Microsoft.Test.Input.Key. },
-            { 57370, Microsoft.Test.Input.Key.NumPad0 },
-            { 57371, Microsoft.Test.Input.Key.NumPad1 },
-            { 57372, Microsoft.Test.Input.Key.NumPad2 },
-            { 57373, Microsoft.Test.Input.Key.NumPad3 },
-            { 57374, Microsoft.Test.Input.Key.NumPad4 },
-            { 57375, Microsoft.Test.Input.Key.NumPad5 },
-            { 57376, Microsoft.Test.Input.Key.NumPad6 },
-            { 57377, Microsoft.Test.Input.Key.NumPad7 },
-            { 57378, Microsoft.Test.Input.Key.NumPad8 },
-            { 57379, Microsoft.Test.Input.Key.NumPad9 },
-            { 57380, Microsoft.Test.Input.Key.Multiply },
-            { 57381, Microsoft.Test.Input.Key.Add },
-            { 57382, Microsoft.Test.Input.Key.Separator },
-            { 57383, Microsoft.Test.Input.Key.Subtract },
-            { 57384, Microsoft.Test.Input.Key.Decimal },
-            { 57385, Microsoft.Test.Input.Key.Divide },
-            { 57393, Microsoft.Test.Input.Key.F1 },
-            { 57394, Microsoft.Test.Input.Key.F2 },
-            { 57395, Microsoft.Test.Input.Key.F3 },
-            { 57396, Microsoft.Test.Input.Key.F4 },
-            { 57397, Microsoft.Test.Input.Key.F5 },
-            { 57398, Microsoft.Test.Input.Key.F6 },
-            { 57399, Microsoft.Test.Input.Key.F7 },
-            { 57400, Microsoft.Test.Input.Key.F8 },
-            { 57401, Microsoft.Test.Input.Key.F9 },
-            { 57402, Microsoft.Test.Input.Key.F10 },
-            { 57403, Microsoft.Test.Input.Key.F11 },
-            { 57404, Microsoft.Test.Input.Key.F12 }
+            //{ 57344, Key.Null },
+            { 57345, Key.Cancel },
+            { 57346, Key.Help },
+            { 57347, Key.Back },
+            { 57348, Key.Tab },
+            { 57349, Key.Clear },
+            { 57350, Key.Return },
+            { 57351, Key.Enter },
+            { 57352, Key.Shift },
+            { 57353, Key.LeftCtrl },
+            { 57354, Key.LeftAlt },
+            { 57355, Key.Pause },
+            { 57356, Key.Escape },
+            { 57357, Key.Space },
+            { 57358, Key.PageUp },
+            { 57359, Key.PageDown },
+            { 57360, Key.End },
+            { 57361, Key.Home },
+            { 57362, Key.Left },
+            { 57363, Key.Up },
+            { 57364, Key.Right },
+            { 57365, Key.Down },
+            { 57366, Key.Insert },
+            { 57367, Key.Delete },
+            { 57368, Key.OemSemicolon },
+            //{ 57369, Key. },
+            { 57370, Key.NumPad0 },
+            { 57371, Key.NumPad1 },
+            { 57372, Key.NumPad2 },
+            { 57373, Key.NumPad3 },
+            { 57374, Key.NumPad4 },
+            { 57375, Key.NumPad5 },
+            { 57376, Key.NumPad6 },
+            { 57377, Key.NumPad7 },
+            { 57378, Key.NumPad8 },
+            { 57379, Key.NumPad9 },
+            { 57380, Key.Multiply },
+            { 57381, Key.Add },
+            { 57382, Key.Separator },
+            { 57383, Key.Subtract },
+            { 57384, Key.Decimal },
+            { 57385, Key.Divide },
+            { 57393, Key.F1 },
+            { 57394, Key.F2 },
+            { 57395, Key.F3 },
+            { 57396, Key.F4 },
+            { 57397, Key.F5 },
+            { 57398, Key.F6 },
+            { 57399, Key.F7 },
+            { 57400, Key.F8 },
+            { 57401, Key.F9 },
+            { 57402, Key.F10 },
+            { 57403, Key.F11 },
+            { 57404, Key.F12 }
+        };
+
+        internal static bool IsSpecial(string keyCode)
+        {
+            return TryGetKey(keyCode[0], out var key) && _specialKeys.Contains(key);
+        }
+
+        private static readonly IList<Key> _specialKeys = new List<Key> 
+        { 
+            Key.RightAlt, Key.LeftAlt, 
+            Key.Insert, Key.Delete,
+            Key.Ctrl, Key.LeftCtrl, Key.RightCtrl,
+            Key.Shift, Key.LeftShift, Key.RightShift,
+            Key.Left, Key.Right, Key.Down, Key.Up,
+            Key.Home, Key.End,
+            Key.PageUp, Key.PageDown,
+            Key.LWin, Key.RWin
         };
 
         public KeyboardActions(JArray actions, CommandEnvironment commandEnvironment)
@@ -98,12 +116,19 @@ namespace WinAppDriver.Input
             }
         }
 
-        private bool TryGetKey(char keyCode, out Microsoft.Test.Input.Key key)
+        public static bool TryGetKey(char keyCode, out Key key)
         {
+            // 8-bit char
+            if (keyCode > 0 && keyCode <= 255)
+            {
+                key = Key.None;
+                return false;
+            }
+
             // NOTE hack, 0-9 were not sent to controls
             if (keyCode >= '0' && keyCode <= '9')
             {
-                key = Microsoft.Test.Input.Key.D0 + (keyCode - '0');
+                key = Key.D0 + (keyCode - '0');
                 return true;
             }
 
@@ -134,11 +159,11 @@ namespace WinAppDriver.Input
             var keyCode = action["value"].Value<string>();
             if (TryGetKey(keyCode[0], out var key))
             {
-                Microsoft.Test.Input.Keyboard.Press(key);
+                Keyboard.Press(key);
                 return;
             }
 
-            Microsoft.Test.Input.Keyboard.Type(keyCode);
+            Keyboard.Type(keyCode);
         }
 
         private void Up(JToken action)
@@ -146,7 +171,7 @@ namespace WinAppDriver.Input
             var keyCode = action["value"].Value<string>();
             if (TryGetKey(keyCode[0], out var key))
             {
-                Microsoft.Test.Input.Keyboard.Release(key);
+                Keyboard.Release(key);
                 return;
             }
         }

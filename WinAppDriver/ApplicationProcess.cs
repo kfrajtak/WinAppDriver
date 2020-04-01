@@ -40,7 +40,7 @@ namespace WinAppDriver
                 throw new ArgumentException("Regex for MainWindowTitle is not valid", e);
             }
 
-            while (cancellationToken.IsCancellationRequested)
+            while (true)
             {
                 Thread.Sleep(500);
 
@@ -59,10 +59,10 @@ namespace WinAppDriver
                     }
 
                     var matchingProcesses = processes.Where(p => regex.IsMatch(p.MainWindowTitle));
-                    process = matchingProcesses.FirstOrDefault();
+
                     if (matchingProcesses.Count() == 1)
                     {
-                        if (process.MainWindowHandle.ToInt32() == 0)
+                        if (matchingProcesses.First().MainWindowHandle.ToInt32() == 0)
                         {
                             // wait for window
                             continue;
@@ -84,31 +84,17 @@ namespace WinAppDriver
                 {
                     break;
                 }
+
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    break;
+                }
             }
 
             if (process == null)
             {
                 throw new NullReferenceException("Process was not started.");
             }
-
-            /*if (process.MainWindowHandle.ToInt32() == 0)
-            {
-                int time = 0;
-                while (!process.HasExited)
-                {
-                    process.Refresh();
-                    if (process.MainWindowHandle.ToInt32() != 0)
-                    {
-                        return process;
-                    }
-                    Thread.Sleep(50);
-                    time += 50;
-                    if (time > timeout)
-                    {
-                        throw new TimeoutException("Process starting timeout expired.");
-                    }
-                }
-            }*/
 
             return process;
         }

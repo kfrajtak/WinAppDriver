@@ -35,16 +35,24 @@ namespace WebDriverAPI
         public static WindowsDriver<WindowsElement> CreateNewSession(string appId, string argument = null)
         {
             AppiumOptions appiumOptions = new AppiumOptions();
-            
-            if (appId == CommonTestSettings.AlarmClockAppId)
+
+            switch (appId)
             {
-                appiumOptions.AddAdditionalCapability("app", @"shell:appsFolder\" + appId);
-                appiumOptions.AddAdditionalCapability("processName", "ApplicationFrameHost");
-                appiumOptions.AddAdditionalCapability("mainWindowTitle", "Alarms & Clock");
-            }
-            else
-            {
-                appiumOptions.AddAdditionalCapability("app", appId);
+                case CommonTestSettings.AlarmClockAppId:
+                    appiumOptions.AddAdditionalCapability("app", @"shell:appsFolder\" + appId);
+                    appiumOptions.AddAdditionalCapability("processName", "ApplicationFrameHost");
+                    appiumOptions.AddAdditionalCapability("mainWindowTitle", "Alarms & Clock");
+                    break;
+
+                case CommonTestSettings.CalculatorAppId:
+                    appiumOptions.AddAdditionalCapability("app", @"C:\Windows\SysWOW64\calc.exe");
+                    appiumOptions.AddAdditionalCapability("processName", "ApplicationFrameHost");
+                    appiumOptions.AddAdditionalCapability("processName", "Calculator");
+                    break;
+
+                default:
+                    appiumOptions.AddAdditionalCapability("app", appId);
+                    break;
             }
 
             if (argument != null)

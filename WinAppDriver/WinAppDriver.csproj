@@ -38,7 +38,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
+  </PropertyGroup>  
   <ItemGroup>
     <Reference Include="AutoItX3.Assembly, Version=3.0.0.0, Culture=neutral, PublicKeyToken=a646454c8d475470, processorArchitecture=MSIL">
       <HintPath>..\packages\AutoItX.Dotnet.3.3.14.5\lib\AutoItX3.Assembly.dll</HintPath>
@@ -171,6 +171,8 @@
     <Compile Include="Infrastructure\ElementFinderByType.cs" />
     <Compile Include="Infrastructure\ElementFinder.cs" />
     <Compile Include="Infrastructure\ElementFinders\ActiveElementFinder.cs" />
+    <Compile Include="Input\Devices\Keyboard.cs" />
+    <Compile Include="Input\InputDeviceException.cs" />
     <Compile Include="Input\Key.cs" />
     <Compile Include="Input\Keyboard.cs" />
     <Compile Include="Input\KeyboardActions.cs" />

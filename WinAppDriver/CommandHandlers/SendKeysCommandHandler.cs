@@ -67,23 +67,7 @@ namespace WinAppDriver.Server.CommandHandlers
 
             if (parameters["value"] is JArray array)
             {
-                AutomationElement.FromHandle(commandEnvironment.WindowHandle).SetFocus();
-                var actions = array.SelectMany(t =>
-                {
-                    return new[] {
-                        new JObject
-                        {
-                            ["type"] = "keyDown",
-                            ["value"] = t.Value<string>()
-                        },
-                        new JObject
-                        {
-                            ["type"] = "keyUp",
-                            ["value"] = t.Value<string>()
-                        }
-                    };
-                });
-                new KeyboardActions(new JArray(actions.ToArray()), commandEnvironment).Execute();
+                new Input.Devices.Keyboard(array).Execute(commandEnvironment);
             }
             else
             {

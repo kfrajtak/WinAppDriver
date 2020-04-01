@@ -81,9 +81,9 @@ namespace WebDriverAPI
         public void SendKeysToElement_ModifierAlt()
         {
             alarmNameTextBox.SendKeys(Keys.Space);
-            Assert.AreEqual("True", alarmNameTextBox.GetAttribute("HasKeyboardFocus"));
+            Assert.AreEqual("true", alarmNameTextBox.GetAttribute("HasKeyboardFocus"));
             alarmNameTextBox.SendKeys(Keys.Alt + Keys.Enter + Keys.Alt); // Alt + Enter moves the focus to the next element
-            Assert.AreEqual("False", alarmNameTextBox.GetAttribute("HasKeyboardFocus"));
+            Assert.AreEqual("false", alarmNameTextBox.GetAttribute("HasKeyboardFocus"));
         }
 
         [TestMethod]
