@@ -35,11 +35,18 @@ namespace WebDriverAPI
         public static WindowsDriver<WindowsElement> CreateNewSession(string appId, string argument = null)
         {
             AppiumOptions appiumOptions = new AppiumOptions();
-            appiumOptions.AddAdditionalCapability("app", appId);
+            
             if (appId == CommonTestSettings.AlarmClockAppId)
             {
-                appiumOptions.AddAdditionalCapability("mainWindowTitle", "Budíky a hodiny");
+                appiumOptions.AddAdditionalCapability("app", @"shell:appsFolder\" + appId);
+                appiumOptions.AddAdditionalCapability("processName", "ApplicationFrameHost");
+                appiumOptions.AddAdditionalCapability("mainWindowTitle", "Alarms & Clock");
             }
+            else
+            {
+                appiumOptions.AddAdditionalCapability("app", appId);
+            }
+
             if (argument != null)
             {
                 appiumOptions.AddAdditionalCapability("appArguments", argument);

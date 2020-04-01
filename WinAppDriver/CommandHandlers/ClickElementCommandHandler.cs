@@ -75,7 +75,7 @@ namespace WinAppDriver.Server.CommandHandlers
                     _manualResetEvent.Set();
                 }, objPattern);*/
 
-                //have to click in a separate thread because box is modal.  From http://social.msdn.microsoft.com/forums/en-US/windowsaccessibilityandautomation/thread/7f0bdc7c-be85-4fde-9f8a-cbb3f16ba5f4/
+                // have to click in a separate thread because box is modal.  From http://social.msdn.microsoft.com/forums/en-US/windowsaccessibilityandautomation/thread/7f0bdc7c-be85-4fde-9f8a-cbb3f16ba5f4/
                 ThreadStart threadStart = new ThreadStart(() =>
                 {
                     var handler = EventHandler.RegisterHandler(InvokePattern.InvokedEvent, automationElement, (sender, e) =>

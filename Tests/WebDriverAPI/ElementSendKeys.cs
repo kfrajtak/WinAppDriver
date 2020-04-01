@@ -57,8 +57,9 @@ namespace WebDriverAPI
             }
 
             // Select all text and delete using keyboard shortcut Ctrl + A and Delete
-            alarmNameTextBox.SendKeys(Keys.Control + "a");
-            alarmNameTextBox.SendKeys(Keys.Delete);
+            alarmNameTextBox.Clear();
+            //alarmNameTextBox.SendKeys(Keys.Control + "a");
+            //alarmNameTextBox.SendKeys(Keys.Delete);
             Assert.AreEqual(string.Empty, alarmNameTextBox.Text);
         }
 
