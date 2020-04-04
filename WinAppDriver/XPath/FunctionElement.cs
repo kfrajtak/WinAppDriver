@@ -21,6 +21,11 @@ namespace WinAppDriver.XPath
 
         bool ICondition.Matches(AutomationElement element, int index)
         {
+            var func = FunctionElementFactory.GetFunctionElement(string.Empty, _name, _args);
+            if (func is ICondition condition)
+            {
+                return condition.Matches(element, index);
+            }
             /*switch (_name)
             {
                 case "contains":

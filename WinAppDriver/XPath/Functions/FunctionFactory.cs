@@ -10,6 +10,8 @@ namespace WinAppDriver.XPath.Functions
             {
                 case "contains":
                     return new Contains(args);
+                case "starts-with":
+                    return new StartsWith(args);
             }
 
             return new FunctionElement(prefix, name, args);

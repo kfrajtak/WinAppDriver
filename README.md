@@ -162,7 +162,7 @@ XPath support:
   - [ ] number()
   - [ ] position()
   - [ ] round()
-  - [ ] starts-with()
+  - [X] starts-with()
   - [ ] string()
   - [ ] string-length()
   - [ ] substring()
