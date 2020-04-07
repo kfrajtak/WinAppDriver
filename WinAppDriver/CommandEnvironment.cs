@@ -131,7 +131,7 @@ namespace WinAppDriver.Server
         public System.Collections.Concurrent.ConcurrentDictionary<IntPtr, ElementCache> _elementCache
             = new System.Collections.Concurrent.ConcurrentDictionary<IntPtr, ElementCache>();
 
-        public ElementCache Cache => _elementCache[WindowHandle];
+        public ElementCache Cache => _elementCache.ContainsKey(WindowHandle) ? _elementCache[WindowHandle] : null;
 
         public IntPtr ApplicationWindowHandle => _hwnd;
 

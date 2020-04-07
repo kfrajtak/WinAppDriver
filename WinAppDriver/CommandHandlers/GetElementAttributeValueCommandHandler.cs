@@ -25,6 +25,7 @@
 // </copyright>
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Automation;
 using WinAppDriver.Extensions;
 
@@ -37,7 +38,9 @@ namespace WinAppDriver.Server.CommandHandlers
     {
         protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters, System.Threading.CancellationToken cancellationToken)
         {
-            if (!parameters.TryGetValue("name", out var attributeName))
+            var attributeName = parameters.FirstOrDefault(p => p.Key.Equals("name", System.StringComparison.InvariantCultureIgnoreCase))
+                .Value?.ToString().Trim();
+            if (string.IsNullOrEmpty(attributeName))
             {
                 return Response.CreateMissingParametersResponse("name");
             }

@@ -51,17 +51,17 @@ namespace WinAppDriver.Server.CommandHandlers
                 return Response.CreateMissingParametersResponse("value");
             }
 
-            Tuple<string, AutomationElement> element = null;
-            var elementFinder = new ElementFinder(mechanism.ToString(), criteria.ToString());
+            IElementFinder elementFinder;
             if (Regex.IsMatch(criteria.ToString(), @"^\/\/Window(\[|$)")) // TODO ugly disgusting hack
             {
-                element = environment.Cache.FindElements(environment.RootElement, elementFinder, cancellationToken).FirstOrDefault();
+                elementFinder = new Infrastructure.ElementFinders.WindowElementFinder(criteria.ToString(), environment.RootElement);
             }
             else
             {
-                element = environment.Cache.FindElements(automationElement, elementFinder, cancellationToken).FirstOrDefault();
+                elementFinder = new ElementFinder(mechanism.ToString(), criteria.ToString());
             }
 
+            var element = environment.Cache.FindElements(automationElement, elementFinder, cancellationToken).FirstOrDefault();
             if (element == null)
             {
                 var errorMessage = $"No such element found using {mechanism} and criteria '{criteria}' in the control tree with element with AutomationId='{automationElement.Current.AutomationId}' as root.";
