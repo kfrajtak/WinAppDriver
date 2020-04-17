@@ -178,7 +178,7 @@ XPath support:
 ## How to create a session
 Add a reference to `Selenium.WebDriver` v3.141.0 (https://www.nuget.org/packages/Selenium.WebDriver/3.141.0) and you are ready to go.
 
-The driver is currently not able to start the system under test. You have to set process name in capabilities. When no command-line argument is provided, the server will be launched at default IP address `http://127.0.0.1:4444`.
+The driver can either start the system under test process or attach to a running process. You have to set process name in capabilities. When no command-line argument is provided, the server will be launched at default IP address `http://127.0.0.1:4444`.
 
 ```
 public static RemoteWebDriver CreateSessionByAttachingToRunningProcess()
