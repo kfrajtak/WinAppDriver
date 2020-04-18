@@ -1,14 +1,10 @@
 ﻿using System;
-using System.IO;
 using System.Diagnostics;
 using System.Threading;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Runtime.InteropServices;
-using System.ComponentModel;
-using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using System.Collections.Generic;
+using WinAppDriver.Extensions;
 
 namespace WinAppDriver
 {
@@ -94,6 +90,26 @@ namespace WinAppDriver
             if (process == null)
             {
                 throw new NullReferenceException("Process was not started.");
+            }
+
+            return process;
+        }
+
+        public static Process AttachToProcess(Dictionary<string, object> desiredCapabilities)
+        {
+            if (desiredCapabilities.TryGetParameterValue<int>("processId", out var processId))
+            {
+                return Process.GetProcessById(processId);
+            }
+
+            var processName = desiredCapabilities.GetParameterValue<string>("processName");
+            var process = Process.GetProcessesByName(processName).FirstOrDefault();
+
+            // searching by name as regular expression pattern
+            if (process == null)
+            {
+                var regex = new Regex(processName);
+                return Process.GetProcesses().FirstOrDefault(x => regex.IsMatch(x.ProcessName));
             }
 
             return process;

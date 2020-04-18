@@ -76,20 +76,10 @@ namespace WinAppDriver.Server.CommandHandlers
             // check does mode is process and capabilities contain processName simultaneounsy
             if (mode?.ToString() == "attach")// & !desiredCapabilities.TryGetValue("processName", out var processName))
             {
-                var processName = desiredCapabilities.GetParameterValue<string>("processName");
-
-                process = Process.GetProcessesByName(processName).FirstOrDefault();
-
-                // searching by name as regular expression pattern
+                process = ApplicationProcess.AttachToProcess(desiredCapabilities);
                 if (process == null)
                 {
-                    var regex = new Regex(processName);
-                    process = Process.GetProcesses().FirstOrDefault(x => regex.IsMatch(x.ProcessName));
-                }
-
-                if (process == null)
-                {
-                    return Response.CreateErrorResponse(-1, $"Cannot attach to process '{processName}', no such process found.");
+                    return Response.CreateErrorResponse(-1, $"Cannot attach to process by id or name no such process found.");
                 }
 
                 attached = true;
