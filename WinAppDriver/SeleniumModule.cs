@@ -59,6 +59,44 @@ namespace WinAppDriver.Server
                         break;
                 }
             }
+
+            Response GetThrowUnknownCommandResponse(string uri, string method)
+            {
+                var response = Server.Response.CreateErrorResponse(WebDriverStatusCode.UnknownCommand, $"{method} request {uri} cannot be handled (not supported).");
+                Context.Response.StatusCode = HttpStatusCode.NotFound;
+                Context.Items["response"] = response;
+                return response;
+            }
+
+            Get["/{uri*}"] = p =>
+            {
+                var uri = (string)p.uri;
+                return HandleCommand(DriverCommand.UnkwnownCommand, p, new Dictionary<string, object>
+                {
+                    { "method", "GET" },
+                    { "uri", uri }
+                });
+            };
+
+            Delete["/{uri*}"] = p =>
+            {
+                var uri = (string)p.uri;
+                return HandleCommand(DriverCommand.UnkwnownCommand, p, new Dictionary<string, object>
+                {
+                    { "method", "DELETE" },
+                    { "uri", uri }
+                });
+            };
+
+            Post["/{uri*}"] = p =>
+            {
+                var uri = (string)p.uri;
+                return HandleCommand(DriverCommand.UnkwnownCommand, p, new Dictionary<string, object> 
+                {
+                    { "method", "POST" },
+                    { "uri", uri }
+                });
+            };
         }
 
         private Nancy.Response BeforeEach(NancyContext context)

@@ -432,5 +432,7 @@ namespace WinAppDriver.Server
         public static readonly string GetElementRect = "getElementRect";
 
         public static readonly string SetTimeouts = "setTimeouts";
+
+        public static readonly string UnkwnownCommand = "unkwnownCommand";
     }
 }

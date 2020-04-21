@@ -133,6 +133,8 @@ namespace WinAppDriver.Server
             this.handlers.Add(DriverCommand.AcceptAlert, new AcceptAlertCommandHandler());
             this.handlers.Add(DriverCommand.DismissAlert, new DismissAlertCommandHandler());
             this.handlers.Add(DriverCommand.SetTimeouts, new SetTimeoutCommandHandler());
+
+            this.handlers.Add(DriverCommand.UnkwnownCommand, new UnknownCommandHandler());
         }
     }
 }
