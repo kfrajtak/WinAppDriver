@@ -10,10 +10,10 @@ This project is using
 - Selenium.WebDriver.3.141.0 to get the internals of web driver (commands for Nancy endpoints for example)
 - windowsphonedriver (https://github.com/forcedotcom/windowsphonedriver) for the basic infrastructure (commands & command handlers)
 
-Why another driver when there already is https://github.com/Microsoft/WinAppDriver? The app I'm testing is quite large with number of elements and that driver was timing out after 60 seconds on some XPath queries (see [this issue](https://github.com/Microsoft/WinAppDriver/issues/333)) and after putting everything together the query finished under 2 seconds.
+Why another driver, when there already is https://github.com/Microsoft/WinAppDriver? The app I'm testing is quite large with many elements, and that driver was timing out after 60 seconds on some XPath queries (see [this issue](https://github.com/Microsoft/WinAppDriver/issues/333)), and after putting everything together, the query finished under 2 seconds.
 
 ## Installation
-Currently there is no installer. Clone the repository and build the executable from the sources.
+Currently, there is no installer. Clone the repository and build the executable from the sources.
 
 ## Selenium
 ### Client driver version
@@ -175,10 +175,10 @@ XPath support:
   - [ ] unparsed-entity-url() XSLT-specific (not supported)
 
 
-## How to create session
-Add reference to `Selenium.WebDriver` v3.141.0 (https://www.nuget.org/packages/Selenium.WebDriver/3.141.0) and you are ready to go.
+## How to create a session
+Add a reference to `Selenium.WebDriver` v3.141.0 (https://www.nuget.org/packages/Selenium.WebDriver/3.141.0) and you are ready to go.
 
-The driver is currently not able to start the system under test. You have to set process name in capapabilities. When no command line argumennt is provided, the server will be started at default IP address `http://127.0.0.1:4444`.
+The driver can either start the system under test process or attach to a running process. You have to set process name in capabilities. When no command-line argument is provided, the server will be launched at default IP address `http://127.0.0.1:4444`.
 
 ```
 public static RemoteWebDriver CreateSessionByAttachingToRunningProcess()
@@ -221,14 +221,14 @@ Element location mechanisms that are supported
   - id, for example `#id`
 - Class name, i.e. UI automation element class name
 - Tag name
-- Accesibility id, i.e. UI automation element automation id
+- Accessibility id, i.e. UI automation element automation id
 - Name, i.e. UI automation element name
 
-Windows in the Win application are not like windows in browser. The windows (`ControlType.Window`) can be nested inside the control tree, for example in a `Tab` element. 
+Windows in the Win application are not like windows in the browser. The windows (`ControlType.Window`) can be nested inside the control tree, for example in a `Tab` element. 
 
 Window can be either located using XPath expression `var window = session.FindElement(By.XPath("/Window/Pane/Window[@AutomationId='WindowName']"));` or by switching to it `session.SwitchTo().Window("WindowName");`, in the first example you will get the element reference, in the other the internal context is switched to new window and elements cached during the following operations can be disposed when window is cloded `session.Close()`.
 
 Note that element wrappers like `OpenQA.Selenium.Support.UI.SelectElement` do not work because internally `select` and `option` elements are expected.
 
 ## Note
-There is quite an ugly [hack](https://github.com/kfrajtak/WinAppDriver/blob/master/WinAppDriver/CommandHandlers/FindChildElementCommandHandler.cs#L56) which bypasses the need to switch windows when searching for a child window using XPath expression. By default the search starts at the root element of a window - the main window or the window the user switched to - and the search for a child window was failing since it was not a direct child of the current root. The fix starts the search for a window at the top level.
+There is quite an ugly [hack](https://github.com/kfrajtak/WinAppDriver/blob/master/WinAppDriver/CommandHandlers/FindChildElementCommandHandler.cs#L56) which bypasses the need to switch windows when searching for a child window using XPath expression. By default, the search starts at the root element of a window - the main window or the window the user switched to - and the search for a child window was failing since it was not a direct child of the current root. The fix starts the search for a window at the top level.

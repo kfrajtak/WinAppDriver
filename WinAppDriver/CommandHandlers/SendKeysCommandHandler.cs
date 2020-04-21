@@ -46,34 +46,18 @@ namespace WinAppDriver.Server.CommandHandlers
         /// <returns>The JSON serialized string representing the command response.</returns>
         protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment commandEnvironment, Dictionary<string, object> parameters, System.Threading.CancellationToken cancellationToken)
         {
+            if (parameters["value"] is JArray array)
+            {
+                new Input.Devices.Keyboard(array).Execute(commandEnvironment);
+                return Response.CreateSuccessResponse();
+            }
+
             if (!parameters.TryGetValue("text", out var text))
             {
                 return Response.CreateMissingParametersResponse("text");
             }
 
-            /*string keysAsString = string.Empty;
-            object[] keysAsArray = keys as object[];
-            if (keysAsArray != null)
-            {
-                foreach (object key in keysAsArray)
-                {
-                    keysAsString += key.ToString();
-                }
-            }*/
-
-            // Normalize line endings to single line feed, as that's what the atom expects.
-            //keysAsString = keysAsString.Replace("\r\n", "\n");
-            //string result = this.EvaluateAtom(environment, WebDriverAtoms.Type, element, keysAsString, environment.CreateFrameObject());
-
-            if (parameters["value"] is JArray array)
-            {
-                new Input.Devices.Keyboard(array).Execute(commandEnvironment);
-            }
-            else
-            {
-                automationElement.SetText(text?.ToString() ?? "");
-            }            
-
+            automationElement.SetText(text?.ToString() ?? "");
             return Response.CreateSuccessResponse();
         }
     }
