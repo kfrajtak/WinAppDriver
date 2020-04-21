@@ -10,6 +10,11 @@ namespace WinAppDriver.Server.CommandHandlers
 {
     internal class GetAlertTextCommandHandler : CommandHandler
     {
+        public GetAlertTextCommandHandler()
+        {
+            _unexpectedAlertCheckRequired = false;
+        }
+
         public override Response Execute(CommandEnvironment environment, Dictionary<string, object> parameters, System.Threading.CancellationToken cancellationToken)
         {
             var modalWindow = environment.GetModalWindow(cancellationToken);
