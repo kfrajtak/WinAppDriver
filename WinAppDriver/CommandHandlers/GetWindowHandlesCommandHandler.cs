@@ -42,6 +42,11 @@ namespace WinAppDriver.Server.CommandHandlers
         /// <returns>The JSON serialized string representing the command response.</returns>
         public override Response Execute(CommandEnvironment environment, Dictionary<string, object> parameters, System.Threading.CancellationToken cancellationToken)
         {
+            if (environment.WindowHandle == System.IntPtr.Zero)
+            {
+                return Response.CreateSuccessResponse(new object[] { });
+            }
+
             var windows = environment.GetWindows(cancellationToken);
             object[] handles = windows.Select(w => w.Current.AutomationId).ToArray();
             return Response.CreateSuccessResponse(handles);
