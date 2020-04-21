@@ -28,6 +28,11 @@ namespace WinAppDriver.Server.CommandHandlers
             }
 
             var element = environment.Cache.GetElement(id);
+            if (element.IsStale())
+            {
+                throw new Exceptions.StaleElementReferenceException();
+            }
+
             if (element != null)
             {
                 return TryGetResponse(element, environment, parameters, cancellationToken);

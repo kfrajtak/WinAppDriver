@@ -39,5 +39,11 @@ namespace WinAppDriver.Extensions
                 child = TreeWalker.ControlViewWalker.GetNextSibling(child);
             }
         }
+
+        public static bool IsStale(this AutomationElement automationElement)
+        {
+            return automationElement.Current.BoundingRectangle.Width == 0
+                && automationElement.Current.BoundingRectangle.Height == 0;
+        }
     }
 }
