@@ -80,7 +80,6 @@ namespace WinAppDriver.Server.CommandHandlers
                 {
                     var handler = EventHandler.RegisterHandler(InvokePattern.InvokedEvent, automationElement, (sender, e) =>
                     {
-                        System.Diagnostics.Debug.WriteLine("invoked");
                         alertBehaviorHandler.OnUnexpectedAlert += UnexpectedAlertEventEventHandler;
                         manualResetEvent.Set();
                     });
