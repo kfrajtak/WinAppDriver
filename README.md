@@ -21,14 +21,14 @@ Latest client driver version 3.141.0.0 must be used when calling the server.
 
 ### Which Selenium commands are implemented?
 - [X] acceptAlert 
-  - default captions to locate the accpet button are `Ok` and `Yes`, additional captions can be added by setting `acceptAlertButtonCaptions` capability with a semicolon separated list of values
+  - default captions to locate the accept button are `Ok` and `Yes`, additional captions can be added by setting `acceptAlertButtonCaptions` capability with a semicolon separated list of values
 - [X] actions
 - [X] clearElement
 - [X] clickElement
 - [X] close
 - [ ] describeElement
 - [X] dismissAlert 
-  - default captions to locate the accpet button are `Cancel` and `No`, additional captions can be added by setting `dismissAlertButtonCaptions` capability with a semicolon separated list of values
+  - default captions to locate the accept button are `Cancel` and `No`, additional captions can be added by setting `dismissAlertButtonCaptions` capability with a semicolon separated list of values
 - [ ] elementEquals
 - [ ] executeAsyncScript
 - [ ] executeScript
@@ -135,7 +135,7 @@ XPath support:
   - [X] Modulo
   - [X] UnaryMinus
   - [ ] Union
- - [ ] functions (https://developer.mozilla.org/en-US/docs/Web/XPath/Functions)
+- [ ] functions (https://developer.mozilla.org/en-US/docs/Web/XPath/Functions)
   - [ ] boolean()
   - [ ] ceiling()
   - [ ] choose()
@@ -174,33 +174,58 @@ XPath support:
   - [ ] true()
   - [ ] unparsed-entity-url() XSLT-specific (not supported)
 
+## Appium Support
+Only this Appium command is implemented
+  - [X] closeApp
 
 ## How to create a session
 Add a reference to `Selenium.WebDriver` v3.141.0 (https://www.nuget.org/packages/Selenium.WebDriver/3.141.0) and you are ready to go.
 
-The driver can either start the system under test process or attach to a running process. You have to set process name in capabilities. When no command-line argument is provided, the server will be launched at default IP address `http://127.0.0.1:4444`.
+The driver can either start the system under test process or attach to a running process. Use capabilities to define the process to attach to. 
+
+When no command-line argument is provided, the server will be launched at default IP address `http://127.0.0.1:4444`.
+
+### Desired capabilities
+Following capabilities are supported:
+
+  - `mode` - `start` (default value) or `attach`    
+  - `processId` - id of the process to attach to
+  - `processName` - name of the process to attach to
+  - `exePath` or `app` - path to the executable to start the process (arguments cannot be provided at the moment)
+  - `mainWindowTitle` - regular expression to help the WinAppDriver narrow down the process to attach to 
+
+### Creating session
 
 ```
-public static RemoteWebDriver CreateSessionByAttachingToRunningProcess()
-{
-  DesiredCapabilities desktopCapabilities = new DesiredCapabilities();
-  desktopCapabilities.SetCapability("processName", "<name of the process>");
-  desktopCapabilities.SetCapability("mode", "attach");
-  return new RemoteWebDriver(
-    new CommandExec(new Uri("http://127.0.0.1:4444"), 
-    TimeSpan.FromSeconds(60)), 
-    desktopCapabilities);
-}
-
 public static RemoteWebDriver CreateSessionByStartingTheApplication()
 {
   DesiredCapabilities desktopCapabilities = new DesiredCapabilities();
-  desktopCapabilities.SetCapability("app", "<name of the process>");  // or "exePath"
+  desktopCapabilities.SetCapability("app", "<name of the program to start>");  
+  // or "exePath" desktopCapabilities.SetCapability("exePath", "<path to the executable to start the process>");  
   // following capabilities should be provided for UWP applications like Calculator or Clocks & Alarms 
   // optional - to identify the process
   desktopCapabilities.SetCapability("processName", "<name of the process>"); 
   // optional - to identify the main window
   desktopCapabilities.SetCapability("mainWindowTitle", "<name of the process>");  
+  return new RemoteWebDriver(
+    new CommandExec(new Uri("http://127.0.0.1:4444"), 
+    TimeSpan.FromSeconds(60)), 
+    desktopCapabilities);
+}
+```
+
+```
+public static RemoteWebDriver CreateSessionByAttachingToRunningProcess()
+{
+  DesiredCapabilities desktopCapabilities = new DesiredCapabilities();
+  desktopCapabilities.SetCapability("mode", "attach");
+  // attach to process using process name
+  desktopCapabilities.SetCapability("processName", "<name of the process to attach to>");
+  // with (optional)
+  desktopCapabilities.SetCapability("windowTitle", "<regular expression to narrow down the list of matching processes>");
+  // or attach to process using process id
+  desktopCapabilities.SetCapability("processId", "<id of the process to attach to>");
+  
   return new RemoteWebDriver(
     new CommandExec(new Uri("http://127.0.0.1:4444"), 
     TimeSpan.FromSeconds(60)), 
