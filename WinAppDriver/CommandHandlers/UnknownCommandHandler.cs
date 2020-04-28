@@ -9,7 +9,7 @@ namespace WinAppDriver.Server.CommandHandlers
         {
             var method = parameters["method"];
             var uri = parameters["uri"];
-            return Response.CreateErrorResponse(WebDriverStatusCode.UnknownCommand, $"{method} request {uri} cannot be handled (not supported).");
+            return Response.CreateErrorResponse(WebDriverStatusCode.UnknownCommand, $"{method} request to '{uri}' cannot be handled (not supported).");
         }
     }
 }

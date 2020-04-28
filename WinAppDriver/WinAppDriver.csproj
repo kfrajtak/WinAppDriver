@@ -109,12 +109,14 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Appium\DriverCommand.cs" />
     <Compile Include="ApplicationProcess.cs" />
     <Compile Include="Behaviors\UnexpectedAlertBehavior2.cs" />
     <Compile Include="Behaviors\UnexpectedAlertBehavior.cs" />
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="CommandHandlers\AlertHandlingCommandHandler.cs" />
     <Compile Include="CommandHandlers\ActionsCommandHandler.cs" />
+    <Compile Include="Appium\CommandInfoRepository.cs" />
     <Compile Include="CommandHandlers\IAsyncCommandHandler.cs" />
     <Compile Include="CommandHandlers\AsyncElementCommandHandler.cs" />
     <Compile Include="CommandHandlers\ElementCommandHandler.cs" />
@@ -240,7 +242,9 @@
       <Name>XPathParser</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Appium\CommandHandlers\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\AutoItX.Dotnet.3.3.14.5\build\AutoItX.Dotnet.targets" Condition="Exists('..\packages\AutoItX.Dotnet.3.3.14.5\build\AutoItX.Dotnet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

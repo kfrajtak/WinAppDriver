@@ -31,7 +31,6 @@ namespace WinAppDriver
 
             public void Dispose()
             {
-                System.Diagnostics.Debug.WriteLine("disposed");
                 Automation.RemoveAutomationEventHandler(_automationEvent, _automationElement, _handler);
             }
         }

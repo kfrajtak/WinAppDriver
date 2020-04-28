@@ -134,6 +134,8 @@ namespace WinAppDriver.Server
             this.handlers.Add(DriverCommand.DismissAlert, new DismissAlertCommandHandler());
             this.handlers.Add(DriverCommand.SetTimeouts, new SetTimeoutCommandHandler());
 
+            this.handlers.Add(Appium.DriverCommand.CloseApp, new CloseCommandHandler());
+
             this.handlers.Add(DriverCommand.UnkwnownCommand, new UnknownCommandHandler());
         }
     }

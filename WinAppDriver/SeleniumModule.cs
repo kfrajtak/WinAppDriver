@@ -23,6 +23,8 @@ namespace WinAppDriver.Server
         public SeleniumModule()
         {
             var repository = new W3CWireProtocolCommandInfoRepository();
+            Appium.CommandInfoRepository.AddAppiumCommands(repository);
+
             var field = repository.GetType().BaseType.GetField("commandDictionary", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public);
             var commandDictionary = (Dictionary<string, CommandInfo>)field.GetValue(repository);
 
@@ -58,14 +60,6 @@ namespace WinAppDriver.Server
                         };
                         break;
                 }
-            }
-
-            Response GetThrowUnknownCommandResponse(string uri, string method)
-            {
-                var response = Server.Response.CreateErrorResponse(WebDriverStatusCode.UnknownCommand, $"{method} request {uri} cannot be handled (not supported).");
-                Context.Response.StatusCode = HttpStatusCode.NotFound;
-                Context.Items["response"] = response;
-                return response;
             }
 
             Get["/{uri*}"] = p =>

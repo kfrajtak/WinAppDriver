@@ -226,11 +226,6 @@ namespace WinAppDriver.Server
 
         public void CloseWindow(IntPtr hwnd)
         {
-            if (ApplicationWindowHandle == hwnd)
-            {
-                return;
-            }
-
             if (_elementCache.TryRemove(hwnd, out var cache))
             {
                 _windowHwnd = cache.PrevWindowsHandle;
