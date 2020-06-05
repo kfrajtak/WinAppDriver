@@ -65,7 +65,7 @@ namespace WinAppDriver.Server
             Get["/{uri*}"] = p =>
             {
                 var uri = (string)p.uri;
-                return HandleCommand(DriverCommand.UnkwnownCommand, p, new Dictionary<string, object>
+                return HandleCommand(DriverCommand.UnknownCommand, p, new Dictionary<string, object>
                 {
                     { "method", "GET" },
                     { "uri", uri }
@@ -75,7 +75,7 @@ namespace WinAppDriver.Server
             Delete["/{uri*}"] = p =>
             {
                 var uri = (string)p.uri;
-                return HandleCommand(DriverCommand.UnkwnownCommand, p, new Dictionary<string, object>
+                return HandleCommand(DriverCommand.UnknownCommand, p, new Dictionary<string, object>
                 {
                     { "method", "DELETE" },
                     { "uri", uri }
@@ -85,7 +85,7 @@ namespace WinAppDriver.Server
             Post["/{uri*}"] = p =>
             {
                 var uri = (string)p.uri;
-                return HandleCommand(DriverCommand.UnkwnownCommand, p, new Dictionary<string, object> 
+                return HandleCommand(DriverCommand.UnknownCommand, p, new Dictionary<string, object> 
                 {
                     { "method", "POST" },
                     { "uri", uri }
@@ -121,7 +121,13 @@ namespace WinAppDriver.Server
             sb.Append(", ");
             if (Context.Items["response"] is Response response && response.Value != null)
             {
-                sb.Append("response body: ").Append(JsonConvert.SerializeObject(response.Value));
+                var responseBody = JsonConvert.SerializeObject(response.Value);
+                if (responseBody.Length > 500)
+                {
+                    responseBody = responseBody.Substring(0, 500) + " ...";
+                }
+
+                sb.Append("response body: ").Append(responseBody);
             }
             else
             {

@@ -433,6 +433,6 @@ namespace WinAppDriver.Server
 
         public static readonly string SetTimeouts = "setTimeouts";
 
-        public static readonly string UnkwnownCommand = "unkwnownCommand";
+        public static readonly string UnknownCommand = "unknownCommand";
     }
 }

@@ -136,7 +136,7 @@ namespace WinAppDriver.Server
 
             this.handlers.Add(Appium.DriverCommand.CloseApp, new CloseCommandHandler());
 
-            this.handlers.Add(DriverCommand.UnkwnownCommand, new UnknownCommandHandler());
+            this.handlers.Add(DriverCommand.UnknownCommand, new UnknownCommandHandler());
         }
     }
 }
