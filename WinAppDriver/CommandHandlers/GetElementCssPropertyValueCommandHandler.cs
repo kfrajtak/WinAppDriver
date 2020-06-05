@@ -26,35 +26,30 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Automation;
 
 namespace WinAppDriver.Server.CommandHandlers
 {
     /// <summary>
     /// Provides handling for the get CSS property value command.
     /// </summary>
-    internal class GetElementCssPropertyValueCommandHandler : CommandHandler
+    internal class GetElementCssPropertyValueCommandHandler : ElementCommandHandler
     {
         /// <summary>
-        /// Executes the command.
+        /// Provides handling for the get element CSS property value command.
         /// </summary>
-        /// <param name="environment">The <see cref="CommandEnvironment"/> to use in executing the command.</param>
-        /// <param name="parameters">The <see cref="Dictionary{string, object}"/> containing the command parameters.</param>
-        /// <returns>The JSON serialized string representing the command response.</returns>
-        public override Response Execute(CommandEnvironment environment, Dictionary<string, object> parameters, System.Threading.CancellationToken cancellationToken)
+        protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment environment, Dictionary<string, object> parameters, System.Threading.CancellationToken cancellationToken)
         {
-            object element;
-            if (!parameters.TryGetValue("ID", out element))
+            if (!parameters.TryGetValue("name", out var name))
             {
-                return Response.CreateMissingParametersResponse("ID");
+                return Response.CreateMissingParametersResponse("name");
             }
 
-            object propertyName;
-            if (!parameters.TryGetValue("PROPERTYNAME", out propertyName))
+            var propertyName = name?.ToString() ?? string.Empty;
+            switch (propertyName)
             {
-                return Response.CreateMissingParametersResponse("PROPERTYNAME");
+                case "BackColor":
+                    return new Css.BackColorHandler().GetResponse(automationElement);
             }
 
             throw new NotSupportedException();
