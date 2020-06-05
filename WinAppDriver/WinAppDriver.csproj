@@ -137,6 +137,7 @@
     <Compile Include="Exceptions\StaleElementReferenceException.cs" />
     <Compile Include="Extensions\AutomationElementExtensions.cs" />
     <Compile Include="Extensions\AutomationExtensions.cs" />
+    <Compile Include="Extensions\COMExceptionExtensions.cs" />
     <Compile Include="Extensions\ControlTypeExtensions.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />

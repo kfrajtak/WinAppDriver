@@ -64,7 +64,27 @@ namespace WinAppDriver.Infrastructure
                         _elementQueue.Enqueue(childAutomationElement);
                     }
 
-                    childAutomationElement = TreeWalker.ControlViewWalker.GetNextSibling(childAutomationElement);
+                    // sometimes the app can stop responding when performing long operation thanks to poor designed 
+                    // try to wait for the response in a loop 
+                    while (true)
+                    {
+                        if (_cancellationToken.IsCancellationRequested)
+                        {
+                            return false;
+                        }
+
+                        try
+                        {
+                            childAutomationElement = TreeWalker.ControlViewWalker.GetNextSibling(childAutomationElement);
+                            break;
+                        }
+                        catch (System.Runtime.InteropServices.COMException comEx) when (comEx.IsTimeout())
+                        {
+                            // retry after a short sleep
+                            Thread.Sleep(TimeSpan.FromMilliseconds(250));
+                            // childAutomationElement = TreeWalker.ControlViewWalker.GetNextSibling(childAutomationElement);
+                        }
+                    }
                 }
 
                 return true;

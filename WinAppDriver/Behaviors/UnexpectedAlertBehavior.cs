@@ -126,6 +126,10 @@ namespace WinAppDriver.Behaviors
                             {
                                 aw = AutomationElement.FromHandle(window.HWnd);
                             }
+                            catch (System.Runtime.InteropServices.COMException comEx) when (comEx.IsTimeout())
+                            {
+                                continue; // do not die on time out ...
+                            }
                             catch (ElementNotAvailableException)
                             {
                                 continue; // menus are causing this exception
