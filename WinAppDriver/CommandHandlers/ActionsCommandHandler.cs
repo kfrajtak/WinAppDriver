@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using WinAppDriver.Extensions;
 using WinAppDriver.Input;
 
 namespace WinAppDriver.Server.CommandHandlers
@@ -43,7 +44,7 @@ namespace WinAppDriver.Server.CommandHandlers
                 {
                     e = comEx;
 
-                    if (comEx.Message.Contains("0x80131505"))
+                    if (comEx.IsTimeout())
                     {
                         System.Threading.Thread.Sleep(250);
                         continue;
