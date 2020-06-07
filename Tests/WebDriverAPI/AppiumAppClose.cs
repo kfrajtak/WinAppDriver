@@ -54,7 +54,7 @@ namespace WebDriverAPI
                 session.CloseApp(); // Attempt to close already closed app
                 Assert.Fail("Exception should have been thrown");
             }
-            catch (OpenQA.Selenium.NoSuchWindowException exception)
+            catch (InvalidOperationException exception)
             {
                 Assert.AreEqual(ErrorStrings.NoSuchWindow, exception.Message);
             }

@@ -33,7 +33,7 @@ namespace WinAppDriver.Server.CommandHandlers
                 }
             };
 
-            new MouseActions(new JArray(actions.ToArray()), commandEnvironment).Execute(out var _);
+            new MouseActions(new JArray(actions.ToArray()), commandEnvironment).Execute();
 
             return Response.CreateSuccessResponse();
         }

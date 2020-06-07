@@ -2,10 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Windows.Automation;
-using WinAppDriver.Extensions;
 using WinAppDriver.Input;
-using WinAppDriver.Input.Devices;
 
 namespace WinAppDriver.Server.CommandHandlers
 {
@@ -63,7 +60,6 @@ namespace WinAppDriver.Server.CommandHandlers
 
             try
             {
-                AutomationElement element = null;
                 foreach (var block in (JArray)o)
                 {
                     var actions = (JArray)block["actions"];
@@ -72,16 +68,9 @@ namespace WinAppDriver.Server.CommandHandlers
                     switch (type)
                     {
                         case "pointer":
-                            new MouseActions(actions, commandEnvironment).Execute(out element);
+                            new MouseActions(actions, commandEnvironment).Execute();
                             break;
                         case "key":
-                            if (Keyboard.AllKeysAreNumbersOrChars(actions, out var input) && element != null)
-                            {
-                                element.SetText(element.GetText() + input);
-                                element = null; // to avoid further problems
-                                break;
-                            }
-
                             new KeyboardActions(actions, commandEnvironment).Execute();
                             break;
                     }
@@ -96,5 +85,4 @@ namespace WinAppDriver.Server.CommandHandlers
             return Response.CreateSuccessResponse();
         }
     }
-
 }

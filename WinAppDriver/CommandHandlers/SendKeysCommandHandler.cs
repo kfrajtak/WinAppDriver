@@ -26,7 +26,9 @@
 
 using WinAppDriver.Extensions;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Automation;
+using WinAppDriver.Input;
 using Newtonsoft.Json.Linq;
 
 namespace WinAppDriver.Server.CommandHandlers
@@ -60,42 +62,3 @@ namespace WinAppDriver.Server.CommandHandlers
         }
     }
 }
-
-/*
-        protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment commandEnvironment, Dictionary<string, object> parameters, System.Threading.CancellationToken cancellationToken)
-        {
-            if (!parameters.TryGetValue("text", out var text))
-            {
-                return Response.CreateMissingParametersResponse("text");
-            }
-
-            // Normalize line endings to single line feed, as that's what the atom expects.
-            //keysAsString = keysAsString.Replace("\r\n", "\n");
-            //string result = this.EvaluateAtom(environment, WebDriverAtoms.Type, element, keysAsString, environment.CreateFrameObject());
-            var array = parameters["value"] as JArray;
-            var value = string.Empty;
-            if (array != null || !TryGetPlainString(array, out value))
-            {
-                new Input.Devices.Keyboard(array).Execute(commandEnvironment);
-            }
-            else
-            {
-                automationElement.SetText(text?.ToString() ?? value);
-            }            
-
-            return Response.CreateSuccessResponse();
-        }
-
-        private bool TryGetPlainString(JArray actions, out string value)
-        {
-            value = null;
-            var chars = actions.Select(a => a["value"].Value<string>()[0]);
-            if (chars.All(a => char.IsLetterOrDigit(a)))
-            {
-                value = new string(chars.ToArray());
-                return true;
-            }
-
-            return false;
-        }
-*/

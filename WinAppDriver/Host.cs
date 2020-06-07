@@ -1,5 +1,8 @@
 ﻿using Nancy.Hosting.Self;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace WinAppDriver.Server
 {
@@ -12,7 +15,6 @@ namespace WinAppDriver.Server
             var hostConfigs = new HostConfiguration
             {
                 UrlReservations = new UrlReservations() { CreateAutomatically = true }
-                //RewriteLocalhost = false
             };
 
             _nancyHost = new NancyHost(new Bootstrapper(), hostConfigs, uri);

@@ -1,6 +1,9 @@
 ﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Automation;
 using WinAppDriver.Server;
 
@@ -89,22 +92,6 @@ namespace WinAppDriver.Input.Devices
                     ["value"] = keyCode
                 }
             };
-        }
-
-        public static bool AllKeysAreNumbersOrChars(JArray actions, out string value)
-        {
-            value = null;
-            var chars = actions
-                .Where(a => a["type"].Value<string>() != "pause")
-                .Where(a => a["type"].Value<string>() != "keyUp")
-                .Select(a => a["value"]?.Value<string>()[0] ?? '\0');
-            if (chars.All(a => char.IsLetterOrDigit(a)))
-            {
-                value = new string(chars.ToArray());
-                return true;
-            }
-
-            return false;
         }
     }
 }

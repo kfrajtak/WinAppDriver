@@ -134,10 +134,7 @@ namespace WebDriverAPI
             session.SwitchTo().Window(session.CurrentWindowHandle);
 
             // Open a new window in private mode
-            new OpenQA.Selenium.Interactions.Actions(session)
-                .KeyDown(Keys.Control).KeyDown(Keys.Shift).SendKeys("N")
-                .Build()
-                .Perform();
+            session.Keyboard.SendKeys(Keys.Control + Keys.Shift + "p" + Keys.Shift + Keys.Control);
             Thread.Sleep(TimeSpan.FromSeconds(3));
             var windowHandlesAfter = session.WindowHandles;
             Assert.IsNotNull(windowHandlesAfter);

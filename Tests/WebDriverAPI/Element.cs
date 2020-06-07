@@ -118,7 +118,7 @@ namespace WebDriverAPI
                 WindowsElement element = session.FindElementByName("InvalidName");
                 Assert.Fail("Exception should have been thrown");
             }
-            catch (NoSuchElementException exception)
+            catch (InvalidOperationException exception)
             {
                 Assert.AreEqual(ErrorStrings.NoSuchElement, exception.Message);
             }
