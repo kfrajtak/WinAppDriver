@@ -36,7 +36,8 @@ namespace WinAppDriver
                 throw new ArgumentException("Regex for MainWindowTitle is not valid", e);
             }
 
-            while (true)
+            var maxLoops = 10;
+            while (maxLoops-- > 0)
             {
                 Thread.Sleep(500);
 
@@ -54,7 +55,8 @@ namespace WinAppDriver
                         processes = Process.GetProcessesByName(processName);
                     }
 
-                    var matchingProcesses = processes.Where(p => regex.IsMatch(p.MainWindowTitle));
+                    var matchingProcesses = processes.Where(
+                        p => regex.IsMatch(Regex.Replace(p.MainWindowTitle, @"\u200b", "")));
 
                     if (matchingProcesses.Count() == 1)
                     {
@@ -92,6 +94,17 @@ namespace WinAppDriver
                 throw new NullReferenceException("Process was not started.");
             }
 
+            maxLoops = 10;
+            while (maxLoops-- > 0 && process.MainWindowHandle == IntPtr.Zero)
+            {
+                Thread.Sleep(500);
+            }
+
+            if (process.MainWindowHandle == IntPtr.Zero)
+            {
+                throw new NullReferenceException("Process has started but main window handle is zero.");
+            }
+                
             return process;
         }
 
