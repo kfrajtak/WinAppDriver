@@ -48,7 +48,7 @@ namespace WinAppDriver.Server.CommandHandlers
             var propertyName = name?.ToString() ?? string.Empty;
             switch (propertyName)
             {
-                case "BackColor":
+                case "background-color":
                     return new Css.BackColorHandler().GetResponse(automationElement);
             }
 
