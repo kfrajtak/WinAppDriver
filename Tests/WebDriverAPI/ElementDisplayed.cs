@@ -88,10 +88,14 @@ namespace WebDriverAPI
             {
                 var displayed = GetStaleElement().Displayed;
                 Assert.Fail("Exception should have been thrown");
-            }
+            }            
             catch (InvalidOperationException exception)
             {
                 Assert.AreEqual(ErrorStrings.StaleElementReference, exception.Message);
+            }
+            catch (Exception e)
+            {
+
             }
         }
     }

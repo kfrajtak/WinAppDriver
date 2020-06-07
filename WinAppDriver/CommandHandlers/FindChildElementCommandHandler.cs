@@ -64,7 +64,18 @@ namespace WinAppDriver.Server.CommandHandlers
             var element = environment.Cache.FindElements(automationElement, elementFinder, cancellationToken).FirstOrDefault();
             if (element == null)
             {
-                var errorMessage = $"No such element found using {mechanism} and criteria '{criteria}' in the control tree with element with AutomationId='{automationElement.Current.AutomationId}' as root.";
+                var rootInfo = "N/A";
+                var id = automationElement.Current.AutomationId;
+                if (!string.IsNullOrEmpty(id?.Trim()))
+                {
+                    rootInfo = $"AutomationId = '{automationElement.Current.AutomationId}'";
+                }
+                else
+                {
+                    rootInfo = $"Name = '{automationElement.Current.Name}'";
+                }
+
+                var errorMessage = $"No such element found using {mechanism} and criteria '{criteria}' in the control tree with element with {rootInfo} as root.";
                 throw new NoSuchElementException(errorMessage);
             }
 

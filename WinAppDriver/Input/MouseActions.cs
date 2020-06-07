@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
+using System.Windows.Automation;
 using WinAppDriver.Server;
 
 namespace WinAppDriver.Input
@@ -18,10 +19,12 @@ namespace WinAppDriver.Input
             _commandEnvironment = commandEnvironment;
         }
 
-        public void Execute()
+        public void Execute(out AutomationElement automationElement)
         {
             _x = 0;
             _y = 0;
+
+            automationElement = null;
 
             foreach (var action in _actions)
             {
@@ -29,7 +32,7 @@ namespace WinAppDriver.Input
                 switch (type)
                 {
                     case "pointerMove":
-                        Move(action);
+                        Move(action, out automationElement);
                         break;
                     case "pointerDown":
                         Down(action);
@@ -55,8 +58,10 @@ namespace WinAppDriver.Input
             }
         }
 
-        private void Move(JToken action)
+        private void Move(JToken action, out AutomationElement element)
         {
+            element = null;
+
             var origin = action["origin"];
             if (origin is JValue value && value.Value<string>() == "pointer") // move relatively to actual pointer position
             {
@@ -69,7 +74,7 @@ namespace WinAppDriver.Input
             {
                 // move pointer to an element location
                 var elementId = origin.First().Last().Value<string>();
-                var element = _commandEnvironment.Cache.GetElement(elementId);
+                element = _commandEnvironment.Cache.GetElement(elementId);
 
                 if (!element.TryGetClickablePoint(out var pt))
                 {

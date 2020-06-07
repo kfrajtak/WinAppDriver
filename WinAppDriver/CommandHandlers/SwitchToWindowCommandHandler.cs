@@ -24,7 +24,12 @@ namespace WinAppDriver.Server.CommandHandlers
                 return Response.CreateMissingParametersResponse("handle");
             }
 
-            var windowHandleOrName = handle?.ToString();
+            var windowHandleOrName = handle?.ToString().Trim() ?? string.Empty;
+            if (windowHandleOrName.Length == 0)
+            {
+                return Response.CreateMissingParametersResponse("handle");
+            }
+
             if (windowHandleOrName != CommandEnvironment.GlobalWindowHandle)
             {
                 var windows = new BreadthFirstSearch().Find(environment.RootElement, ControlType.Window, cancellationToken)

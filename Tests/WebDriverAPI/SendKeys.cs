@@ -59,39 +59,38 @@ namespace WebDriverAPI
         {
             // Select all text and delete using keyboard shortcut Ctrl + A and Delete
             editBox.Click();
-            session.Keyboard.SendKeys(Keys.Control + "a" + Keys.Control);
-            session.Keyboard.SendKeys(Keys.Delete);
+            editBox.SendKeys(Keys.Control + "A" + Keys.Delete);
             Assert.AreEqual(string.Empty, editBox.Text);
         }
 
         [TestMethod]
         public void SendKeys_Alphabet()
         {
-            session.Keyboard.SendKeys("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
+            editBox.SendKeys("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
             Assert.AreEqual("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", editBox.Text);
         }
 
         [TestMethod]
         public void SendKeys_EmptySequence()
         {
-            session.Keyboard.SendKeys(string.Empty);
+            editBox.SendKeys(string.Empty);
             Assert.AreEqual(string.Empty, editBox.Text);
         }
 
         [TestMethod]
         public void SendKeys_ModifierAlt()
         {
-            session.Keyboard.SendKeys(Keys.Alt + "ED" + Keys.Alt); // Insert Time/Date
+            editBox.SendKeys(Keys.Alt + "ED" + Keys.Alt); // Insert Time/Date
             Assert.IsTrue(editBox.Text.Length > 0);
         }
 
         [TestMethod]
         public void SendKeys_ModifierControl()
         {
-            session.Keyboard.SendKeys("789");
-            session.Keyboard.SendKeys(Keys.Control + "a" + Keys.Control); // Select all
-            session.Keyboard.SendKeys(Keys.Control + "c" + Keys.Control); // Copy
-            session.Keyboard.SendKeys(Keys.Control + "vvv" + Keys.Control); // Paste 3 times
+            editBox.SendKeys("789");
+            editBox.SendKeys(Keys.Control + "a" + Keys.Control); // Select all
+            editBox.SendKeys(Keys.Control + "c" + Keys.Control); // Copy
+            editBox.SendKeys(Keys.Control + "vvv" + Keys.Control); // Paste 3 times
             Assert.AreEqual("789789789", editBox.Text);
         }
 
@@ -99,16 +98,16 @@ namespace WebDriverAPI
         public void SendKeys_ModifierExplicitRelease()
         {
             // Keys persist all modifier between API call and requires ecplicit modifier release
-            session.Keyboard.SendKeys(Keys.Shift + "abcwxyz1237890"); // Shift modifier is still pressed
-            session.Keyboard.SendKeys("abcwxyz1237890" + Keys.Shift);
-            session.Keyboard.SendKeys("abcwxyz1237890");
+            editBox.SendKeys(Keys.Shift + "abcwxyz1237890"); // Shift modifier is still pressed
+            editBox.SendKeys("abcwxyz1237890" + Keys.Shift);
+            editBox.SendKeys("abcwxyz1237890");
             Assert.AreEqual("ABCWXYZ!@#&*()ABCWXYZ!@#&*()abcwxyz1237890", editBox.Text);
         }
 
         [TestMethod]
         public void SendKeys_ModifierShift()
         {
-            session.Keyboard.SendKeys(Keys.Shift + "abcdefghijklmnopqrstuvwxyz\n1234567890\t`-=[]\\;',./" + Keys.Shift);
+            editBox.SendKeys(Keys.Shift + "abcdefghijklmnopqrstuvwxyz\n1234567890\t`-=[]\\;',./" + Keys.Shift);
             Assert.AreEqual("ABCDEFGHIJKLMNOPQRSTUVWXYZ\r\n!@#$%^&*()\t~_+{}|:\"<>?", editBox.Text); // Assumes 101 keys US Keyboard layout
         }
 
@@ -136,21 +135,21 @@ namespace WebDriverAPI
         [TestMethod]
         public void SendKeys_NonPrintableKeys()
         {
-            session.Keyboard.SendKeys("9");
-            session.Keyboard.SendKeys(Keys.Home + "8");
-            session.Keyboard.SendKeys(Keys.Home + "7");
-            session.Keyboard.SendKeys(Keys.Home + Keys.Tab);
-            session.Keyboard.SendKeys(Keys.Home + Keys.Enter);
-            session.Keyboard.SendKeys(Keys.Up + Keys.Tab + "78");
-            session.Keyboard.SendKeys(Keys.Home + Keys.Enter);
-            session.Keyboard.SendKeys(Keys.Up + Keys.Tab + "7");
+            editBox.SendKeys("9");
+            editBox.SendKeys(Keys.Home + "8");
+            editBox.SendKeys(Keys.Home + "7");
+            editBox.SendKeys(Keys.Home + Keys.Tab);
+            editBox.SendKeys(Keys.Home + Keys.Enter);
+            editBox.SendKeys(Keys.Up + Keys.Tab + "78");
+            editBox.SendKeys(Keys.Home + Keys.Enter);
+            editBox.SendKeys(Keys.Up + Keys.Tab + "7");
             Assert.AreEqual("\t7\r\n\t78\r\n\t789", editBox.Text);
         }
 
         [TestMethod]
         public void SendKeys_Number()
         {
-            session.Keyboard.SendKeys("0123456789");
+            editBox.SendKeys("0123456789");
             Assert.AreEqual("0123456789", editBox.Text);
         }
 
@@ -159,14 +158,14 @@ namespace WebDriverAPI
         {
             // Line endings such as \r or \n are replaced with \r\n
             // form feeds (\f) or vertical tab feeds (\v) are removed
-            session.Keyboard.SendKeys("\a\b\f\n\r\t\v\'\"\\\r\n");
+            editBox.SendKeys("\a\b\f\n\r\t\v\'\"\\\r\n");
             Assert.AreEqual("\r\n\r\n\t\'\"\\\r\n\r\n", editBox.Text);
         }
 
         [TestMethod]
         public void SendKeys_SymbolsKeys()
         {
-            session.Keyboard.SendKeys("`-=[]\\;',./~!@#$%^&*()_+{}|:\"<>?");
+            editBox.SendKeys("`-=[]\\;',./~!@#$%^&*()_+{}|:\"<>?");
             Assert.AreEqual("`-=[]\\;',./~!@#$%^&*()_+{}|:\"<>?", editBox.Text);
         }
 

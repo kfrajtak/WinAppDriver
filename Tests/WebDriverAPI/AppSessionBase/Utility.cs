@@ -50,6 +50,12 @@ namespace WebDriverAPI
                     appiumOptions.AddAdditionalCapability("processName", "Calculator");
                     break;
 
+                case CommonTestSettings.EdgeAppId:
+                    appiumOptions.AddAdditionalCapability("app", @"shell:appsFolder\" + appId);
+                    appiumOptions.AddAdditionalCapability("processName", "msedge");
+                    appiumOptions.AddAdditionalCapability("mainWindowTitle", "Microsoft Edge");
+                    break;
+
                 default:
                     appiumOptions.AddAdditionalCapability("app", appId);
                     break;

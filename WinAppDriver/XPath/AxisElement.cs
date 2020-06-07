@@ -67,9 +67,7 @@ namespace WinAppDriver.XPath
             switch (Axis)
             {
                 case XPathAxis.Attribute:
-                    var attributeValue = automationElement.GetAutomationElementPropertyValue(Name);
-                    System.Diagnostics.Debug.WriteLine($"{Axis}: {automationElement.Current.LocalizedControlType}#{automationElement.Current.AutomationId} @{Name} => {attributeValue}");
-                    return attributeValue;
+                    return automationElement.GetAutomationElementPropertyValue(Name);
                 case XPathAxis.Self:
                     return automationElement;
                 default:

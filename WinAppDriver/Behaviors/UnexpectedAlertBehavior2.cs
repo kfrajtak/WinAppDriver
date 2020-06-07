@@ -31,11 +31,6 @@ namespace WinAppDriver.Behaviors
 
         public class Handler : IDisposable
         {
-            private AutomationEventHandler _handler;
-            private readonly AutomationElement _automationElement;
-            private IUIAutomation _automation;
-            private Thread _thread, _threadB;
-            private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
             private SystemWindow _rootWindow;
             private IList<SystemWindow> _childWindows;
 
