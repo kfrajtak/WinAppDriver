@@ -12,7 +12,7 @@ namespace WinAppDriver
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public static Process StartProcessFromPath(string path, CancellationToken cancellationToken, string processName = null, string mainWindowTitlePattern = null)
+        public static Process StartProcessFromPath(string path, CancellationToken cancellationToken, string processName = null, string mainWindowTitlePattern = null, string workingDirectory = null)
         {
             Logger.Info("Starting process from path " + path);
 
@@ -23,6 +23,7 @@ namespace WinAppDriver
             };
 
             processName = processName?.Trim();
+            startInfo.WorkingDirectory = workingDirectory;
 
             var process = Process.Start(startInfo);
 
