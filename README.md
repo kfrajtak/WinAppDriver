@@ -14,6 +14,11 @@ Why another driver, when there already is https://github.com/Microsoft/WinAppDri
 
 ## Installation
 Currently, there is no installer. Clone the repository and build the executable from the sources.
+Use the executable found under `WinAppDriver.Server\bin\Debug\WinAppDriver.Server.exe`
+
+## External Requirements
+Some features use the [AutoIt](https://www.autoitscript.com/site/autoit/downloads/) automation DLL.
+Acquire the Zip release and copy `AutoItX3_x64.dll` to the WinAppDriver executable directory.
 
 ## Selenium
 ### Client driver version
@@ -192,6 +197,7 @@ Following capabilities are supported:
   - `processId` - id of the process to attach to
   - `processName` - name of the process to attach to
   - `exePath` or `app` - path to the executable to start the process (arguments cannot be provided at the moment)
+  - `appWorkingDir` - set the working directory of the new process
   - `mainWindowTitle` - regular expression to help the WinAppDriver narrow down the process to attach to 
 
 ### Creating session
@@ -203,6 +209,8 @@ public static RemoteWebDriver CreateSessionByStartingTheApplication()
   desktopCapabilities.SetCapability("app", "<name of the program to start>");  
   // or "exePath" desktopCapabilities.SetCapability("exePath", "<path to the executable to start the process>");  
   // following capabilities should be provided for UWP applications like Calculator or Clocks & Alarms 
+  // optional - to set the working directory
+  desktopCapabilities.SetCapability("appWorkingDir", "<path to run the process in>"); 
   // optional - to identify the process
   desktopCapabilities.SetCapability("processName", "<name of the process>"); 
   // optional - to identify the main window

@@ -97,8 +97,9 @@ namespace WinAppDriver.Server.CommandHandlers
                     }
 
                     desiredCapabilities.TryGetParameterValue<string>("processName", out var processName);
+                    desiredCapabilities.TryGetParameterValue<string>("appWorkingDir", out var workingDirectory);
 
-                    process = ApplicationProcess.StartProcessFromPath(exePath.ToString(), cancellationToken, processName, mainWindowTitle);
+                    process = ApplicationProcess.StartProcessFromPath(exePath.ToString(), cancellationToken, processName, mainWindowTitle, workingDirectory);
                     if (process == null)
                     {
                         return Response.CreateErrorResponse(-1, "Cannot start process.");
