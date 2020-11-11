@@ -12,6 +12,18 @@ This project is using
 
 Why another driver, when there already is https://github.com/Microsoft/WinAppDriver? The app I'm testing is quite large with many elements, and that driver was timing out after 60 seconds on some XPath queries (see [this issue](https://github.com/Microsoft/WinAppDriver/issues/333)), and after putting everything together, the query finished under 2 seconds.
 
+## Supported Platforms
+This project relies on MS UI Automation which is a part of the Windows Accessibility API.
+
+The official [documentation](https://docs.microsoft.com/en-us/windows/win32/winauto/entry-uiauto-win32#run-time-requirements) mentions support for various platforms: 
+
+> UI Automation is supported on the following operating systems: Windows XP, Windows Server 2003, Windows Server 2003 R2, Windows Vista, Windows 7, Windows 10, Windows Server 2008, Windows Server 2008 R2, Windows Server 2012, Windows Server 2012 R2, Windows Server 2016, and Windows Server 2019.
+
+I can't confirm it will work on those platforms since I only have Win 10 Enterprise on my machine, but all the required libraries are part of the project.
+
+## Developer mode
+As far as I know developer mode is not required.
+
 ## Installation
 Currently, there is no installer. Clone the repository and build the executable from the sources.
 Use the executable found under `WinAppDriver.Server\bin\Debug\WinAppDriver.Server.exe`
