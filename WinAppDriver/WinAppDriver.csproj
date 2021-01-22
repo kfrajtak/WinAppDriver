@@ -118,6 +118,7 @@
     <Compile Include="CommandHandlers\ActionsCommandHandler.cs" />
     <Compile Include="Appium\CommandInfoRepository.cs" />
     <Compile Include="CommandHandlers\Css\BackColorHandler.cs" />
+    <Compile Include="CommandHandlers\Helpers\ActionsHelper.cs" />
     <Compile Include="CommandHandlers\IAsyncCommandHandler.cs" />
     <Compile Include="CommandHandlers\AsyncElementCommandHandler.cs" />
     <Compile Include="CommandHandlers\ElementCommandHandler.cs" />

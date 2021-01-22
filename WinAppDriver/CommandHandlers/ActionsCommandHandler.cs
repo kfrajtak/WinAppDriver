@@ -1,7 +1,10 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Windows.Automation;
+using WinAppDriver.CommandHandlers.Helpers;
 using WinAppDriver.Extensions;
 using WinAppDriver.Input;
 
@@ -18,10 +21,6 @@ namespace WinAppDriver.Server.CommandHandlers
             {
                 return Response.CreateMissingParametersResponse("actions");
             }
-
-            var release = new Stack<Microsoft.Test.Input.Key>();
-
-            var actionsToExecute = new List<Action>();
 
             var numberOfRetries = 10;
             Exception e = null;
@@ -61,6 +60,7 @@ namespace WinAppDriver.Server.CommandHandlers
 
             try
             {
+                AutomationElement element = null;
                 foreach (var block in (JArray)o)
                 {
                     var actions = (JArray)block["actions"];
@@ -69,9 +69,19 @@ namespace WinAppDriver.Server.CommandHandlers
                     switch (type)
                     {
                         case "pointer":
-                            new MouseActions(actions, commandEnvironment).Execute();
+                            new MouseActions(actions, commandEnvironment).Execute(out element);
                             break;
                         case "key":
+                            if (ActionsHelper.TryGetPlainString(actions, out var input, out var lastKey) && element != null)
+                            {
+                                element.SetText(input);
+                                element = null; // to avoid further problems
+                                if (lastKey != null)
+                                {
+                                    new KeyboardActions(new JArray(actions.Skip(actions.Count() - 2).Take(2)), commandEnvironment).Execute();
+                                }
+                                break;
+                            }
                             new KeyboardActions(actions, commandEnvironment).Execute();
                             break;
                     }

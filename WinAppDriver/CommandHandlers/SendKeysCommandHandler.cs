@@ -26,10 +26,9 @@
 
 using WinAppDriver.Extensions;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Automation;
-using WinAppDriver.Input;
 using Newtonsoft.Json.Linq;
+using WinAppDriver.CommandHandlers.Helpers;
 
 namespace WinAppDriver.Server.CommandHandlers
 {
@@ -46,19 +45,22 @@ namespace WinAppDriver.Server.CommandHandlers
         /// <returns>The JSON serialized string representing the command response.</returns>
         protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment commandEnvironment, Dictionary<string, object> parameters, System.Threading.CancellationToken cancellationToken)
         {
-            if (parameters["value"] is JArray array)
-            {
-                new Input.Devices.Keyboard(array).Execute(commandEnvironment);
-                return Response.CreateSuccessResponse();
-            }
-
             if (!parameters.TryGetValue("text", out var text))
             {
                 return Response.CreateMissingParametersResponse("text");
             }
 
-            automationElement.SetText(text?.ToString() ?? "");
+            var array = parameters["value"] as JArray;
+            var value = string.Empty;
+            if (array != null || !ActionsHelper.TryGetPlainString(array, out value, out _))
+            {
+                new Input.Devices.Keyboard(array).Execute(commandEnvironment);
+            }
+            else
+            {
+                automationElement.SetText(text?.ToString() ?? value);
+            }
             return Response.CreateSuccessResponse();
-        }
+        }        
     }
 }

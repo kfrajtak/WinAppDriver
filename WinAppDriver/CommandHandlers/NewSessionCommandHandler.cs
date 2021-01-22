@@ -58,18 +58,32 @@ namespace WinAppDriver.Server.CommandHandlers
 
             var desiredCapabilities = JObject.Parse(parameters["desiredCapabilities"]?.ToString() ?? "{}").ToObject<Dictionary<string, object>>();
 
+            // translation from MS capabilities
+            // app - Application identifier or executable full path
+            if (desiredCapabilities.TryGetValue("app", out var app))
+            {
+                desiredCapabilities.Add("processName", app);
+            }
+            // appArguments - Application launch arguments
+            // appTopLevelWindow - Existing application top level window to attach to 
+            if (desiredCapabilities.TryGetValue("appTopLevelWindow", out var appTopLevelWindow))
+            { 
+            }
+            // appWorkingDir - Application working directory (Classic apps only)  
+            // platformName - Target platform name
+            // platformVersion - Target platform version
+
             // extend capabilities with one more required parameter
             if (!desiredCapabilities.TryGetValue("mode", out var mode))
             {
                 mode = "start";
-                //return Response.CreateMissingParametersResponse("mode");
             }
 
             var mainWindowTitle = "";
             if (desiredCapabilities.TryGetValue("mainWindowTitle", out var mwt))
             {
                 mainWindowTitle = mwt?.ToString() ?? "";
-            }
+            }            
 
             var attached = false;
             Process process = null;
