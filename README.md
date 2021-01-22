@@ -28,10 +28,6 @@ As far as I know developer mode is not required.
 Currently, there is no installer. Clone the repository and build the executable from the sources.
 Use the executable found under `WinAppDriver.Server\bin\Debug\WinAppDriver.Server.exe`
 
-## External Requirements
-Some features use the [AutoIt](https://www.autoitscript.com/site/autoit/downloads/) automation DLL.
-Acquire the Zip release and copy `AutoItX3_x64.dll` to the WinAppDriver executable directory.
-
 ## Selenium
 ### Client driver version
 Latest client driver version 3.141.0.0 must be used when calling the server.
