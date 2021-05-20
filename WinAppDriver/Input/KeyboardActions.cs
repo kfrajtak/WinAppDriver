@@ -2,7 +2,6 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using WinAppDriver.Server;
 
 namespace WinAppDriver.Input
@@ -10,7 +9,6 @@ namespace WinAppDriver.Input
     public class KeyboardActions
     {
         private readonly JArray _actions;
-        private readonly CommandEnvironment _commandEnvironment;
 
         private static Dictionary<int, Key> _map = new Dictionary<int, Key>
         {
@@ -87,10 +85,9 @@ namespace WinAppDriver.Input
             Key.LWin, Key.RWin
         };
 
-        public KeyboardActions(JArray actions, CommandEnvironment commandEnvironment)
+        public KeyboardActions(JArray actions)
         {
             _actions = actions;
-            _commandEnvironment = commandEnvironment;
         }
 
         public void Execute()

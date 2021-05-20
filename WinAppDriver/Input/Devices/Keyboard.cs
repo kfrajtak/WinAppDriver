@@ -1,9 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Automation;
 using WinAppDriver.Server;
 
@@ -20,13 +16,13 @@ namespace WinAppDriver.Input.Devices
             _keysHeld = new List<string>();
         }
 
-        public void Execute(CommandEnvironment commandEnvironment)
+        public void Execute(CommandEnvironment commandEnvironment, System.Threading.CancellationToken cancellationToken)
         {
             AutomationElement.FromHandle(commandEnvironment.WindowHandle).SetFocus();
 
             var actions = GetActions();
-
-            new KeyboardActions(new JArray(actions.ToArray()), commandEnvironment).Execute();
+            var strategy = new Strategies.SendKeys.OneByOne();
+            strategy.Execute(commandEnvironment, new Dictionary<string, object> { { "actions", actions } }, cancellationToken);
         }
 
         private IEnumerable<JObject> GetActions()

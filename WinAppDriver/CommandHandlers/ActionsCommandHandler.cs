@@ -19,10 +19,6 @@ namespace WinAppDriver.Server.CommandHandlers
                 return Response.CreateMissingParametersResponse("actions");
             }
 
-            var release = new Stack<Microsoft.Test.Input.Key>();
-
-            var actionsToExecute = new List<Action>();
-
             var numberOfRetries = 10;
             Exception e = null;
             while (numberOfRetries-- >= 0)
@@ -35,7 +31,6 @@ namespace WinAppDriver.Server.CommandHandlers
                 try
                 {
                     SetForegroundWindow(commandEnvironment.WindowHandle);
-                    //System.Windows.Automation.AutomationElement.FromHandle(commandEnvironment.WindowHandle).SetFocus();
                     commandEnvironment.Window.SetFocus();
                     e = null;
                     break;
@@ -61,29 +56,14 @@ namespace WinAppDriver.Server.CommandHandlers
 
             try
             {
-                foreach (var block in (JArray)o)
-                {
-                    var actions = (JArray)block["actions"];
-                    var type = block["type"].Value<string>();
-
-                    switch (type)
-                    {
-                        case "pointer":
-                            new MouseActions(actions, commandEnvironment).Execute();
-                            break;
-                        case "key":
-                            new KeyboardActions(actions, commandEnvironment).Execute();
-                            break;
-                    }
-                }
+                var strategy = new Strategies.SendKeys.OneByOne();
+                return strategy.Execute(commandEnvironment, parameters, cancellationToken);
             }
             finally
             {
                 Microsoft.Test.Input.Mouse.Reset();
                 Microsoft.Test.Input.Keyboard.Reset();
-            }
-
-            return Response.CreateSuccessResponse();
+            }            
         }
     }
 }

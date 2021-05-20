@@ -26,9 +26,7 @@
 
 using WinAppDriver.Extensions;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Automation;
-using WinAppDriver.Input;
 using Newtonsoft.Json.Linq;
 
 namespace WinAppDriver.Server.CommandHandlers
@@ -46,9 +44,16 @@ namespace WinAppDriver.Server.CommandHandlers
         /// <returns>The JSON serialized string representing the command response.</returns>
         protected override Response GetResponse(AutomationElement automationElement, CommandEnvironment commandEnvironment, Dictionary<string, object> parameters, System.Threading.CancellationToken cancellationToken)
         {
+            var sendKeyStrategyType = commandEnvironment.GetSendKeyStrategyType();
+            switch (sendKeyStrategyType)
+            {
+                case Strategies.SendKeys.SendKeyStrategyType.SetValue:
+                    return commandEnvironment.GetSendKeyStrategy().Execute(commandEnvironment, parameters, cancellationToken);
+            }
+
             if (parameters["value"] is JArray array)
             {
-                new Input.Devices.Keyboard(array).Execute(commandEnvironment);
+                new Input.Devices.Keyboard(array).Execute(commandEnvironment, cancellationToken);
                 return Response.CreateSuccessResponse();
             }
 

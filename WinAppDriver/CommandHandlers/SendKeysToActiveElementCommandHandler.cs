@@ -24,11 +24,7 @@
 // USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // </copyright>
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WinAppDriver.Server.CommandHandlers
 {
@@ -60,6 +56,10 @@ namespace WinAppDriver.Server.CommandHandlers
                     keysAsString += key.ToString();
                 }
             }
+
+            /*
+
+            return strategy.Execute(commandEnvironment, parameters, cancellationToken);*/
 
             // Normalize line endings to single line feed, as that's what the atom expects.
             keysAsString = keysAsString.Replace("\r\n", "\n");

@@ -114,6 +114,7 @@
     <Compile Include="Behaviors\UnexpectedAlertBehavior2.cs" />
     <Compile Include="Behaviors\UnexpectedAlertBehavior.cs" />
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="CommandEnvironmentExtensions.cs" />
     <Compile Include="CommandHandlers\AlertHandlingCommandHandler.cs" />
     <Compile Include="CommandHandlers\ActionsCommandHandler.cs" />
     <Compile Include="Appium\CommandInfoRepository.cs" />
@@ -215,6 +216,10 @@
     <Compile Include="ProtocolValueJsonConverter.cs" />
     <Compile Include="Response.cs" />
     <Compile Include="SeleniumModule.cs" />
+    <Compile Include="Strategies\SendKeys\Grouped.cs" />
+    <Compile Include="Strategies\SendKeys\ISendKeysStrategy.cs" />
+    <Compile Include="Strategies\SendKeys\OneByOne.cs" />
+    <Compile Include="Strategies\SendKeys\SetValue.cs" />
     <Compile Include="TextEventArgs.cs" />
     <Compile Include="Utils\NativeMethods.cs" />
     <Compile Include="Utils\PointComparer.cs" />

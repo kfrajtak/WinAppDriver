@@ -207,6 +207,7 @@ Following capabilities are supported:
   - `exePath` or `app` - path to the executable to start the process (arguments cannot be provided at the moment)
   - `appWorkingDir` - set the working directory of the new process
   - `mainWindowTitle` - regular expression to help the WinAppDriver narrow down the process to attach to 
+  - `sendKeyStrategy` (`oneByOne`|`grouped`|`setValue`) - strategy to use to type text into a text field, default value is `oneByOne`, currently this capability cannot be changed during the session
 
 ### Creating session
 
